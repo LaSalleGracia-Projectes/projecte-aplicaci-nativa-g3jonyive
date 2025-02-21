@@ -1,4 +1,4 @@
-rootProject.name = "ConectYourCoachView"
+rootProject.name = "Book"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
