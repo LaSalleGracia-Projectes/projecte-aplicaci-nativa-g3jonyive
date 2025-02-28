@@ -102,6 +102,13 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.connectyourcoach.connectyourcoach"
             packageVersion = "1.0.0"
+
+            macOS {
+                iconFile.set(project.file("resources/app_icon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("resources/app_icon.ico"))
+            }
         }
     }
 }
