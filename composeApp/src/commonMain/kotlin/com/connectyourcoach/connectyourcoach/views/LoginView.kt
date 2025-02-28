@@ -43,7 +43,7 @@ fun LoginView() {
                 label = { Text("Username") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 256.dp)
+                    .padding(horizontal = 32.dp)
             )
             Spacer(modifier = Modifier.weight(0.5f))
             TextField(
@@ -52,8 +52,7 @@ fun LoginView() {
                 label = { Text("Password") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 256.dp)
-                    .padding(top = 16.dp),
+                    .padding(horizontal = 32.dp),
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(modifier = Modifier.weight(0.5f))
@@ -61,8 +60,7 @@ fun LoginView() {
                 onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 512.dp)
-                    .padding(top = 32.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Text("Login")
             }
