@@ -25,7 +25,7 @@ fun LoginView() {
             .fillMaxSize()
             .background(Color.LightGray)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -36,7 +36,7 @@ fun LoginView() {
                     modifier = Modifier.size(120.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.weight(1f))
             TextField(
                 value = username,
                 onValueChange = { username = it },
@@ -45,6 +45,7 @@ fun LoginView() {
                     .fillMaxWidth()
                     .padding(horizontal = 256.dp)
             )
+            Spacer(modifier = Modifier.weight(0.5f))
             TextField(
                 value = password,
                 onValueChange = { password = it },
@@ -55,6 +56,7 @@ fun LoginView() {
                     .padding(top = 16.dp),
                 visualTransformation = PasswordVisualTransformation()
             )
+            Spacer(modifier = Modifier.weight(0.5f))
             Button(
                 onClick = {},
                 modifier = Modifier
@@ -64,8 +66,15 @@ fun LoginView() {
             ) {
                 Text("Login")
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.weight(2f))
+            Text("Si no tienes cuenta:")
+            Button(onClick = {
+            }) {
+                Text("REGISTRO")
+            }
+            Spacer(modifier = Modifier.weight(0.2f))
             Text(text = message, color = MaterialTheme.colors.primary)
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
