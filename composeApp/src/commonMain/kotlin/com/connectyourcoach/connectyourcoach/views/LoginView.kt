@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import connectyourcoach.composeapp.generated.resources.Logo
+import connectyourcoach.composeapp.generated.resources.logo
 import connectyourcoach.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.painterResource
 
@@ -31,7 +31,7 @@ fun LoginView() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(Res.drawable.Logo),
+                    painter = painterResource(Res.drawable.logo),
                     contentDescription = "Login Logo",
                     modifier = Modifier.size(120.dp)
                 )
