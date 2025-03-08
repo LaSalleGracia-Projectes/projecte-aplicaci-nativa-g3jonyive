@@ -10,19 +10,23 @@ import com.connectyourcoach.connectyourcoach.views.LoginView
 import com.connectyourcoach.connectyourcoach.views.ProfileView
 import com.connectyourcoach.connectyourcoach.views.RegisterPhotoUsernameView
 import com.connectyourcoach.connectyourcoach.views.RegisterView
-
+import com.connectyourcoach.connectyourcoach.views.RegisterViewModel
 
 @Composable
 fun App() {
     var currentScreen by remember { mutableStateOf("registerPhoto") }
+    val registerViewModel = remember { RegisterViewModel() }
 
     MaterialTheme {
         when (currentScreen) {
             "registerPhoto" -> RegisterPhotoUsernameView { currentScreen = "register" }
-            "register" -> RegisterView { currentScreen = "login" }
+            "register" -> RegisterView(viewModel = registerViewModel) {
+                currentScreen = "login"
+            }
             "login" -> LoginView { currentScreen = "profile" }
             "profile" -> ProfileView(
-                onNavigateToSettings = { /* Afegir navegació a Settings si cal */ },
+                viewModel = registerViewModel, // Pass the same ViewModel
+                onNavigateToSettings = { /* Add navigation logic */ },
                 onLogout = { currentScreen = "login" }
             )
         }

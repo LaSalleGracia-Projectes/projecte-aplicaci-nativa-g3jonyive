@@ -89,7 +89,7 @@ fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
 }
 
 @Composable
-fun RegisterView(onRegisterComplete: () -> Unit) {
+fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
     var fullname by remember { mutableStateOf("") }
     var number by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -185,7 +185,7 @@ fun RegisterView(onRegisterComplete: () -> Unit) {
         Button(
             onClick = {
                 if (fullname.isNotBlank() && isValidPhoneNumber(number) && email.isNotBlank() && password.isNotBlank() && !emailError && !passwordError) {
-                    viewModel.onRegister(email, password)
+                    viewModel.onRegister(fullname, email, password, number)
                     onRegisterComplete()
                 } else {
                     registerError = "Revisa les dades del formulari"
@@ -196,10 +196,4 @@ fun RegisterView(onRegisterComplete: () -> Unit) {
             Text("Registrar-se")
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewRegisterView() {
-    RegisterView(onRegisterComplete = {})
 }
