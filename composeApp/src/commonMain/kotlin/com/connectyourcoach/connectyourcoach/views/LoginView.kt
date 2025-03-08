@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun LoginView() {
+fun LoginView(function: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
@@ -19,40 +19,33 @@ fun LoginView() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray)
+            .background(Color.LightGray),
+        contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             TextField(
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("Username") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 256.dp)
-                    .padding(top = 16.dp)
+                modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 256.dp)
-                    .padding(top = 16.dp),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 512.dp)
-                    .padding(top = 32.dp)
+                onClick = { function() }, // Ara canvia de pantalla
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login")
             }
@@ -61,5 +54,3 @@ fun LoginView() {
         }
     }
 }
-
-

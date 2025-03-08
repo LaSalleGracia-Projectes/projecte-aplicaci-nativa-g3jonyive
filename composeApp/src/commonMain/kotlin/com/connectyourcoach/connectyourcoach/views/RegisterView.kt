@@ -17,11 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import coil3.compose.AsyncImage
-import org.auth.def.RegisterViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun RegisterPhotoUsernameView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
+fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var registerError by remember { mutableStateOf<String?>(null) }
 
@@ -90,7 +89,7 @@ fun RegisterPhotoUsernameView(viewModel: RegisterViewModel, onRegisterComplete: 
 }
 
 @Composable
-fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
+fun RegisterView(onRegisterComplete: () -> Unit) {
     var fullname by remember { mutableStateOf("") }
     var number by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -202,5 +201,5 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
 @Preview
 @Composable
 fun PreviewRegisterView() {
-    RegisterView(viewModel = RegisterViewModel(), onRegisterComplete = {})
+    RegisterView(onRegisterComplete = {})
 }

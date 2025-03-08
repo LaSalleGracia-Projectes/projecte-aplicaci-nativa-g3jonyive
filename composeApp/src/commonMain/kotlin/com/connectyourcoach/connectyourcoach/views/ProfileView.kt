@@ -17,85 +17,83 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 @Composable
-fun ProfileView(onNavigateToSettings: () -> Unit) {
+fun ProfileView(onNavigateToSettings: () -> Unit, onLogout: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Títol de la vista
+        // Botó de configuració i logout
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = onLogout) {
+                Icon(Icons.Default.ExitToApp, contentDescription = "Tancar sessió", tint = Color.Red)
+            }
+            IconButton(onClick = onNavigateToSettings) {
+                Icon(Icons.Default.Settings, contentDescription = "Configuració")
+            }
+        }
+
+        // Títol del perfil
         Text(
             text = "Perfil",
             style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
+            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
         )
-    }
 
-    Spacer(modifier = Modifier.height(50.dp))
+        // Foto de perfil amb botó d'edició
+        Box(contentAlignment = Alignment.BottomEnd) {
+            AsyncImage(
+                model = "https://definicion.de/wp-content/uploads/2019/07/perfil-de-usuario.png",
+                contentDescription = "Foto de perfil",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(CircleShape)
+                    .border(4.dp, Color.Black, CircleShape)
+            )
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        IconButton(
-            onClick = onNavigateToSettings,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Icon(Icons.Default.Settings, contentDescription = "Configuració")
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black)
+                    .border(2.dp, Color.White, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = "Canviar foto",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(70.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "AuraTurqesa", style = MaterialTheme.typography.h6)
+        Spacer(modifier = Modifier.height(32.dp))
 
-            Box(contentAlignment = Alignment.BottomEnd) {
-                AsyncImage(
-                    model = "https://definicion.de/wp-content/uploads/2019/07/perfil-de-usuario.png",
-                    contentDescription = "Foto de perfil",
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(CircleShape)
-                        .border(4.dp, Color.Black, CircleShape)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black)
-                        .border(2.dp, Color.White, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = "Canviar foto",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(text = "AuraTurqesa")
-            Spacer(modifier = Modifier.height(150.dp))
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(start = 32.dp)) {
-                    ProfileRow(Icons.Default.AccountCircle, "Sergi Saravia Terricabras")
-                    ProfileRow(Icons.Default.Email, "sergi.saravia@gracia.lasalle.cat")
-                    ProfileRow(Icons.Default.Phone, "(+34) 634 534 089")
-                    ProfileRow(Icons.Default.DateRange, "11/03/2003")
-                }
-            }
+        // Informació de l'usuari
+        Column(modifier = Modifier.fillMaxWidth()) {
+            ProfileRow(Icons.Default.AccountCircle, "Sergi Saravia Terricabras")
+            ProfileRow(Icons.Default.Email, "sergi.saravia@gracia.lasalle.cat")
+            ProfileRow(Icons.Default.Phone, "(+34) 634 534 089")
+            ProfileRow(Icons.Default.DateRange, "11/03/2003")
         }
     }
 }
 
 @Composable
 fun ProfileRow(icon: ImageVector, text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(icon, contentDescription = null)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 8.dp)
+    ) {
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colors.primary)
         Spacer(modifier = Modifier.width(15.dp))
-        Text(text = text)
+        Text(text = text, style = MaterialTheme.typography.body1)
     }
 }
