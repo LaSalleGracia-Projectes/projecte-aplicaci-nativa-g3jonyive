@@ -26,6 +26,7 @@ navigationRuntimeKtx = "2.8.7"
 navigationCompose = "2.8.7"
 ui = "1.5.0"
 runtimeAndroid = "1.7.8"
+uiAndroid = "1.7.8"
 
 [libraries]
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
@@ -53,6 +54,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

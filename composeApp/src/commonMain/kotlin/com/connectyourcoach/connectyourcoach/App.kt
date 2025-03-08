@@ -11,6 +11,8 @@ import com.connectyourcoach.connectyourcoach.views.ProfileView
 import com.connectyourcoach.connectyourcoach.views.RegisterPhotoUsernameView
 import com.connectyourcoach.connectyourcoach.views.RegisterView
 import com.connectyourcoach.connectyourcoach.views.RegisterViewModel
+import com.connectyourcoach.connectyourcoach.views.TablonView
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App() {
@@ -30,5 +32,6 @@ fun App() {
                 onLogout = { currentScreen = "login" }
             )
         }
+        TablonView()
     }
 }
