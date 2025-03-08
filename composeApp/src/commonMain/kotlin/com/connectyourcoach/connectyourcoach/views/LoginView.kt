@@ -15,7 +15,7 @@ import connectyourcoach.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoginView() {
+fun LoginView(function: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
@@ -23,37 +23,33 @@ fun LoginView() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray)
+            .background(Color.LightGray),
+        contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.logo),
-                    contentDescription = "Login Logo",
-                    modifier = Modifier.size(120.dp)
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             TextField(
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("Username") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
+                modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.weight(0.5f))
+            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = { function() }, // Ara canvia de pantalla
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.weight(0.5f))
             Button(
