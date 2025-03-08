@@ -16,7 +16,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App() {
-    var currentScreen by remember { mutableStateOf("registerPhoto") }
+    var currentScreen by remember { mutableStateOf("profile") }
     val registerViewModel = remember { RegisterViewModel() }
 
     MaterialTheme {

@@ -25,7 +25,6 @@ roomCompilerProcessingTesting = "2.6.1"
 navigationRuntimeKtx = "2.8.7"
 navigationCompose = "2.8.7"
 ui = "1.5.0"
-runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
 
 [libraries]
@@ -53,7 +52,6 @@ androidx-room-compiler-processing-testing = { group = "androidx.room", name = "r
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 material = { module = "androidx.compose.material:material", version.ref = "material" }
-androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 
 [plugins]

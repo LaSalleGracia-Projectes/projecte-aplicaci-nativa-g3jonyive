@@ -1,10 +1,8 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
@@ -12,14 +10,14 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    private val _fullname = MutableLiveData("")
-    val fullname: LiveData<String> get() = _fullname
+    private val _fullname: MutableState<String> = mutableStateOf("")
+    val fullname: State<String> get() = _fullname
 
-    private val _email = MutableLiveData("")
-    val email: LiveData<String> get() = _email
+    private val _email: MutableState<String> = mutableStateOf("")
+    val email: State<String> get() = _email
 
-    private val _phoneNumber = MutableLiveData("")
-    val phoneNumber: LiveData<String> get() = _phoneNumber
+    private val _phoneNumber: MutableState<String> = mutableStateOf("")
+    val phoneNumber: State<String> get() = _phoneNumber
 
     fun onRegister(fullname: String, email: String, password: String, phoneNumber: String) {
         viewModelScope.launch {

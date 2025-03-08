@@ -2,7 +2,6 @@ package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.background
 import androidx.compose.runtime.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
@@ -10,9 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import connectyourcoach.composeapp.generated.resources.logo
-import connectyourcoach.composeapp.generated.resources.Res
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun LoginView(function: () -> Unit) {
@@ -50,25 +46,11 @@ fun LoginView(function: () -> Unit) {
             Button(
                 onClick = { function() }, // Ara canvia de pantalla
                 modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.weight(0.5f))
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
             ) {
                 Text("Login")
             }
-            Spacer(modifier = Modifier.weight(2f))
-            Text("Si no tienes cuenta:")
-            Button(onClick = {
-            }) {
-                Text("REGISTRO")
-            }
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(text = message, color = MaterialTheme.colors.primary)
-            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
