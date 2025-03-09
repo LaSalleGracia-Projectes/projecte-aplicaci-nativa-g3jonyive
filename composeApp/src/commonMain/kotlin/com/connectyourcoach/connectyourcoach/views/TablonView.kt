@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -16,10 +15,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TablonView() {
+fun TablonView(navigateToProfile: () -> Unit, navigateToInicio: () -> Unit) {
     Scaffold(
         topBar = { TablonTopBar() },
-        bottomBar = { TablonBottomBar() }
+        bottomBar = { TablonBottomBar(navigateToProfile, navigateToInicio) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -36,6 +35,7 @@ fun TablonView() {
         }
     }
 }
+
 
 @Composable
 fun TablonTopBar() {
@@ -67,21 +67,30 @@ fun TablonSearchBar() {
 }
 
 @Composable
-fun TablonBottomBar() {
+fun TablonBottomBar(navigateToProfile: () -> Unit, navigateToInicio: () -> Unit) {
     var selectedItem by remember { mutableStateOf(0) }
 
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.onSurface
     ) {
-        listOf("Inicio" to Icons.Default.Home, "Chat" to Icons.Default.Email, "Perfil" to Icons.Default.Person).forEachIndexed { index, (label, icon) ->
+        listOf(
+            "Inicio" to Icons.Default.Home,
+            "Chat" to Icons.Default.Email,
+            "Perfil" to Icons.Default.Person
+        ).forEachIndexed { index, (label, icon) ->
             BottomNavigationItem(
                 icon = { Icon(icon, contentDescription = label) },
                 label = { Text(label) },
                 selected = selectedItem == index,
-                onClick = { selectedItem = index }
+                onClick = {
+                    selectedItem = index
+                    when (label) {
+                        "Inicio" -> navigateToInicio()
+                        "Perfil" -> navigateToProfile()
+                    }
+                }
             )
         }
     }
 }
-
