@@ -22,7 +22,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
-    val username by viewModel.username
+    val email by viewModel.email
     val password by viewModel.password
     val loading by viewModel.loading
     val error by viewModel.error
@@ -56,8 +56,8 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
             )
         }
         TextField(
-            value = username,
-            onValueChange = { viewModel.onUsernameChange(it) },
+            value = email,
+            onValueChange = { viewModel.onEmailChange(it) },
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,

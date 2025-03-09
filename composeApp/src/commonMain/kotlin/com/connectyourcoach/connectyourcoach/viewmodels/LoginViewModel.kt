@@ -4,11 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.FirebaseAuth
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val _username: MutableState<String> = mutableStateOf("")
-    val username: MutableState<String> get() = _username
+    private val auth: MutableState<FirebaseAuth> = mutableStateOf(Firebase.auth)
+
+    private val _email: MutableState<String> = mutableStateOf("")
+    val email: MutableState<String> get() = _email
 
     private val _password: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> get() = _password
@@ -21,8 +26,8 @@ class LoginViewModel : ViewModel() {
 
 
 
-    fun onUsernameChange(username: String) {
-        _username.value = username
+    fun onEmailChange(username: String) {
+        _email.value = username
     }
 
     fun onPasswordChange(password: String) {
@@ -30,23 +35,33 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onLogin(): Boolean{
-        val status = username.value.isNotEmpty() && password.value.isNotEmpty()
+        _loading.value = true
+
+        var state = false
 
         viewModelScope.launch {
-            _loading.value = true
+            try {
+                val authResult = auth.value.signInWithEmailAndPassword(
+                    email = _email.value,
+                    password = _password.value
+                )
 
-            // Simulamos un login
-            kotlinx.coroutines.delay(2000)
-
-            if (status) {
-                _error.value = ""
-            } else {
-                _error.value = "Invalid username or password"
+                authResult.user?.let {
+                    _loading.value = false
+                    _error.value = "Session started"
+                    state = true
+                } ?: run {
+                    _loading.value = false
+                    _error.value = "Invalid email or password"
+                    state = false
+                }
+            } catch (e: Exception) {
+                _loading.value = false
+                _error.value = e.message ?: "An unknown error occurred"
+                state = false
             }
-
-            _loading.value = false
         }
 
-        return status
+        return state
     }
 }
