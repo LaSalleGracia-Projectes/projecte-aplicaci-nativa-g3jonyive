@@ -5,8 +5,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import com.connectyourcoach.connectyourcoach.views.ProfileView
+import com.connectyourcoach.connectyourcoach.views.TablonView
 
-class ProfileScreen(function: () -> Unit) : Screen {
+class ProfileScreen : Screen {
 
     @Composable
     override fun Content() {
@@ -15,11 +16,9 @@ class ProfileScreen(function: () -> Unit) : Screen {
         ProfileView(
             viewModel = RegisterViewModel(),
             onNavigateToSettings = {
-                // Canvia a la pantalla de configuració
                 navigator?.push(SettingsScreen { var currentScreen = "profile" })
             },
             onLogout = {
-                // Aquí pots implementar el que fa el logout, com tancar sessió de Firebase
                 println("Usuari tancat de la sessió.")
             }
         )
