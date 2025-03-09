@@ -6,7 +6,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
 import com.connectyourcoach.connectyourcoach.views.LoginView
 
-class LoginScreen : Screen {
+class LoginScreen(function: () -> Unit) : Screen {
 
     @Composable
     override fun Content() {
@@ -14,8 +14,11 @@ class LoginScreen : Screen {
 
         LoginView(
             viewModel = LoginViewModel(),
-            onLogin = { navigator?.push(MainScreen()) },
-            onRegister = {  }
+            onLogin = { navigator?.push(MainScreen { var currentScreen = "profile" }) },
+            onRegister = { navigator?.push(RegisterScreen {
+                // Quan l'usuari es registra i s'acaba
+                var currentScreen = "login"
+            }) } // Redirigeix a la pantalla de registre
         )
     }
 }

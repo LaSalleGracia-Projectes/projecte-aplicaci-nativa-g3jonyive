@@ -1,6 +1,5 @@
 package com.connectyourcoach.connectyourcoach.nav
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +11,7 @@ import com.connectyourcoach.connectyourcoach.screens.LoginScreen
 import com.connectyourcoach.connectyourcoach.screens.MainScreen
 import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
 import com.connectyourcoach.connectyourcoach.screens.SettingsScreen
+import com.connectyourcoach.connectyourcoach.screens.RegisterScreen // Afegeix la pantalla de registre
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 
@@ -28,7 +28,14 @@ fun NavigationWrapper() {
 
     // Es defineix la vista de navegació
     Navigator(screen = when (currentScreen) {
-        "login" -> LoginScreen { currentScreen = "main" }
+        "login" -> LoginScreen {
+            // Quan l'usuari vol registrar-se
+            currentScreen = "register"
+        }
+        "register" -> RegisterScreen {
+            // Quan l'usuari es registra i s'acaba
+            currentScreen = "login"
+        }
         "profile" -> ProfileScreen { currentScreen = "settings" }
         "settings" -> SettingsScreen { currentScreen = "profile" }
         "main" -> MainScreen { currentScreen = "profile" }
