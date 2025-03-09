@@ -19,29 +19,33 @@ class RegisterViewModel : ViewModel() {
     private val _phoneNumber: MutableState<String> = mutableStateOf("")
     val phoneNumber: State<String> get() = _phoneNumber
 
-    fun onRegister(fullname: String, email: String, password: String, phoneNumber: String) {
+    private val _username: MutableState<String> = mutableStateOf("")
+    val username: State<String> get() = _username
+
+    fun onRegister(fullname: String, email: String, password: String, phoneNumber: String, username: String) {
         viewModelScope.launch {
             try {
-                // Intentem registrar l'usuari a Firebase
                 val result = Firebase.auth.createUserWithEmailAndPassword(email, password)
 
-                // Guardem la informació addicional de l'usuari
                 _fullname.value = fullname
                 _email.value = email
                 _phoneNumber.value = phoneNumber
+                _username.value = username
 
-                // Aquí pots fer alguna cosa si la creació de l'usuari és exitosa, com actualitzar la UI
                 println("Usuari creat amb èxit!")
             } catch (e: Exception) {
-                // Maneig d'errors si alguna cosa surt malament
                 println("Error: ${e.message}")
             }
         }
     }
 
-    // Funció per actualitzar la informació de l'usuari (si cal)
-    fun updateUserDetails(fullname: String, phoneNumber: String) {
+    fun updateUserDetails(fullname: String, phoneNumber: String, username: String) {
         _fullname.value = fullname
         _phoneNumber.value = phoneNumber
+        _username.value = username
+    }
+
+    fun updateUsername(newUsername: String) {
+        _username.value = newUsername
     }
 }

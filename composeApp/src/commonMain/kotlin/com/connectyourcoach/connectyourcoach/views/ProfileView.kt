@@ -50,7 +50,10 @@ fun ProfileView(viewModel: RegisterViewModel, onNavigateToSettings: () -> Unit, 
                 Button(
                     onClick = {
                         // Actualitza les dades amb noves informacions, per exemple
-                        viewModel.updateUserDetails("Nou Nom Actualitzat", "987654321")
+                        viewModel.updateUserDetails(
+                            "Nou Nom Actualitzat", "987654321",
+                            username = "AuraTurqesa"
+                        )
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

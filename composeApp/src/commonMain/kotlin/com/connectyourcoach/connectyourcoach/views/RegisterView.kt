@@ -21,8 +21,8 @@ import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
-    var username by remember { mutableStateOf("") }
+fun RegisterPhotoUsernameView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
+    var username by remember { mutableStateOf(viewModel.username.value) }
     var registerError by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -31,7 +31,6 @@ fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Registre", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
-
         Spacer(modifier = Modifier.height(50.dp))
 
         Box(contentAlignment = Alignment.BottomEnd) {
@@ -43,22 +42,6 @@ fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
                     .clip(CircleShape)
                     .border(4.dp, Color.Black, CircleShape)
             )
-
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black)
-                    .border(2.dp, Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Edit,
-                    contentDescription = "Canviar foto",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -78,6 +61,7 @@ fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
         Button(
             onClick = {
                 if (username.isNotBlank()) {
+                    viewModel.updateUsername(username) // Guarda el username al ViewModel
                     onRegisterComplete()
                 } else {
                     registerError = "El nom d'usuari no pot estar buit"
@@ -88,6 +72,7 @@ fun RegisterPhotoUsernameView(onRegisterComplete: () -> Unit) {
         }
     }
 }
+
 
 @Composable
 fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
@@ -186,7 +171,10 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
         Button(
             onClick = {
                 if (fullname.isNotBlank() && isValidPhoneNumber(number) && email.isNotBlank() && password.isNotBlank() && !emailError && !passwordError) {
-                    viewModel.onRegister(fullname, email, password, number)
+                    viewModel.onRegister(
+                        fullname, email, password, number,
+                        username = viewModel.username.value
+                    )
                     onRegisterComplete()
                 } else {
                     registerError = "Revisa les dades del formulari"
