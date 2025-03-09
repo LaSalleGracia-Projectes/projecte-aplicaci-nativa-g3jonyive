@@ -51,6 +51,9 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
             implementation(libs.firebase.auth)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.tabNavigator)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
