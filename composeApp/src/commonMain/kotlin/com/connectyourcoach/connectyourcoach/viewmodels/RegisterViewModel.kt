@@ -1,8 +1,8 @@
-package com.connectyourcoach.connectyourcoach.views
+package com.connectyourcoach.connectyourcoach.viewmodels
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
@@ -10,10 +10,14 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    var fullname by mutableStateOf("")
-    var email by mutableStateOf("")
-    var password by mutableStateOf("")
-    var phoneNumber by mutableStateOf("")
+    private val _fullname: MutableState<String> = mutableStateOf("")
+    val fullname: State<String> get() = _fullname
+
+    private val _email: MutableState<String> = mutableStateOf("")
+    val email: State<String> get() = _email
+
+    private val _phoneNumber: MutableState<String> = mutableStateOf("")
+    val phoneNumber: State<String> get() = _phoneNumber
 
     fun onRegister(fullname: String, email: String, password: String, phoneNumber: String) {
         viewModelScope.launch {
@@ -22,9 +26,9 @@ class RegisterViewModel : ViewModel() {
                 val result = Firebase.auth.createUserWithEmailAndPassword(email, password)
 
                 // Guardem la informació addicional de l'usuari
-                this@RegisterViewModel.fullname = fullname
-                this@RegisterViewModel.email = email
-                this@RegisterViewModel.phoneNumber = phoneNumber
+                _fullname.value = fullname
+                _email.value = email
+                _phoneNumber.value = phoneNumber
 
                 // Aquí pots fer alguna cosa si la creació de l'usuari és exitosa, com actualitzar la UI
                 println("Usuari creat amb èxit!")
@@ -33,5 +37,11 @@ class RegisterViewModel : ViewModel() {
                 println("Error: ${e.message}")
             }
         }
+    }
+
+    // Funció per actualitzar la informació de l'usuari (si cal)
+    fun updateUserDetails(fullname: String, phoneNumber: String) {
+        _fullname.value = fullname
+        _phoneNumber.value = phoneNumber
     }
 }

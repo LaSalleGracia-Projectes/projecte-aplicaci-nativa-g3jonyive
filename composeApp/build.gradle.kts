@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -51,6 +52,9 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
             implementation(libs.firebase.auth)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.tabNavigator)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -91,7 +95,8 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.runtime.android)
+    implementation(libs.androidx.ui.android)
+    implementation(libs.androidx.ui.text.android)
     debugImplementation(compose.uiTooling)
 }
 
@@ -103,6 +108,13 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.connectyourcoach.connectyourcoach"
             packageVersion = "1.0.0"
+
+            macOS {
+                iconFile.set(project.file("resources/app_icon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("resources/app_icon.ico"))
+            }
         }
     }
 }

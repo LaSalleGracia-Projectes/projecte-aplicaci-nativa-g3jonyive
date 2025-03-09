@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import coil3.compose.AsyncImage
+import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

@@ -3,7 +3,9 @@ package com.connectyourcoach.connectyourcoach.views
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -13,12 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 
 @Composable
-fun TablonView(navigateToProfile: () -> Unit, navigateToInicio: () -> Unit) {
+fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit) {
     Scaffold(
-        topBar = { TablonTopBar() },
-        bottomBar = { TablonBottomBar(navigateToProfile, navigateToInicio) }
+        topBar = { TablonTopBar(viewModel, onSignOut) },
+        bottomBar = { TablonBottomBar() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -36,15 +41,20 @@ fun TablonView(navigateToProfile: () -> Unit, navigateToInicio: () -> Unit) {
     }
 }
 
-
 @Composable
-fun TablonTopBar() {
+fun TablonTopBar(viewModel: TablonViewModel, onSignOut: () -> Unit) {
     TopAppBar(
         title = { Text("Tablón") },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             IconButton(onClick = { /* Acción del botón */ }) {
                 Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
+            }
+            IconButton(onClick = {
+                viewModel.signOut()
+                onSignOut()
+            }) {
+                Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
             }
         }
     )
@@ -67,30 +77,21 @@ fun TablonSearchBar() {
 }
 
 @Composable
-fun TablonBottomBar(navigateToProfile: () -> Unit, navigateToInicio: () -> Unit) {
+fun TablonBottomBar() {
     var selectedItem by remember { mutableStateOf(0) }
 
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.onSurface
     ) {
-        listOf(
-            "Inicio" to Icons.Default.Home,
-            "Chat" to Icons.Default.Email,
-            "Perfil" to Icons.Default.Person
-        ).forEachIndexed { index, (label, icon) ->
+        listOf("Inicio" to Icons.Default.Home, "Chat" to Icons.Default.Email, "Perfil" to Icons.Default.Person).forEachIndexed { index, (label, icon) ->
             BottomNavigationItem(
                 icon = { Icon(icon, contentDescription = label) },
                 label = { Text(label) },
                 selected = selectedItem == index,
-                onClick = {
-                    selectedItem = index
-                    when (label) {
-                        "Inicio" -> navigateToInicio()
-                        "Perfil" -> navigateToProfile()
-                    }
-                }
+                onClick = { selectedItem = index }
             )
         }
     }
 }
+
