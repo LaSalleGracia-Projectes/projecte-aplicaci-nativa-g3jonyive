@@ -6,7 +6,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 import com.connectyourcoach.connectyourcoach.views.TablonView
 
-class MainScreen(function: () -> Unit) : Screen {
+class MainScreen : Screen {
 
     @Composable
     override fun Content() {
@@ -16,7 +16,7 @@ class MainScreen(function: () -> Unit) : Screen {
             viewModel = TablonViewModel(),
             onSignOut = {
                 navigator?.popAll()
-                navigator?.push(LoginScreen { var currentScreen = "main" })
+                navigator?.push(LoginScreen())
             }
         )
     }

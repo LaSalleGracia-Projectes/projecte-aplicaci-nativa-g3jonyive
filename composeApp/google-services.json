@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "509247796997",
+    "project_id": "connectyourcoach-98301",
+    "storage_bucket": "connectyourcoach-98301.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509247796997:android:95792260d4f7a276bee96c",
+        "android_client_info": {
+          "package_name": "com.connectyourcoach.connectyourcoach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509247796997-1mkhg1l7u365dfb7k1bvonrh0c7nmdg3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_5_gsWxv-8ihC_PukhBRU9_2s-F-7aEo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509247796997-1mkhg1l7u365dfb7k1bvonrh0c7nmdg3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
