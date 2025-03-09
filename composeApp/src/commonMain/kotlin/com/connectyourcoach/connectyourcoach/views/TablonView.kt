@@ -75,7 +75,7 @@ fun TablonSearchBar() {
 }
 
 @Composable
-fun TablonBottomBar(
+fun TablonBottomBar(viewModel: TablonViewModel,
     onInicio: () -> Unit,
     onChat: () -> Unit,
     onProfile: () -> Unit
