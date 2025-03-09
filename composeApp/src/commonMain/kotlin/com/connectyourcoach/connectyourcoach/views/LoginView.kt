@@ -26,6 +26,11 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
     val password by viewModel.password
     val loading by viewModel.loading
     val error by viewModel.error
+    val loguedIt by viewModel.loggedIn
+
+    if (loguedIt) {
+        onLogin()
+    }
 
     Column(
         modifier = Modifier
@@ -80,20 +85,14 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    val status = viewModel.onLogin()
-                    if (status) {
-                        onLogin()
-                    }
+                    viewModel.onLogin()
                 }
             )
         )
         Spacer(modifier = Modifier.weight(3f))
         Button(
             onClick = {
-                val status = viewModel.onLogin()
-                if (status) {
-                    onLogin()
-                }
+                viewModel.onLogin()
             },
             modifier = Modifier.fillMaxWidth()
         ) {

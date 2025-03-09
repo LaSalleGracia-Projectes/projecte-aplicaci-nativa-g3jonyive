@@ -24,7 +24,8 @@ class LoginViewModel : ViewModel() {
     private val _error: MutableState<String> = mutableStateOf("")
     val error: MutableState<String> get() = _error
 
-
+    private val _loggedIn: MutableState<Boolean> = mutableStateOf(false)
+    val loggedIn: MutableState<Boolean> get() = _loggedIn
 
     fun onEmailChange(username: String) {
         _email.value = username
@@ -34,10 +35,8 @@ class LoginViewModel : ViewModel() {
         _password.value = password
     }
 
-    fun onLogin(): Boolean{
+    fun onLogin() {
         _loading.value = true
-
-        var state = false
 
         viewModelScope.launch {
             try {
@@ -48,20 +47,17 @@ class LoginViewModel : ViewModel() {
 
                 authResult.user?.let {
                     _loading.value = false
-                    _error.value = "Session started"
-                    state = true
+                    _loggedIn.value = true
                 } ?: run {
                     _loading.value = false
                     _error.value = "Invalid email or password"
-                    state = false
+                    _loggedIn.value = false
                 }
             } catch (e: Exception) {
                 _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"
-                state = false
+                _loggedIn.value = false
             }
         }
-
-        return state
     }
 }

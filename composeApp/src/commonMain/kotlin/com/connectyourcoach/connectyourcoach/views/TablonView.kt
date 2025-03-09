@@ -3,6 +3,7 @@ package com.connectyourcoach.connectyourcoach.views
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -14,11 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 
 @Composable
-fun TablonView() {
+fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit) {
     Scaffold(
-        topBar = { TablonTopBar() },
+        topBar = { TablonTopBar(viewModel, onSignOut) },
         bottomBar = { TablonBottomBar() }
     ) { paddingValues ->
         Column(
@@ -38,13 +42,19 @@ fun TablonView() {
 }
 
 @Composable
-fun TablonTopBar() {
+fun TablonTopBar(viewModel: TablonViewModel, onSignOut: () -> Unit) {
     TopAppBar(
         title = { Text("Tablón") },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             IconButton(onClick = { /* Acción del botón */ }) {
                 Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
+            }
+            IconButton(onClick = {
+                viewModel.signOut()
+                onSignOut()
+            }) {
+                Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
             }
         }
     )
