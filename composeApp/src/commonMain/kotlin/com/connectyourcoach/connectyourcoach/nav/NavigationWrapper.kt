@@ -7,7 +7,7 @@ import com.connectyourcoach.connectyourcoach.screens.LoginScreen
 
 @Composable
 fun NavigationWrapper() {
-    Navigator(screen = LoginScreen {}) { navigator ->
+    Navigator(screen = LoginScreen()) { navigator ->
         SlideTransition(navigator)
     }
 }

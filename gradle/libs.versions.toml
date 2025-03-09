@@ -27,6 +27,7 @@ navigationCompose = "2.8.7"
 ui = "1.5.0"
 uiAndroid = "1.7.8"
 voyager = "1.0.0-rc10"
+uiTextAndroid = "1.7.8"
 
 [libraries]
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
@@ -58,6 +59,7 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

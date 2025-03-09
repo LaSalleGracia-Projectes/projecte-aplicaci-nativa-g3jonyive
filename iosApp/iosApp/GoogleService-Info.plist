@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>509247796997-ebodc1fb6t3vgd1fn297egnvorqq203h.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.509247796997-ebodc1fb6t3vgd1fn297egnvorqq203h</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA3WhkLgeWpYS4tIH_CLV_fzaLknMbMclE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>509247796997</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.connectyourcoach.connectyourcoach.ConnectYourCoach</string>
+	<key>PROJECT_ID</key>
+	<string>connectyourcoach-98301</string>
+	<key>STORAGE_BUCKET</key>
+	<string>connectyourcoach-98301.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:509247796997:ios:fce74f021e6f4950bee96c</string>
+</dict>
+</plist>
