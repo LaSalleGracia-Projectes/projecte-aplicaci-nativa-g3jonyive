@@ -15,63 +15,44 @@ import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 @Composable
 fun ProfileView(
     viewModel: ProfileViewModel,
-    onNavigateToSettings: () -> Unit,
-    onLogout: () -> Unit,
-    onInicio: () -> Unit,
-    onChat: () -> Unit,
-    onProfile: () -> Unit
+    paddingValues: PaddingValues,
+    onLogout: () -> Unit
 ) {
     val fullname = viewModel.fullName
     val email = viewModel.email
     val phoneNumber = viewModel.phoneNumber
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Perfil de l'Usuari") },
-                actions = {
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Configuració")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            TablonBottomBar(onInicio, onChat, onProfile, TablonViewModel()) // Aquí afegim la BottomBar
-        },
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Comprovem que les dades del viewModel es mostren
-                Text("Nom complet: ${fullname}")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Correu electrònic: ${email}")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Telèfon: ${phoneNumber}")
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        viewModel.onLogout()
-                        onLogout()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tancar sessió")
-                }
-                // Botó per actualitzar manualment les dades del perfil
-                Button(
-                    onClick = {
-
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Actualitzar informació")
-                }
-            }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Comprovem que les dades del viewModel es mostren
+        Text("Nom complet: ${fullname}")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Correu electrònic: ${email}")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Telèfon: ${phoneNumber}")
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                viewModel.onLogout()
+                onLogout()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Tancar sessió")
         }
-    )
+        // Botó per actualitzar manualment les dades del perfil
+        Button(
+            onClick = {
+
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Actualitzar informació")
+        }
+    }
 }
