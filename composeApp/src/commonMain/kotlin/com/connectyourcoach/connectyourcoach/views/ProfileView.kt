@@ -32,7 +32,7 @@ fun ProfileView(
             )
         },
         bottomBar = {
-            TablonBottomBar(onInicio, onChat, onProfile, TablonViewModel()) // Aquí afegim la BottomBar
+            TablonBottomBar(onInicio, onChat, onProfile, TablonViewModel())
         },
         content = {
             Column(
@@ -41,34 +41,19 @@ fun ProfileView(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Comprovem que les dades del viewModel es mostren
-                Text("Nom complet: ${viewModel.fullname}")
+                Text("Nom complet: ${viewModel.fullname.value}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Correu electrònic: ${viewModel.email}")
+                Text("Nom d'usuari: ${viewModel.username.value}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Telèfon: ${viewModel.phoneNumber}")
+                Text("Correu electrònic: ${viewModel.email.value}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Telèfon: ${viewModel.phoneNumber.value}")
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = {
-                        // Quan es tanca sessió, es pot restablir el viewModel
-                        onLogout()
-                    },
+                    onClick = onLogout,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Tancar sessió")
-                }
-                // Botó per actualitzar manualment les dades del perfil
-                Button(
-                    onClick = {
-                        // Actualitza les dades amb noves informacions, per exemple
-                        viewModel.updateUserDetails(
-                            "Nou Nom Actualitzat", "987654321",
-                            username = "AuraTurqesa"
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Actualitzar informació")
                 }
             }
         }

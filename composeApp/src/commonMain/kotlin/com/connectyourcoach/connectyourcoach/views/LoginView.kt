@@ -16,12 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
+import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
+fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
     val email by viewModel.email
     val password by viewModel.password
     val loading by viewModel.loading
@@ -53,6 +54,7 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 .background(Color.Transparent)
         )
         Spacer(modifier = Modifier.weight(3f))
+
         if (error.isNotEmpty()) {
             Text(
                 text = error,
@@ -60,10 +62,11 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 modifier = Modifier.padding(8.dp)
             )
         }
+
         TextField(
             value = email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("Username") },
+            label = { Text("User email") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -71,7 +74,9 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 imeAction = ImeAction.Next
             )
         )
+
         Spacer(modifier = Modifier.weight(1f))
+
         TextField(
             value = password,
             onValueChange = { viewModel.onPasswordChange(it) },
@@ -89,7 +94,9 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 }
             )
         )
+
         Spacer(modifier = Modifier.weight(3f))
+
         Button(
             onClick = {
                 viewModel.onLogin()
@@ -98,6 +105,7 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
         ) {
             Text("Login")
         }
+
         Text(
             text = "Don't have an account?",
             color = MaterialTheme.colors.onBackground,

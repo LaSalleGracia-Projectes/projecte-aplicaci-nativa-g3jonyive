@@ -5,7 +5,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.views.SettingsProfileView
 
-class SettingsScreen(function: () -> Unit) : Screen {
+class SettingsScreen() : Screen {
 
     @Composable
     override fun Content() {
