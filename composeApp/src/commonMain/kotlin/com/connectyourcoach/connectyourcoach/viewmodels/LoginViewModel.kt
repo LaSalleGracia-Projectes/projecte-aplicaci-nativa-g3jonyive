@@ -27,9 +27,6 @@ class LoginViewModel : ViewModel() {
     private val _loggedIn: MutableState<Boolean> = mutableStateOf(false)
     val loggedIn: MutableState<Boolean> get() = _loggedIn
 
-    private val _registered: MutableState<Boolean> = mutableStateOf(false)
-    val registered: MutableState<Boolean> get() = _registered
-
     fun onEmailChange(username: String) {
         _email.value = username
     }
@@ -64,28 +61,18 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun onRegister() {
-        _loading.value = true
-
+    fun onForgotPassword() {
         viewModelScope.launch {
             try {
-                val authResult = auth.value.createUserWithEmailAndPassword(
-                    email = _email.value,
-                    password = _password.value
-                )
-
-                authResult.user?.let {
-                    _loading.value = false
-                    _registered.value = true
-                } ?: run {
-                    _loading.value = false
-                    _error.value = "Registration failed"
-                    _registered.value = false
+                if (_email.value.isEmpty()) {
+                    _error.value = "Please enter your email"
+                    return@launch
                 }
+
+                auth.value.sendPasswordResetEmail(email = _email.value)
+                _error.value = "Password reset email sent"
             } catch (e: Exception) {
-                _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"
-                _registered.value = false
             }
         }
     }

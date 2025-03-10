@@ -1,6 +1,9 @@
 package com.connectyourcoach.connectyourcoach.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
@@ -12,13 +15,13 @@ class ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val registerViewModel = RegisterViewModel()
+        val registerViewModel by remember { mutableStateOf(RegisterViewModel()) }
 
         // Passant les funcions de navegació a ProfileView
         ProfileView(
             viewModel = registerViewModel,
             onNavigateToSettings = {
-                navigator?.push(SettingsScreen { var currentScreen = "profile" })
+                navigator?.push(SettingsScreen())
             },
             onLogout = {
                 println("Usuari tancat de la sessió.")

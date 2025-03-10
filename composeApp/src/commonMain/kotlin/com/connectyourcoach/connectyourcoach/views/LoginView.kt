@@ -98,13 +98,22 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
         ) {
             Text("Login")
         }
-        Text(
-            text = "Don't have an account?",
-            color = MaterialTheme.colors.onBackground,
-            modifier = Modifier
-                .padding(8.dp)
-                .clickable { onRegister() },
-        )
+        Row {
+            Text(
+                text = "Don't have an account?",
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable { onRegister() },
+            )
+            Text(
+                text = "Forgot password?",
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable { viewModel.onForgotPassword() },
+            )
+        }
         Spacer(modifier = Modifier.weight(10f))
     }
 }

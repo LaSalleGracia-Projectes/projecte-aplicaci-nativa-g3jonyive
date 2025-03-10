@@ -12,7 +12,7 @@ class RegisterScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val registerViewModel = remember { RegisterViewModel() }
+        val registerViewModel by remember { mutableStateOf(RegisterViewModel()) }
         var showPhotoUsernameView by remember { mutableStateOf(true) }
 
         if (showPhotoUsernameView) {
