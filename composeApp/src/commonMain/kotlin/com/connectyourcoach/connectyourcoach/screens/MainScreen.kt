@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
-import com.connectyourcoach.connectyourcoach.views.TablonBottomBar
 import com.connectyourcoach.connectyourcoach.views.TablonView
 
 class MainScreen : Screen {
@@ -20,16 +19,12 @@ class MainScreen : Screen {
                 // A la sortida, pots gestionar la navegació, per exemple, tancar la sessió
                 navigator?.popAll()
                 navigator?.push(LoginScreen()) // Exemple de navegació a la pantalla de login
-            }
-        )
-
-        TablonBottomBar(
-            viewModel = tablonViewModel,
+            },
             onInicio = {
                 navigator?.push(MainScreen())
             },
             onChat = {
-
+                // Afegeix la navegació del chat aquí si és necessari
             },
             onProfile = {
                 navigator?.push(ProfileScreen())

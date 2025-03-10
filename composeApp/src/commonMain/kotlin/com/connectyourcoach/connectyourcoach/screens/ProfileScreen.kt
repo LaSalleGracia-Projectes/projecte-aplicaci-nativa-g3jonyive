@@ -12,16 +12,29 @@ class ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val registerViewModel = RegisterViewModel()
 
+        // Passant les funcions de navegació a ProfileView
         ProfileView(
-            viewModel = RegisterViewModel(),
+            viewModel = registerViewModel,
             onNavigateToSettings = {
                 navigator?.push(SettingsScreen { var currentScreen = "profile" })
             },
             onLogout = {
                 println("Usuari tancat de la sessió.")
+                navigator?.popAll() // Tanca totes les pantalles
+                navigator?.push(LoginScreen()) // Navega a la pantalla de login
+            },
+            // Funcions de navegació per a BottomBar
+            onInicio = {
+                navigator?.push(MainScreen()) // Navega a la pantalla principal
+            },
+            onChat = {
+
+            },
+            onProfile = {
+                navigator?.push(ProfileScreen())
             }
         )
     }
 }
-

@@ -9,9 +9,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
+import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
-fun ProfileView(viewModel: RegisterViewModel, onNavigateToSettings: () -> Unit, onLogout: () -> Unit) {
+fun ProfileView(
+    viewModel: RegisterViewModel,
+    onNavigateToSettings: () -> Unit,
+    onLogout: () -> Unit,
+    onInicio: () -> Unit,
+    onChat: () -> Unit,
+    onProfile: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -22,6 +30,9 @@ fun ProfileView(viewModel: RegisterViewModel, onNavigateToSettings: () -> Unit, 
                     }
                 }
             )
+        },
+        bottomBar = {
+            TablonBottomBar(onInicio, onChat, onProfile, TablonViewModel()) // Aquí afegim la BottomBar
         },
         content = {
             Column(

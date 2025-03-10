@@ -14,21 +14,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
-fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit) {
+fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit, onInicio: () -> Unit, onChat: () -> Unit, onProfile: () -> Unit) {
     Scaffold(
-        topBar = { TablonTopBar(viewModel, onSignOut) },
-        bottomBar = { TablonBottomBar(viewModel, onInicio, onChat, onProfile) }
+        topBar = { TablonTopBar(viewModel, onSignOut) }, // Aquí solo tienes un TopBar
+        bottomBar = { TablonBottomBar(onInicio, onChat, onProfile, viewModel) } // Solo la BottomBar que va en la parte inferior
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            TablonSearchBar()
+            TablonSearchBar() // Esta es la SearchBar que está debajo del TopBar
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -59,32 +58,18 @@ fun TablonTopBar(viewModel: TablonViewModel, onSignOut: () -> Unit) {
 }
 
 @Composable
-fun TablonSearchBar() {
-    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-
-    OutlinedTextField(
-        value = searchQuery,
-        onValueChange = { searchQuery = it },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-        placeholder = { Text("Buscar en el tablón...") },
-        singleLine = true
-    )
-}
-
-@Composable
-fun TablonBottomBar(viewModel: TablonViewModel,
+fun TablonBottomBar(
     onInicio: () -> Unit,
     onChat: () -> Unit,
-    onProfile: () -> Unit
+    onProfile: () -> Unit,
+    viewModel: TablonViewModel
 ) {
     var selectedItem by remember { mutableStateOf(0) }
 
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface,
-        contentColor = MaterialTheme.colors.onSurface
+        contentColor = MaterialTheme.colors.onSurface,
+        modifier = Modifier.fillMaxWidth() // Asegura que la barra se estire a lo largo de toda la pantalla
     ) {
         listOf(
             "Inicio" to Icons.Default.Home,
@@ -108,3 +93,18 @@ fun TablonBottomBar(viewModel: TablonViewModel,
     }
 }
 
+@Composable
+fun TablonSearchBar() {
+    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = { searchQuery = it },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+        placeholder = { Text("Buscar en el tablón...") },
+        singleLine = true
+    )
+}
