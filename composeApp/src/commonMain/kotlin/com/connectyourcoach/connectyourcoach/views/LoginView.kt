@@ -62,11 +62,10 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
                 modifier = Modifier.padding(8.dp)
             )
         }
-
         TextField(
             value = email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("User email") },
+            label = { Text("Correu electrònic") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -74,13 +73,11 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
                 imeAction = ImeAction.Next
             )
         )
-
         Spacer(modifier = Modifier.weight(1f))
-
         TextField(
             value = password,
             onValueChange = { viewModel.onPasswordChange(it) },
-            label = { Text("Password") },
+            label = { Text("Contrasenya") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -94,25 +91,21 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
                 }
             )
         )
-
         Spacer(modifier = Modifier.weight(3f))
-
         Button(
             onClick = {
                 viewModel.onLogin()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
+            Text("Iniciar sessió")
         }
-
         Text(
-            text = "Don't have an account?",
+            text = "No tens compte?",
             color = MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .padding(8.dp)
-                .clickable { onRegister() },
+                .clickable { onRegister() }
         )
-        Spacer(modifier = Modifier.weight(10f))
     }
 }

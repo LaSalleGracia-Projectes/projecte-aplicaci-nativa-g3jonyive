@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -88,6 +90,9 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
 
     val countryPrefixes = listOf("+1", "+34", "+44", "+49", "+33", "+39", "+81", "+86", "+91")
 
+    // Estat per controlar la visibilitat de la contrasenya
+    var passwordVisible by remember { mutableStateOf(false) }
+
     fun isValidEmail(email: String): Boolean = email.contains("@") && email.contains(".")
     fun isValidPassword(password: String): Boolean =
         password.length >= 8 && password.any { it.isUpperCase() } && password.any { it.isLowerCase() } &&
@@ -145,6 +150,7 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // TextField per la contrasenya
         TextField(
             value = password,
             onValueChange = {
@@ -153,8 +159,18 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
             },
             label = { Text("Contrasenya") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            isError = passwordError
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            isError = passwordError,
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = if (passwordVisible) "Ocultar contrasenya" else "Mostrar contrasenya"
+                    )
+                }
+            }
         )
+
         if (passwordError) {
             Text(
                 "La contrasenya ha de tenir 8 caràcters, una majúscula, una minúscula, un número i un signe especial",
