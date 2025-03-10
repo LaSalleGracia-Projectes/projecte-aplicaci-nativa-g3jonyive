@@ -43,9 +43,9 @@ fun BaseBottomBar(
                 onClick = {
                     selectedItem = index
                     when (label) {
-                        "Inicio" -> navigator?.push(MainScreen())
+                        "Inicio" -> if (navigator?.lastItem !is MainScreen) navigator?.push(MainScreen())
                         "Chat" -> {  }
-                        "Perfil" -> navigator?.push(ProfileScreen())
+                        "Perfil" -> if (navigator?.lastItem !is ProfileScreen) navigator?.push(ProfileScreen())
                     }
                 }
             )
