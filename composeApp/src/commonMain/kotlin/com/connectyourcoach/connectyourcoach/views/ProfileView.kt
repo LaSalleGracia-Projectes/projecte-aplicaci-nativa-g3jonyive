@@ -8,18 +8,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
 fun ProfileView(
-    viewModel: RegisterViewModel,
+    viewModel: ProfileViewModel,
     onNavigateToSettings: () -> Unit,
     onLogout: () -> Unit,
     onInicio: () -> Unit,
     onChat: () -> Unit,
     onProfile: () -> Unit
 ) {
+    val fullname = viewModel.fullName
+    val email = viewModel.email
+    val phoneNumber = viewModel.phoneNumber
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,15 +47,15 @@ fun ProfileView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Comprovem que les dades del viewModel es mostren
-                Text("Nom complet: ${viewModel.fullname}")
+                Text("Nom complet: ${fullname}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Correu electrònic: ${viewModel.email}")
+                Text("Correu electrònic: ${email}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Telèfon: ${viewModel.phoneNumber}")
+                Text("Telèfon: ${phoneNumber}")
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        // Quan es tanca sessió, es pot restablir el viewModel
+                        viewModel.onLogout()
                         onLogout()
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -60,11 +65,7 @@ fun ProfileView(
                 // Botó per actualitzar manualment les dades del perfil
                 Button(
                     onClick = {
-                        // Actualitza les dades amb noves informacions, per exemple
-                        viewModel.updateUserDetails(
-                            "Nou Nom Actualitzat", "987654321",
-                            username = "AuraTurqesa"
-                        )
+
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

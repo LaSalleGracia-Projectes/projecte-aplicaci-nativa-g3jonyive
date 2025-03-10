@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
-fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit, onInicio: () -> Unit, onChat: () -> Unit, onProfile: () -> Unit) {
+fun TablonView(viewModel: TablonViewModel, onInicio: () -> Unit, onChat: () -> Unit, onProfile: () -> Unit) {
     Scaffold(
-        topBar = { TablonTopBar(viewModel, onSignOut) }, // Aquí solo tienes un TopBar
+        topBar = { TablonTopBar(viewModel) }, // Aquí solo tienes un TopBar
         bottomBar = { TablonBottomBar(onInicio, onChat, onProfile, viewModel) } // Solo la BottomBar que va en la parte inferior
     ) { paddingValues ->
         Column(
@@ -39,19 +39,13 @@ fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit, onInicio: () -
 }
 
 @Composable
-fun TablonTopBar(viewModel: TablonViewModel, onSignOut: () -> Unit) {
+fun TablonTopBar(viewModel: TablonViewModel) {
     TopAppBar(
         title = { Text("Tablón") },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             IconButton(onClick = { /* Acción del botón */ }) {
                 Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
-            }
-            IconButton(onClick = {
-                viewModel.signOut()
-                onSignOut()
-            }) {
-                Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
             }
         }
     )

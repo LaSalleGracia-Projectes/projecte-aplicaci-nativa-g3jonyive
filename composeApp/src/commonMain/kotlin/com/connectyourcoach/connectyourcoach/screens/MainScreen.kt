@@ -18,11 +18,6 @@ class MainScreen : Screen {
 
         TablonView(
             viewModel = viewModel,
-            onSignOut = {
-                // A la sortida, pots gestionar la navegació, per exemple, tancar la sessió
-                navigator?.popAll()
-                navigator?.push(LoginScreen()) // Exemple de navegació a la pantalla de login
-            },
             onInicio = {
                 navigator?.push(MainScreen())
             },

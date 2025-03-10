@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import com.connectyourcoach.connectyourcoach.views.ProfileView
 import com.connectyourcoach.connectyourcoach.views.TablonView
@@ -15,11 +16,11 @@ class ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val registerViewModel by remember { mutableStateOf(RegisterViewModel()) }
+        val viewModel by remember { mutableStateOf(ProfileViewModel()) }
 
         // Passant les funcions de navegació a ProfileView
         ProfileView(
-            viewModel = registerViewModel,
+            viewModel = viewModel,
             onNavigateToSettings = {
                 navigator?.push(SettingsScreen())
             },
