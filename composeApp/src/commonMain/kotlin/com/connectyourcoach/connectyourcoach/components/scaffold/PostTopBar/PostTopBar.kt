@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun PostTopBar(title: String, onBack: () -> Unit) {
     TopAppBar(
-        title = { Text("Post $title") },
+        title = { Text(title) },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             IconButton(onClick = { onBack() }) {

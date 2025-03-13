@@ -31,14 +31,22 @@ fun PostCard(post: Post, onClick: (String) -> Unit) {
                     .padding(16.dp)
                     .background(MaterialTheme.colors.surface.copy(alpha = 0.7f))
             ) {
-                Text(text = post.title, style = MaterialTheme.typography.h6)
+                Text(text = truncatedContent(post.title), style = MaterialTheme.typography.h6)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = post.description, style = MaterialTheme.typography.body1)
+                Text(text = truncatedContent(post.description), style = MaterialTheme.typography.body1)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "User ID: ${post.user_id}", style = MaterialTheme.typography.body2)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Price: \$${post.price}", style = MaterialTheme.typography.body2)
             }
         }
+    }
+}
+
+fun truncatedContent(content: String): String {
+    return if (content.length > 30) {
+        content.substring(0, 30) + "..."
+    } else {
+        content
     }
 }
