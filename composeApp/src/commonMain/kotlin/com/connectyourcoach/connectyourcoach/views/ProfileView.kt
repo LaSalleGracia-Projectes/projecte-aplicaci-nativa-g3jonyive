@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
@@ -22,6 +24,7 @@ fun ProfileView(
     val fullname by viewModel.fullname
     val email by viewModel.email
     val phoneNumber by viewModel.phoneNumber
+    val photoUrl by viewModel.photoUrl
 
     Column(
         modifier = Modifier
@@ -30,7 +33,14 @@ fun ProfileView(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Comprovem que les dades del viewModel es mostren
+        AsyncImage(
+            model = photoUrl,
+            contentDescription = "Profile picture",
+            modifier = Modifier
+                .size(128.dp)
+                .clip(MaterialTheme.shapes.small)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text("Full Name: ${fullname}")
         Spacer(modifier = Modifier.height(8.dp))
         Text("Email: ${email}")
@@ -44,7 +54,7 @@ fun ProfileView(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Close session")
+            Text("Sign out")
         }
     }
 }

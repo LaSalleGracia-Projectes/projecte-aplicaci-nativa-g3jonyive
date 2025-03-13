@@ -21,6 +21,9 @@ class ProfileViewModel : ViewModel() {
     private val _email: MutableState<String> = mutableStateOf("toni.gimenez@gracia.lasalle.cat")
     val email: MutableState<String> get() = _email
 
+    private val _photoUrl: MutableState<String> = mutableStateOf("https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50")
+    val photoUrl: MutableState<String> get() = _photoUrl
+
     init {
         if (auth.currentUser != null) {
             if (!auth.currentUser?.displayName.isNullOrEmpty()) {
@@ -31,6 +34,9 @@ class ProfileViewModel : ViewModel() {
             }
             if (!auth.currentUser?.email.isNullOrEmpty()) {
                 _email.value = auth.currentUser!!.email!!
+            }
+            if (!auth.currentUser?.photoURL.isNullOrEmpty()) {
+                _photoUrl.value = auth.currentUser!!.photoURL!!
             }
         }
     }
