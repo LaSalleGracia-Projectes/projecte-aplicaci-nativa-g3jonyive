@@ -1,6 +1,8 @@
 package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -8,42 +10,131 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.lifecycle.ViewModel
+import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
 
 @Composable
-fun SettingsProfileView(onBack: () -> Unit) {
-    var fullName by remember { mutableStateOf("Sergi Saravia Terricabras") }
-    var username by remember { mutableStateOf("AuraTurqesa") }
-    var email by remember { mutableStateOf("sergi.saravia@gracia.lasalle.cat") }
-    var birthdate by remember { mutableStateOf("11/03/2003") }
+fun SettingsProfileView(viewModel: SettingsViewModel, paddingValues: PaddingValues, onSave: () -> Unit) {
+    val email by viewModel.email
+    val fullname by viewModel.fullname
+    val password by viewModel.password
+    val saved by viewModel.saved
+    val loading by viewModel.loading
+    val saveError by viewModel.saveError
+
+    if (saved) {
+        onSave()
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 32.dp),
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.Start).padding(16.dp)) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Tornar")
+        if (loading) {
+            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            return@Column
         }
 
-        Text("Editar Perfil", style = MaterialTheme.typography.h5)
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.weight(3f))
 
-        TextField(value = fullName, onValueChange = { fullName = it }, label = { Text("Nom complet") })
-        Spacer(modifier = Modifier.height(28.dp))
+        Text(
+            text = "Edit profile",
+            style = MaterialTheme.typography.h5,
+        )
 
-        TextField(value = username, onValueChange = { username = it }, label = { Text("Nom d'usuari") })
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.weight(2f))
 
-        TextField(value = email, onValueChange = { email = it }, label = { Text("Correu electrònic") })
-        Spacer(modifier = Modifier.height(28.dp))
+        TextField(
+            value = fullname,
+            onValueChange = { viewModel.updateFullname(it) },
+            label = { Text("Full name") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
+        )
 
-        TextField(value = birthdate, onValueChange = { birthdate = it }, label = { Text("Data de naixement") })
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
-        Button(onClick = onBack) {
-            Text("Desar i tornar")
+        TextField(
+            value = email,
+            onValueChange = { viewModel.updateEmail(it) },
+            label = { Text("Email") },
+            isError = !viewModel.isValidEmail(),
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
+        )
+
+        if (!viewModel.isValidEmail() && email.isNotEmpty()) {
+            Text(
+                text = "Email must contain '@' and '.'",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        TextField(
+            value = password,
+            onValueChange = { viewModel.updatePassword(it) },
+            label = { Text("Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            isError = !viewModel.isValidPassword(),
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    viewModel.onSave()
+                }
+            )
+        )
+
+        if (!viewModel.isValidPassword() && password.isNotEmpty()) {
+            Text(
+                text = "Password must contain at least 8 characters, one uppercase, one lowercase, one digit and one special character",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(2f))
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = viewModel.isValidSave(),
+            onClick = {
+                viewModel.onSave()
+            }
+        ) {
+            Text("Desar")
+        }
+
+        if (saveError != null) {
+            Text(
+                text = saveError!!,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(3f))
     }
 }
