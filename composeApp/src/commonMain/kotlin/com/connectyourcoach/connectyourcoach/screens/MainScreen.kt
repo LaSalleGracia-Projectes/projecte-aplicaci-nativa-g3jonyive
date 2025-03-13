@@ -18,7 +18,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TablonTopBar
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
-import com.connectyourcoach.connectyourcoach.views.TablonSearchBar
 import com.connectyourcoach.connectyourcoach.views.TablonView
 
 class MainScreen : Screen {
