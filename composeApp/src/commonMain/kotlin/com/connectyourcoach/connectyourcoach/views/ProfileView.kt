@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,9 +19,9 @@ fun ProfileView(
     paddingValues: PaddingValues,
     onLogout: () -> Unit
 ) {
-    val fullname = viewModel.fullName
-    val email = viewModel.email
-    val phoneNumber = viewModel.phoneNumber
+    val fullname by viewModel.fullname
+    val email by viewModel.email
+    val phoneNumber by viewModel.phoneNumber
 
     Column(
         modifier = Modifier
@@ -30,11 +31,11 @@ fun ProfileView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Comprovem que les dades del viewModel es mostren
-        Text("Nom complet: ${fullname}")
+        Text("Full Name: ${fullname}")
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Correu electrònic: ${email}")
+        Text("Email: ${email}")
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Telèfon: ${phoneNumber}")
+        Text("Phone: ${phoneNumber}")
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
@@ -43,7 +44,7 @@ fun ProfileView(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Tancar sessió")
+            Text("Close session")
         }
     }
 }

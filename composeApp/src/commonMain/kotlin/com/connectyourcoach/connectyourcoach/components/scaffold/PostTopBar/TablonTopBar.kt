@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TablonTopBar(onMoreOptions: () -> Unit) {
     TopAppBar(
-        title = { Text("Tablón") },
+        title = { Text("Dashboard") },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             IconButton(onClick = { onMoreOptions() }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
+                Icon(Icons.Default.MoreVert, contentDescription = "More options")
             }
         }
     )

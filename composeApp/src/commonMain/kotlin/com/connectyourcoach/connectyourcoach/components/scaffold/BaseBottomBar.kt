@@ -33,9 +33,9 @@ fun BaseBottomBar(
         modifier = Modifier.fillMaxWidth() // Asegura que la barra se estire a lo largo de toda la pantalla
     ) {
         listOf(
-            "Inicio" to Icons.Default.Home,
+            "Home" to Icons.Default.Home,
             "Chat" to Icons.Default.Email,
-            "Perfil" to Icons.Default.Person
+            "Profile" to Icons.Default.Person
         ).forEachIndexed { index, (label, icon) ->
             BottomNavigationItem(
                 icon = { Icon(icon, contentDescription = label) },
@@ -44,9 +44,9 @@ fun BaseBottomBar(
                 onClick = {
                     selectedItem = index
                     when (label) {
-                        "Inicio" -> if (navigator?.lastItem !is TablonScreen) navigator?.push(TablonScreen())
+                        "Home" -> if (navigator?.lastItem !is TablonScreen) navigator?.push(TablonScreen())
                         "Chat"   -> if (navigator?.lastItem !is ChatScreen) navigator?.push(ChatScreen())
-                        "Perfil" -> if (navigator?.lastItem !is ProfileScreen) navigator?.push(ProfileScreen())
+                        "Profile" -> if (navigator?.lastItem !is ProfileScreen) navigator?.push(ProfileScreen())
                     }
                 }
             )

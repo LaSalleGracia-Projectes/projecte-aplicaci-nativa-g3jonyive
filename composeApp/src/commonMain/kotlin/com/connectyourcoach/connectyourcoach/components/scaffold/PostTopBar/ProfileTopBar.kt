@@ -11,10 +11,10 @@ import androidx.compose.runtime.Composable
 @Composable
 fun ProfileTopBar(onNavigateToSettings: () -> Unit) {
     TopAppBar(
-        title = { Text("Perfil de l'Usuari") },
+        title = { Text("User profile") },
         actions = {
             IconButton(onClick = onNavigateToSettings) {
-                Icon(Icons.Default.Settings, contentDescription = "Configuració")
+                Icon(Icons.Default.Settings, contentDescription = "Configuration")
             }
         }
     )
