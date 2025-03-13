@@ -83,10 +83,7 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit, o
     val number by viewModel.phoneNumber
     val email by viewModel.email
     val password by viewModel.password
-
-    val emailError by remember { mutableStateOf(false) }
-    val passwordError by remember { mutableStateOf(false) }
-    var registerError by remember { mutableStateOf<String?>(null) }
+    val registerError by viewModel.registerError
 
     Column(
         modifier = Modifier
@@ -132,6 +129,14 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit, o
             )
         )
 
+        if (!viewModel.isValidPhoneNumber() && number.isNotEmpty()) {
+            Text(
+                text = "Phone number must contain 9 digits",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         TextField(
@@ -146,6 +151,14 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit, o
                 imeAction = ImeAction.Next
             )
         )
+
+        if (!viewModel.isValidEmail() && email.isNotEmpty()) {
+            Text(
+                text = "Email must contain '@' and '.'",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -168,6 +181,14 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit, o
             )
         )
 
+        if (!viewModel.isValidPassword() && password.isNotEmpty()) {
+            Text(
+                text = "Password must contain at least 8 characters, one uppercase, one lowercase, one digit and one special character",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.weight(2f))
 
         Button(
@@ -176,6 +197,22 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit, o
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")
+        }
+
+        if (!viewModel.isValidRegister()) {
+            Text(
+                text = "All fields must be filled and valid",
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        if (registerError.isNotEmpty()) {
+            Text(
+                text = registerError,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(8.dp)
+            )
         }
 
         Text(

@@ -28,6 +28,9 @@ class RegisterViewModel : ViewModel() {
     private val _password: MutableState<String> = mutableStateOf("")
     val password: State<String> get() = _password
 
+    private val _registerError: MutableState<String> = mutableStateOf("")
+    val registerError: State<String> get() = _registerError
+
     fun onRegister(onRegisterComplete: () -> Unit) {
         viewModelScope.launch {
             try {
