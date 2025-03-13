@@ -7,27 +7,27 @@ import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.PostTopBar.TablonTopBar
-import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
-import com.connectyourcoach.connectyourcoach.views.TablonView
+import com.connectyourcoach.connectyourcoach.components.scaffold.PostTopBar.PostTopBar
+import com.connectyourcoach.connectyourcoach.viewmodels.PostViewModel
+import com.connectyourcoach.connectyourcoach.views.PostView
 
-class TablonScreen : Screen {
+class PostScreen(private val postId: String) : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val viewModel by remember { mutableStateOf(TablonViewModel()) }
+        val viewModel by remember { mutableStateOf(PostViewModel(postId)) }
 
         BaseScaffold(
             navigator = navigator,
-            topBar = { TablonTopBar(onMoreOptions = {  }) },
+            topBar = { PostTopBar(
+                    title = viewModel.post.value?.title ?: "Post",
+                    onBack = { navigator?.pop() },
+                ) },
         ) { paddingValues ->
-            TablonView(
+            PostView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
-                onClickPost = { postId ->
-                    navigator?.push(PostScreen(postId))
-                }
             )
         }
     }
