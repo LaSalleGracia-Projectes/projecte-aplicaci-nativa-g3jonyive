@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -152,6 +153,7 @@ fun RegisterView(viewModel: RegisterViewModel, onRegisterComplete: () -> Unit) {
                 passwordError = !isValidPassword(it)
             },
             label = { Text("Contrasenya") },
+            visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             isError = passwordError
         )

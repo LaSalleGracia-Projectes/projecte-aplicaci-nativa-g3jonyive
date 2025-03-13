@@ -45,14 +45,5 @@ fun ProfileView(
         ) {
             Text("Tancar sessió")
         }
-        // Botó per actualitzar manualment les dades del perfil
-        Button(
-            onClick = {
-
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Actualitzar informació")
-        }
     }
 }

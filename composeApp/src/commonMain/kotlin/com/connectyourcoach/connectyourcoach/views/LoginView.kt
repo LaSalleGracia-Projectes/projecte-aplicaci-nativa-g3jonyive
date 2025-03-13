@@ -63,7 +63,7 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
         TextField(
             value = email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("Username") },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
