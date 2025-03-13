@@ -13,17 +13,19 @@ class RegisterScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val registerViewModel by remember { mutableStateOf(RegisterViewModel()) }
-        var showPhotoUsernameView by remember { mutableStateOf(true) }
+        var showPhotoUsernameView by remember { mutableStateOf(false) }
 
         if (showPhotoUsernameView) {
             RegisterPhotoUsernameView(
                 viewModel = registerViewModel,
-                onRegisterComplete = { showPhotoUsernameView = false }
+                onRegisterComplete = { showPhotoUsernameView = false },
+                onLogin = { navigator?.pop() }
             )
         } else {
             RegisterView(
                 viewModel = registerViewModel,
-                onRegisterComplete = { navigator?.pop() }
+                onRegisterComplete = { navigator?.pop() },
+                onLogin = { navigator?.pop() }
             )
         }
     }

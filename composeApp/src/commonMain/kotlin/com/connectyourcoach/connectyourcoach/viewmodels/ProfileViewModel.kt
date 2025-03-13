@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
     private val auth by mutableStateOf(Firebase.auth)
 
-    private val _fullName by mutableStateOf("Toni Gimenez")
+    private val _fullName by mutableStateOf(auth.currentUser?.displayName ?: "Toni Gimenez")
     val fullName get() = _fullName
 
     private val _phoneNumber by mutableStateOf("666666666")
