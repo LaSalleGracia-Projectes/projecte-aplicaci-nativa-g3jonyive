@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.PostTopBar.TablonTopBar
+import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.TablonTopBar
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 import com.connectyourcoach.connectyourcoach.views.TablonView
 

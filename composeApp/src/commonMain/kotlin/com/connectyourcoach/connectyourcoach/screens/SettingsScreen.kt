@@ -1,8 +1,17 @@
 package com.connectyourcoach.connectyourcoach.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
+import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.PostTopBar
+import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.SettingsTopBar
+import com.connectyourcoach.connectyourcoach.viewmodels.PostViewModel
+import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
+import com.connectyourcoach.connectyourcoach.views.PostView
 import com.connectyourcoach.connectyourcoach.views.SettingsProfileView
 
 class SettingsScreen : Screen {
@@ -10,13 +19,22 @@ class SettingsScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val viewModel by remember { mutableStateOf(SettingsViewModel()) }
 
-        SettingsProfileView(
-            onBack = {
-                // Quan es fa clic per tornar enrere, es torna a la pantalla anterior (Perfil)
-                navigator?.pop()
-            }
-        )
+        BaseScaffold(
+            navigator = navigator,
+            topBar = { SettingsTopBar(
+                onBack = { navigator?.pop() },
+            ) },
+        ) { paddingValues ->
+            SettingsProfileView (
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                onSave = {
+                    navigator?.pop()
+                }
+            )
+        }
     }
 }
 

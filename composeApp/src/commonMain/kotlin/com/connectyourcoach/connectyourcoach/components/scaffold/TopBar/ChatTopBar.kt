@@ -1,4 +1,4 @@
-package com.connectyourcoach.connectyourcoach.components.scaffold.PostTopBar
+package com.connectyourcoach.connectyourcoach.components.scaffold.TopBar
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
