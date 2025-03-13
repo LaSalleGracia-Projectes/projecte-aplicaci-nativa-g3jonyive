@@ -19,7 +19,7 @@ class LoginScreen : Screen {
 
         LoginView(
             viewModel = viewModel,
-            onLogin = { navigator?.push(MainScreen()) },
+            onLogin = { navigator?.push(TablonScreen()) },
             onRegister = { navigator?.push(RegisterScreen()) }
         )
     }

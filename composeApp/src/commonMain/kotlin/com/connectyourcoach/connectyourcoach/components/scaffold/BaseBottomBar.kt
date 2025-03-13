@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import com.connectyourcoach.connectyourcoach.screens.ChatScreen
-import com.connectyourcoach.connectyourcoach.screens.MainScreen
+import com.connectyourcoach.connectyourcoach.screens.TablonScreen
 import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
 
 @Composable
@@ -44,7 +44,7 @@ fun BaseBottomBar(
                 onClick = {
                     selectedItem = index
                     when (label) {
-                        "Inicio" -> if (navigator?.lastItem !is MainScreen) navigator?.push(MainScreen())
+                        "Inicio" -> if (navigator?.lastItem !is TablonScreen) navigator?.push(TablonScreen())
                         "Chat"   -> if (navigator?.lastItem !is ChatScreen) navigator?.push(ChatScreen())
                         "Perfil" -> if (navigator?.lastItem !is ProfileScreen) navigator?.push(ProfileScreen())
                     }

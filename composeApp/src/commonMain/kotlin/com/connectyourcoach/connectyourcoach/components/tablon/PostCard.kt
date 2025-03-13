@@ -1,7 +1,7 @@
 package com.connectyourcoach.connectyourcoach.components.tablon
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -12,10 +12,11 @@ import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.models.Post
 
 @Composable
-fun PostCard(post: Post) {
+fun PostCard(post: Post, onClick: (String) -> Unit) {
     Card(
         modifier = Modifier
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onClick(post.id) },
         elevation = 4.dp
     ) {
         Box {

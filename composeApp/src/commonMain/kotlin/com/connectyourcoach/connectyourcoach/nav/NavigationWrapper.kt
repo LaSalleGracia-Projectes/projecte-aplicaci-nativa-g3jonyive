@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.connectyourcoach.connectyourcoach.screens.LoginScreen
-import com.connectyourcoach.connectyourcoach.screens.MainScreen
+import com.connectyourcoach.connectyourcoach.screens.TablonScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 
@@ -12,7 +12,7 @@ import dev.gitlive.firebase.auth.auth
 fun NavigationWrapper() {
     val user = Firebase.auth.currentUser
 
-    val screen = if (user != null) MainScreen() else LoginScreen()
+    val screen = if (user != null) TablonScreen() else LoginScreen()
 
     Navigator(screen = screen) { navigator ->
         SlideTransition(navigator)
