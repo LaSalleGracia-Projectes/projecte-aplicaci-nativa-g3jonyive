@@ -1,110 +1,58 @@
 package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.components.tablon.PostCard
+import com.connectyourcoach.connectyourcoach.components.tablon.TablonSearchBar
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
-fun TablonView(viewModel: TablonViewModel, onSignOut: () -> Unit, onInicio: () -> Unit, onChat: () -> Unit, onProfile: () -> Unit) {
-    Scaffold(
-        topBar = { TablonTopBar(viewModel, onSignOut) }, // Aquí solo tienes un TopBar
-        bottomBar = { TablonBottomBar(onInicio, onChat, onProfile, viewModel) } // Solo la BottomBar que va en la parte inferior
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            TablonSearchBar() // Esta es la SearchBar que está debajo del TopBar
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Contenido del Tablón", style = MaterialTheme.typography.h6)
-            }
-        }
-    }
-}
-
-@Composable
-fun TablonTopBar(viewModel: TablonViewModel, onSignOut: () -> Unit) {
-    TopAppBar(
-        title = { Text("Tablón") },
-        backgroundColor = MaterialTheme.colors.primarySurface,
-        actions = {
-            IconButton(onClick = { /* Acción del botón */ }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
-            }
-            IconButton(onClick = {
-                viewModel.signOut()
-                onSignOut()
-            }) {
-                Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
-            }
-        }
-    )
-}
-
-@Composable
-fun TablonBottomBar(
-    onInicio: () -> Unit,
-    onChat: () -> Unit,
-    onProfile: () -> Unit,
-    viewModel: TablonViewModel
-) {
-    var selectedItem by remember { mutableStateOf(0) }
-
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colors.surface,
-        contentColor = MaterialTheme.colors.onSurface,
-        modifier = Modifier.fillMaxWidth() // Asegura que la barra se estire a lo largo de toda la pantalla
+fun TablonView(viewModel: TablonViewModel, paddingValues: PaddingValues, onClickPost: (String) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        listOf(
-            "Inicio" to Icons.Default.Home,
-            "Chat" to Icons.Default.Email,
-            "Perfil" to Icons.Default.Person
-        ).forEachIndexed { index, (label, icon) ->
-            BottomNavigationItem(
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) },
-                selected = selectedItem == index,
-                onClick = {
-                    selectedItem = index
-                    when (label) {
-                        "Inicio" -> onInicio()
-                        "Chat" -> onChat()
-                        "Perfil" -> onProfile()
-                    }
+        val posts by viewModel.posts
+        val query by viewModel.query
+        val loading by viewModel.loading
+
+        TablonSearchBar(
+            query = query,
+            onSearch = { viewModel.onSearch(it) }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (loading) {
+            CircularProgressIndicator()
+            return@Column
+        }
+
+        if (posts.isNotEmpty()) {
+            LazyColumn {
+                items(posts) { post ->
+                    PostCard(
+                        post = post,
+                        onClick = onClickPost
+                    )
                 }
+            }
+        } else {
+            Text(
+                text = "No posts found",
+                style = MaterialTheme.typography.h6
             )
         }
     }
-}
-
-@Composable
-fun TablonSearchBar() {
-    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-
-    OutlinedTextField(
-        value = searchQuery,
-        onValueChange = { searchQuery = it },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-        placeholder = { Text("Buscar en el tablón...") },
-        singleLine = true
-    )
 }

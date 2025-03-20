@@ -16,13 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
-import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
+fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
     val email by viewModel.email
     val password by viewModel.password
     val loading by viewModel.loading
@@ -54,7 +53,6 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
                 .background(Color.Transparent)
         )
         Spacer(modifier = Modifier.weight(3f))
-
         if (error.isNotEmpty()) {
             Text(
                 text = error,
@@ -65,7 +63,7 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
         TextField(
             value = email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("Correu electrònic") },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -77,7 +75,7 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
         TextField(
             value = password,
             onValueChange = { viewModel.onPasswordChange(it) },
-            label = { Text("Contrasenya") },
+            label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -98,14 +96,24 @@ fun LoginView(viewModel: LoginViewModel, registerViewModel: RegisterViewModel, o
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sessió")
+            Text("Login")
         }
-        Text(
-            text = "No tens compte?",
-            color = MaterialTheme.colors.onBackground,
-            modifier = Modifier
-                .padding(8.dp)
-                .clickable { onRegister() }
-        )
+        Row {
+            Text(
+                text = "Don't have an account?",
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable { onRegister() },
+            )
+            Text(
+                text = "Forgot password?",
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable { viewModel.onForgotPassword() },
+            )
+        }
+        Spacer(modifier = Modifier.weight(10f))
     }
 }
