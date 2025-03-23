@@ -8,12 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.lifecycle.ViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
 
 @Composable
@@ -91,7 +88,7 @@ fun SettingsProfileView(viewModel: SettingsViewModel, paddingValues: PaddingValu
         TextField(
             value = password,
             onValueChange = { viewModel.updatePassword(it) },
-            label = { Text("Password") },
+            label = { Text("New Password") },
             visualTransformation = PasswordVisualTransformation(),
             isError = !viewModel.isValidPassword(),
             modifier = Modifier.fillMaxWidth(),

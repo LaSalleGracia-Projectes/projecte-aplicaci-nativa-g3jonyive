@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SettingsViewModel : ViewModel() {
@@ -22,6 +21,9 @@ class SettingsViewModel : ViewModel() {
     private val _password: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> get() = _password
 
+    private val _currentPassword: MutableState<String> = mutableStateOf("")
+    val currentPassword: MutableState<String> get() = _currentPassword
+
     private val _saveError: MutableState<String?> = mutableStateOf(null)
     val saveError: MutableState<String?> get() = _saveError
 
@@ -30,6 +32,9 @@ class SettingsViewModel : ViewModel() {
 
     private val _loading: MutableState<Boolean> = mutableStateOf(false)
     val loading: MutableState<Boolean> get() = _loading
+
+    private val _showPasswordField: MutableState<Boolean> = mutableStateOf(false)
+    val showPasswordField: MutableState<Boolean> get() = _showPasswordField
 
     init {
         if (auth.currentUser != null) {
@@ -44,14 +49,25 @@ class SettingsViewModel : ViewModel() {
 
     fun updateFullname(fullname: String) {
         _fullName.value = fullname
+        checkForChanges()
     }
 
     fun updateEmail(email: String) {
         _email.value = email
+        checkForChanges()
     }
 
     fun updatePassword(password: String) {
         _password.value = password
+    }
+
+    fun updateCurrentPassword(currentPassword: String) {
+        _currentPassword.value = currentPassword
+    }
+
+    private fun checkForChanges() {
+        val user = auth.currentUser
+        _showPasswordField.value = _fullName.value != user?.displayName || _email.value != user?.email
     }
 
     fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
@@ -60,7 +76,7 @@ class SettingsViewModel : ViewModel() {
         _password.value.length >= 8 && _password.value.any { it.isUpperCase() } && _password.value.any { it.isLowerCase() } &&
                 _password.value.any { it.isDigit() } && _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
 
-    fun isValidSave(): Boolean = isValidEmail() && isValidPassword()
+    fun isValidSave(): Boolean = isValidEmail() && (!_showPasswordField.value || _currentPassword.value.isNotEmpty())
 
     fun onSave() {
         viewModelScope.launch {
@@ -71,7 +87,18 @@ class SettingsViewModel : ViewModel() {
     suspend fun save() {
         try {
             _loading.value = true
-            auth.currentUser?.updateProfile(displayName = _fullName.value)
+            val user = auth.currentUser
+            if (user != null) {
+                if (_fullName.value != user.displayName) {
+                    user.updateProfile(displayName = _fullName.value)
+                }
+                if (_email.value != user.email) {
+                    user.updateEmail(_email.value)
+                }
+                if (_password.value.isNotEmpty()) {
+                    user.updatePassword(_password.value)
+                }
+            }
             _loading.value = false
             _saved.value = true
         } catch (e: Exception) {

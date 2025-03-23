@@ -2,8 +2,6 @@ package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -12,8 +10,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
-import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
-import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
 @Composable
 fun ProfileView(
@@ -46,6 +42,8 @@ fun ProfileView(
         Text("Email: ${email}")
         Spacer(modifier = Modifier.height(8.dp))
         Text("Phone: ${phoneNumber}")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Password: ******")
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
