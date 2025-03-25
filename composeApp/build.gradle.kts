@@ -55,6 +55,7 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
