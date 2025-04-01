@@ -23,6 +23,10 @@ fun RegisterPhotoUsernameView(
     var email by remember { mutableStateOf(viewModel.email.value) }
     var password by remember { mutableStateOf(viewModel.password.value) }
 
+    LaunchedEffect(httpClient) {
+        viewModel.initialize(httpClient)
+    }
+
     if (viewModel.showAvatarGenerator.value) {
         ApiCamera(httpClient) { imageUrl ->
             viewModel.updateAvatarUrl(imageUrl)
@@ -42,18 +46,29 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(50.dp))
 
         // Secció d'avatar
-        if (viewModel.avatarUrl.value.isNotBlank()) {
-            KamelImage(
-                resource = asyncPainterResource(data = viewModel.avatarUrl.value),
-                contentDescription = "Avatar de l'usuari",
-                modifier = Modifier.size(100.dp)
-            )
-        } else {
-            Button(
-                onClick = { viewModel.showAvatarGenerator(true) },
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("Seleccionar Avatar")
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            if (viewModel.avatarUrl.value.isNotBlank()) {
+                KamelImage(
+                    resource = asyncPainterResource(data = viewModel.avatarUrl.value),
+                    contentDescription = "Avatar de l'usuari",
+                    modifier = Modifier.size(100.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { viewModel.generateRandomAvatar() },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Text("Generar Nou Avatar")
+                }
+            } else {
+                Button(
+                    onClick = { viewModel.showAvatarGenerator(true) },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Text("Seleccionar Avatar")
+                }
             }
         }
 

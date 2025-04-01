@@ -5,8 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
@@ -27,6 +29,23 @@ class RegisterViewModel : ViewModel() {
 
     private val _showAvatarGenerator: MutableState<Boolean> = mutableStateOf(false)
     val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
+
+    private lateinit var imageLoader: ImageLoader
+
+    fun initialize(httpClient: HttpClient) {
+        imageLoader = ImageLoader(httpClient)
+    }
+
+    fun generateRandomAvatar() {
+        viewModelScope.launch {
+            try {
+                val newAvatarUrl = imageLoader.getRandomAvatar()
+                _avatarUrl.value = newAvatarUrl
+            } catch (e: Exception) {
+                _registerError.value = "Error en generar l'avatar: ${e.message}"
+            }
+        }
+    }
 
     fun onRegister(onRegisterComplete: () -> Unit) {
         viewModelScope.launch {
