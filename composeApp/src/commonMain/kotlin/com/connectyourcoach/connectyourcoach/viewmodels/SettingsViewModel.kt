@@ -1,12 +1,15 @@
 package com.connectyourcoach.connectyourcoach.viewmodels
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
 
 class SettingsViewModel : ViewModel() {
@@ -32,6 +35,9 @@ class SettingsViewModel : ViewModel() {
 
     private val _loading: MutableState<Boolean> = mutableStateOf(false)
     val loading: MutableState<Boolean> get() = _loading
+
+    private val _settingsError: MutableState<String> = mutableStateOf("")
+    val registerError: State<String> get() = _settingsError
 
     private val _showPasswordField: MutableState<Boolean> = mutableStateOf(false)
     val showPasswordField: MutableState<Boolean> get() = _showPasswordField
@@ -84,6 +90,30 @@ class SettingsViewModel : ViewModel() {
         }
     }
 
+    private val _avatarUrl: MutableState<String> = mutableStateOf("")
+    val avatarUrl: State<String> get() = _avatarUrl
+
+    private val _showAvatarGenerator: MutableState<Boolean> = mutableStateOf(false)
+    val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
+
+    private lateinit var imageLoader: ImageLoader
+
+    fun initialize(httpClient: HttpClient) {
+        imageLoader = ImageLoader(httpClient)
+    }
+
+    fun generateRandomAvatar() {
+        viewModelScope.launch {
+            try {
+                val newAvatarUrl = imageLoader.getRandomAvatar()
+                _avatarUrl.value = newAvatarUrl
+            } catch (e: Exception) {
+                _settingsError.value = "Error en generar l'avatar: ${e.message}"
+            }
+        }
+    }
+
+
     suspend fun save() {
         try {
             _loading.value = true
@@ -106,5 +136,13 @@ class SettingsViewModel : ViewModel() {
             _loading.value = false
             _saveError.value = e.message
         }
+    }
+
+    fun showAvatarGenerator(show: Boolean) {
+        _showAvatarGenerator.value = show
+    }
+
+    fun updateAvatarUrl(newAvatarUrl: String) {
+        _avatarUrl.value = newAvatarUrl
     }
 }
