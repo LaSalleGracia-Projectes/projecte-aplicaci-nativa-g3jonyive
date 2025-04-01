@@ -1,5 +1,6 @@
 package com.connectyourcoach.connectyourcoach.models
 
+
 data class Post(
     val id: String,
     val created_at: String,
