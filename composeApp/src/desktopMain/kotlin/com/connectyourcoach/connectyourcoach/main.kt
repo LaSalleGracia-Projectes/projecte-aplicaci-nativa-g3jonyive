@@ -6,8 +6,8 @@ import androidx.compose.ui.window.application
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "ConnectYourCoach",
+        title = "ConnectYourCoach"
     ) {
-        App()
+        App(httpClient = createHttpClient())
     }
 }
