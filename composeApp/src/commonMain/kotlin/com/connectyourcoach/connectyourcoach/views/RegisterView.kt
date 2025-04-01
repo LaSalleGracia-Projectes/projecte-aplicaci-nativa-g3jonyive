@@ -7,17 +7,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+import io.ktor.client.HttpClient
 
 @Composable
 fun RegisterPhotoUsernameView(
     viewModel: RegisterViewModel,
-    onRegisterComplete: () -> Unit
+    onRegisterComplete: () -> Unit,
+    httpClient: HttpClient
 ) {
     var username by remember { mutableStateOf(viewModel.username.value) }
     var email by remember { mutableStateOf(viewModel.email.value) }
     var password by remember { mutableStateOf(viewModel.password.value) }
-    var registerError by remember { mutableStateOf<String?>(null) }
+
+    if (viewModel.showAvatarGenerator.value) {
+        ApiCamera(httpClient) { imageUrl ->
+            viewModel.updateAvatarUrl(imageUrl)
+            viewModel.showAvatarGenerator(false)
+        }
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -28,6 +40,24 @@ fun RegisterPhotoUsernameView(
     ) {
         Text("Registre", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
         Spacer(modifier = Modifier.height(50.dp))
+
+        // Secció d'avatar
+        if (viewModel.avatarUrl.value.isNotBlank()) {
+            KamelImage(
+                resource = asyncPainterResource(data = viewModel.avatarUrl.value),
+                contentDescription = "Avatar de l'usuari",
+                modifier = Modifier.size(100.dp)
+            )
+        } else {
+            Button(
+                onClick = { viewModel.showAvatarGenerator(true) },
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Text("Seleccionar Avatar")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
             value = username,
@@ -57,24 +87,26 @@ fun RegisterPhotoUsernameView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (registerError != null) {
-            Text(registerError!!, color = MaterialTheme.colors.error)
+        if (viewModel.registerError.value.isNotBlank()) {
+            Text(viewModel.registerError.value, color = MaterialTheme.colors.error)
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         Button(
             onClick = {
-                if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-                    viewModel.updateUsername(username)
-                    viewModel.updateEmail(email)
-                    viewModel.updatePassword(password)
-                    onRegisterComplete()
+                viewModel.updateUsername(username)
+                viewModel.updateEmail(email)
+                viewModel.updatePassword(password)
+
+                if (viewModel.isValidRegister()) {
+                    viewModel.onRegister(onRegisterComplete)
                 } else {
-                    registerError = "Tots els camps són obligatoris"
+                    viewModel.updateRegisterError("Si us plau, omple tots els camps correctament i selecciona un avatar")
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Següent")
+            Text("Registrar-se")
         }
     }
 }

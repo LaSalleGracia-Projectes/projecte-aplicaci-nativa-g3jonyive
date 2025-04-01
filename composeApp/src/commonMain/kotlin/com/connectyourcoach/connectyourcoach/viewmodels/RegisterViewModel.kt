@@ -22,6 +22,12 @@ class RegisterViewModel : ViewModel() {
     private val _registerError: MutableState<String> = mutableStateOf("")
     val registerError: State<String> get() = _registerError
 
+    private val _avatarUrl: MutableState<String> = mutableStateOf("")
+    val avatarUrl: State<String> get() = _avatarUrl
+
+    private val _showAvatarGenerator: MutableState<Boolean> = mutableStateOf(false)
+    val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
+
     fun onRegister(onRegisterComplete: () -> Unit) {
         viewModelScope.launch {
             try {
@@ -30,6 +36,7 @@ class RegisterViewModel : ViewModel() {
                 println("Usuari creat amb èxit!")
                 onRegisterComplete()
             } catch (e: Exception) {
+                updateRegisterError("Error en el registre: ${e.message}")
                 println("Error: ${e.message}")
             }
         }
@@ -47,11 +54,30 @@ class RegisterViewModel : ViewModel() {
         _password.value = newPassword
     }
 
+    fun updateAvatarUrl(newAvatarUrl: String) {
+        _avatarUrl.value = newAvatarUrl
+    }
+
+    fun updateRegisterError(errorMessage: String) {
+        _registerError.value = errorMessage
+    }
+
+    fun showAvatarGenerator(show: Boolean) {
+        _showAvatarGenerator.value = show
+    }
+
     fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
 
     fun isValidPassword(): Boolean =
-        _password.value.length >= 8 && _password.value.any { it.isUpperCase() } && _password.value.any { it.isLowerCase() } &&
-                _password.value.any { it.isDigit() } && _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
+        _password.value.length >= 8 &&
+                _password.value.any { it.isUpperCase() } &&
+                _password.value.any { it.isLowerCase() } &&
+                _password.value.any { it.isDigit() } &&
+                _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
 
-    fun isValidRegister(): Boolean = isValidEmail() && isValidPassword() && _username.value.isNotEmpty()
+    fun isValidRegister(): Boolean =
+        isValidEmail() &&
+                isValidPassword() &&
+                _username.value.isNotEmpty() &&
+                _avatarUrl.value.isNotEmpty()
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -21,11 +22,22 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.client.HttpClient
 
+
 @Composable
-fun ApiCamera(httpClient: HttpClient) {
+fun ApiCamera(
+    httpClient: HttpClient,
+    onAvatarGenerated: (String) -> Unit
+) {
     val coroutineScope = rememberCoroutineScope()
     val avatarState = remember {
         AvatarState(httpClient, coroutineScope)
+    }
+
+    // Quan l'estat canvia a èxit, cridem el callback
+    LaunchedEffect(avatarState.imageState) {
+        if (avatarState.imageState is ImageState.Success) {
+            onAvatarGenerated((avatarState.imageState as ImageState.Success).imageUrl)
+        }
     }
 
     MaterialTheme {
