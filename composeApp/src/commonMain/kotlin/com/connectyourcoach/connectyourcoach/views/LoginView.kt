@@ -98,7 +98,7 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
         ) {
             Text("Login")
         }
-        Row {
+        Column {
             Text(
                 text = "Don't have an account?",
                 color = MaterialTheme.colors.onBackground,

@@ -5,10 +5,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ChatListTopBar
-import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ChatTopBar
-import com.connectyourcoach.connectyourcoach.views.ChatView
+import com.connectyourcoach.connectyourcoach.views.ListChatView
 
-class ChatScreen : Screen {
+class ChatListScreen : Screen {
 
     @Composable
     override fun Content() {
@@ -16,18 +15,13 @@ class ChatScreen : Screen {
 
         BaseScaffold(
             navigator = navigator,
-            topBar = { ChatTopBar(
-                userName = "Usuario",
-                onAvatarClick = {  },
-                onBackClick = {
-                    navigator?.pop()
-                })
-            },
-            showBottomBar = false
+            topBar = { ChatListTopBar() },
         ) { paddingValues ->
-            ChatView(
+            ListChatView(
                 paddingValues = paddingValues
-            )
+            ) { chatPreview ->
+                navigator?.push(ChatScreen())
+            }
         }
     }
 }

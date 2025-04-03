@@ -1,85 +1,110 @@
 package com.connectyourcoach.connectyourcoach.views
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.PostViewModel
+
+// Definir la paleta de colores personalizada
+private val DarkBlue = Color(0xFF173040)
+private val Turquoise = Color(0xFF038C8C)
+private val MintGreen = Color(0xFF5FD9AC)
+private val LightGray = Color(0xFFD9D8D2)
+private val Beige = Color(0xFFBFBCB4)
+
+// Definir el tema con la paleta de colores
+private val customColors = darkColors(
+    primary = Turquoise,
+    secondary = MintGreen,
+    background = DarkBlue,
+    surface = LightGray,
+    onPrimary = Color.White,
+    onSecondary = DarkBlue,
+    onBackground = LightGray,
+    onSurface = DarkBlue
+)
 
 @Composable
 fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val post by viewModel.post
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        post?.let { post ->
-            AsyncImage(
-                model = post.photo,
-                contentDescription = post.title,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = post.title,
-                style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(16.dp)
-            )
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
+    MaterialTheme(colors = customColors) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background) // Fondo del post
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top
+        ) {
+            post?.let { post ->
+                AsyncImage(
+                    model = post.photo,
+                    contentDescription = post.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.primary) // Fondo de imagen
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "By ${post.user_id}",
-                    style = MaterialTheme.typography.body2,
+                    text = post.title,
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.surface, // Color del título
                     modifier = Modifier.padding(16.dp)
                 )
-                Text(
-                    text = "On ${post.created_at}",
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(16.dp)
-                )
-                if (post.updated_at != post.created_at) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
-                        text = "Updated on ${post.updated_at}",
+                        text = "By ${post.user_id}",
                         style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.onPrimary, // Color del texto secundario
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Text(
+                        text = "On ${post.created_at}",
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    if (post.updated_at != post.created_at) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Updated on ${post.updated_at}",
+                            style = MaterialTheme.typography.body2,
+                            color = Beige, // Color beige para actualizaciones
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                    Text(
+                        text = "Price: ${post.price}",
+                        style = MaterialTheme.typography.body2,
+                        color = MintGreen, // Precio en verde menta
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Price: ${post.price}",
-                    style = MaterialTheme.typography.body2,
+                    text = post.description,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onPrimary, // Color de texto principal
                     modifier = Modifier.padding(16.dp)
                 )
+            } ?: run {
+                Text(
+                    text = "Post not found",
+                    color = MaterialTheme.colors.error
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = post.description,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(16.dp)
-            )
-        } ?: run {
-            Text("Post not found")
         }
     }
 }
