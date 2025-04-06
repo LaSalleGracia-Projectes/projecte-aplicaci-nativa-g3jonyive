@@ -17,7 +17,8 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
+    // Configuració de targets per iOS
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,9 +29,10 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+    // Configuració de Desktop
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
 
@@ -43,6 +45,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -63,16 +66,16 @@ kotlin {
             //API Camera
             implementation(libs.kamel.core)
             implementation(libs.kamel.image)
-            
+
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(libs.kotlinx.coroutines.core)
 
-
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
         }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
@@ -102,16 +105,19 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -121,6 +127,7 @@ android {
 dependencies {
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
+    implementation(project(":composeApp"))
     debugImplementation(compose.uiTooling)
 }
 

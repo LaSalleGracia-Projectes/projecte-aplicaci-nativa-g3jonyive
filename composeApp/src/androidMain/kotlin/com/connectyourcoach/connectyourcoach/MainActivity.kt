@@ -1,47 +1,22 @@
-package com.connectyourcoach.connectyourcoach.views
+package com.connectyourcoach.connectyourcoach
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import java.io.File
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
 
-@Composable
-actual fun OpenCamera(onImageSelected: (String) -> Unit) {
-    val context = LocalContext.current
-    val takePhotoLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            // Here you would upload the photo and get the URL
-            // For now we'll just use a placeholder
-            onImageSelected("https://example.com/uploaded_photo.jpg")
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    App()
+                }
+            }
         }
     }
-
-    // Create temp file
-    val photoFile = File.createTempFile(
-        "avatar_",
-        ".jpg",
-        context.externalCacheDir
-    )
-    val photoUri = Uri.fromFile(photoFile)
-
-    takePhotoLauncher.launch(photoUri)
-}
-
-@Composable
-actual fun OpenGallery(onImageSelected: (String) -> Unit) {
-    val pickPhotoLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            // Here you would upload the photo and get the URL
-            // For now we'll just use the URI
-            onImageSelected(it.toString())
-        }
-    }
-
-    pickPhotoLauncher.launch("image/*")
 }
