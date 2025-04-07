@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,19 +32,38 @@ data class ChatPreview(
 
 @Composable
 fun ListChatView(paddingValues: PaddingValues, onChatSelected: (ChatPreview) -> Unit) {
-    val chats = remember { mutableStateListOf(
-        ChatPreview("1", "María López", "Nos vemos mañana!", "10:45 AM", Res.drawable.logo),
-        ChatPreview("2", "Juan Pérez", "¿Qué tal todo?", "9:30 AM", Res.drawable.logo),
-        ChatPreview("3", "Laura García", "Gracias! 😊", "Ayer", Res.drawable.logo)
-    )}
+    val originalChats = remember {
+        listOf(
+            ChatPreview("1", "María López", "Nos vemos mañana!", "10:45 AM", Res.drawable.logo),
+            ChatPreview("2", "Juan Pérez", "¿Qué tal todo?", "9:30 AM", Res.drawable.logo),
+            ChatPreview("3", "Laura García", "Gracias! 😊", "Ayer", Res.drawable.logo)
+        )
+    }
 
-    LazyColumn(
+    var searchText by remember { mutableStateOf("") }
+    val filteredChats = originalChats.filter {
+        it.userName.contains(searchText, ignoreCase = true) ||
+                it.lastMessage.contains(searchText, ignoreCase = true)
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        items(chats) { chat ->
-            ChatListItem(chat) { onChatSelected(chat) }
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            label = { Text("Buscar") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
+        LazyColumn {
+            items(filteredChats) { chat ->
+                ChatListItem(chat) { onChatSelected(chat) }
+            }
         }
     }
 }
