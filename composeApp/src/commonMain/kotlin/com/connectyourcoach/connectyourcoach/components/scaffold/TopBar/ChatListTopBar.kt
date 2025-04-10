@@ -11,23 +11,27 @@ import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import com.connectyourcoach.connectyourcoach.screens.ArchivedChatScreen
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.box_white
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ChatListTopBar() {
+    val navigator = LocalNavigator.current
+
     TopAppBar(
         title = { Text("Chat") },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             Image(
                 painter = painterResource(Res.drawable.box_white),
-                contentDescription = "Archivar chat",
+                contentDescription = "Ver chats archivados",
                 modifier = Modifier
                     .size(36.dp)
                     .clickable {
-
+                        navigator?.push(ArchivedChatScreen())
                     }
                     .padding(4.dp)
             )
