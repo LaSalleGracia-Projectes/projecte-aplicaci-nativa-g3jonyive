@@ -16,10 +16,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.connectyourcoach.connectyourcoach.screens.ChatScreen
-import com.connectyourcoach.connectyourcoach.screens.TablonScreen
 import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
+import com.connectyourcoach.connectyourcoach.screens.TablonScreen
 
 @Composable
 fun BaseBottomBar(
@@ -43,13 +44,39 @@ fun BaseBottomBar(
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
+
                     when (label) {
-                        "Home" -> if (navigator?.lastItem !is TablonScreen) navigator?.push(TablonScreen())
-                        "Chat"   -> if (navigator?.lastItem !is ChatScreen) navigator?.push(ChatScreen())
-                        "Profile" -> if (navigator?.lastItem !is ProfileScreen) navigator?.push(ProfileScreen())
+                        "Home" -> navigateToScreen(
+                            navigator,
+                            TablonScreen(),
+                            condition = { it is TablonScreen }
+                        )
+                        "Chat" -> navigateToScreen(
+                            navigator,
+                            ChatScreen(),
+                            condition = { it is ChatScreen }
+                        )
+                        "Profile" -> navigateToScreen(
+                            navigator,
+                            ProfileScreen(),
+                            condition = { it is ProfileScreen }
+                        )
                     }
                 }
             )
         }
     }
+}
+
+private fun navigateToScreen(
+    navigator: Navigator?,
+    targetScreen: Screen,
+    condition: (Any) -> Boolean
+) {
+    if (navigator?.lastItem == targetScreen) return
+    if (navigator?.items?.any(condition) == true) {
+        navigator.popUntil(condition)
+        return
+    }
+    navigator?.push(targetScreen)
 }
