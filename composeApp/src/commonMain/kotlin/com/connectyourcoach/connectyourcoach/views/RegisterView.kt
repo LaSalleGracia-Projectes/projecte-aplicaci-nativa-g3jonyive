@@ -1,39 +1,37 @@
 package com.connectyourcoach.connectyourcoach.views
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-
-@Composable
-expect fun OpenCamera(onImageSelected: (String) -> Unit)
-
-@Composable
-expect fun OpenGallery(onImageSelected: (String) -> Unit)
+import io.ktor.client.HttpClient
 
 @Composable
 fun RegisterPhotoUsernameView(
     viewModel: RegisterViewModel,
-    onRegisterComplete: () -> Unit
+    onRegisterComplete: () -> Unit,
+    httpClient: HttpClient,
+    onLogin: () -> Boolean?
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.initialize(httpClient)
+    }
+
+    if (viewModel.showAvatarGenerator.value) {
+        ApiCamera(httpClient) { imageUrl ->
+            viewModel.updateAvatarUrl(imageUrl)
+            viewModel.showAvatarGenerator(false)
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,97 +39,41 @@ fun RegisterPhotoUsernameView(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Register", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
+        Text("Registre", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Avatar Section
-        Box(contentAlignment = Alignment.BottomEnd) {
+        if (viewModel.avatarUrl.value.isNotBlank()) {
             KamelImage(
-                resource = asyncPainterResource(data = viewModel.avatarUrl.ifEmpty { "https://example.com/default_avatar.png" }),
-                contentDescription = "User avatar",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colors.primary, CircleShape),
-                contentScale = ContentScale.Crop
+                resource = asyncPainterResource(data = viewModel.avatarUrl.value),
+                contentDescription = "Avatar de l'usuari",
+                modifier = Modifier.size(100.dp)
             )
-
-            IconButton(
-                onClick = { viewModel.showAvatarOptions = true },
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(MaterialTheme.colors.primary, CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Change avatar",
-                    tint = Color.White
-                )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Button(onClick = { viewModel.generateRandomAvatar() }) {
+                    Text("Generar Nou Avatar")
+                }
+            }
+        } else {
+            Button(onClick = { viewModel.showAvatarGenerator(true) }) {
+                Text("Seleccionar Avatar")
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Avatar Options Dialog
-        if (viewModel.showAvatarOptions) {
-            AlertDialog(
-                onDismissRequest = { viewModel.showAvatarOptions = false },
-                title = { Text("Select Avatar") },
-                text = {
-                    Column {
-                        AvatarOptionButton(
-                            icon = Icons.Default.ThumbUp,
-                            text = "Take photo",
-                            onClick = {
-                                viewModel.showAvatarOptions = false
-                                OpenCamera { url ->
-                                    viewModel.avatarUrl = url
-                                }
-                            }
-                        )
-                        AvatarOptionButton(
-                            icon = Icons.Default.Face,
-                            text = "Choose from gallery",
-                            onClick = {
-                                viewModel.showAvatarOptions = false
-                                OpenGallery { url ->
-                                    viewModel.avatarUrl = url
-                                }
-                            }
-                        )
-                        AvatarOptionButton(
-                            icon = Icons.Default.Refresh,
-                            text = "Generate random avatar",
-                            onClick = {
-                                viewModel.showAvatarOptions = false
-                                viewModel.generateRandomAvatar()
-                            }
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { viewModel.showAvatarOptions = false }
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
-
-        // Form Fields
         TextField(
-            value = viewModel.username,
-            onValueChange = { viewModel.username = it },
-            label = { Text("Username") },
+            value = viewModel.username.value,
+            onValueChange = { viewModel.updateUsername(it) },
+            label = { Text("Nom d'usuari") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = viewModel.email,
-            onValueChange = { viewModel.email = it },
+            value = viewModel.email.value,
+            onValueChange = { viewModel.updateEmail(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -139,21 +81,17 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = viewModel.password,
-            onValueChange = { viewModel.password = it },
-            label = { Text("Password") },
+            value = viewModel.password.value,
+            onValueChange = { viewModel.updatePassword(it) },
+            label = { Text("Contrasenya") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        if (viewModel.registerError.isNotEmpty()) {
-            Text(
-                text = viewModel.registerError,
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(8.dp)
-            )
+        if (viewModel.registerError.value.isNotBlank()) {
+            Text(viewModel.registerError.value, color = MaterialTheme.colors.error)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -162,19 +100,12 @@ fun RegisterPhotoUsernameView(
                 if (viewModel.isValidRegister()) {
                     viewModel.onRegister(onRegisterComplete)
                 } else {
-                    viewModel.registerError = "Please fill all fields correctly and select an avatar"
+                    viewModel.updateRegisterError("Si us plau, omple tots els camps correctament i selecciona un avatar")
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            enabled = viewModel.isValidRegister() && !viewModel.isLoading
+            modifier = Modifier.fillMaxWidth()
         ) {
-            if (viewModel.isLoading) {
-                CircularProgressIndicator(color = Color.White)
-            } else {
-                Text("Register")
-            }
+            Text("Registrar-se")
         }
     }
 }

@@ -1,72 +1,103 @@
 package com.connectyourcoach.connectyourcoach.viewmodels
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.connectyourcoach.connectyourcoach.model.UserData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
 
-class RegisterViewModel {
-    var fullname by mutableStateOf("")
-    var email by mutableStateOf("")
-    var phoneNumber by mutableStateOf("")
-    var username by mutableStateOf("")
-    var password by mutableStateOf("")
-    var avatarUrl by mutableStateOf("")
-    var registerError by mutableStateOf("")
-    var showAvatarOptions by mutableStateOf(false)
-    var isLoading by mutableStateOf(false)
+class RegisterViewModel : ViewModel() {
+    private val _username = mutableStateOf("")
+    val username: State<String> get() = _username
 
-    fun onRegister(onSuccess: () -> Unit) {
-        isLoading = true
-        CoroutineScope(Dispatchers.Main).launch {
+    private val _email = mutableStateOf("")
+    val email: State<String> get() = _email
+
+    private val _password = mutableStateOf("")
+    val password: State<String> get() = _password
+
+    private val _registerError = mutableStateOf("")
+    val registerError: State<String> get() = _registerError
+
+    private val _avatarUrl = mutableStateOf("")
+    val avatarUrl: State<String> get() = _avatarUrl
+
+    private val _showAvatarGenerator = mutableStateOf(false)
+    val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
+
+    private var imageLoader: ImageLoader? = null
+
+    fun initialize(httpClient: HttpClient) {
+        imageLoader = ImageLoader(httpClient)
+    }
+
+    fun generateRandomAvatar() {
+        viewModelScope.launch {
             try {
-                val result = Firebase.auth.createUserWithEmailAndPassword(email, password)
-                result.user?.updateProfile(displayName = fullname, photoURL = avatarUrl)
-                onSuccess()
+                if (imageLoader == null) {
+                    _registerError.value = "ImageLoader no inicialitzat"
+                    return@launch
+                }
+                val newAvatarUrl = imageLoader!!.getRandomAvatar()
+                _avatarUrl.value = newAvatarUrl
             } catch (e: Exception) {
-                registerError = "Registration error: ${e.message}"
-            } finally {
-                isLoading = false
+                _registerError.value = "Error en generar l'avatar: ${e.message}"
             }
         }
     }
 
-    fun generateRandomAvatar() {
-        avatarUrl = "https://api.dicebear.com/7.x/pixel-art/svg?seed=${System.currentTimeMillis()}"
+    fun onRegister(onRegisterComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val result = Firebase.auth.createUserWithEmailAndPassword(_email.value, _password.value)
+                result.user?.updateProfile(displayName = _username.value)
+                onRegisterComplete()
+            } catch (e: Exception) {
+                updateRegisterError("Error en el registre: ${e.message}")
+            }
+        }
     }
 
-    fun isValidEmail(): Boolean = email.contains("@") && email.contains(".")
+    fun updateUsername(newUsername: String) {
+        _username.value = newUsername
+    }
 
+    fun updateEmail(newEmail: String) {
+        _email.value = newEmail
+    }
+
+    fun updatePassword(newPassword: String) {
+        _password.value = newPassword
+    }
+
+    fun updateAvatarUrl(newAvatarUrl: String) {
+        _avatarUrl.value = newAvatarUrl
+    }
+
+    fun updateRegisterError(errorMessage: String) {
+        _registerError.value = errorMessage
+    }
+
+    fun showAvatarGenerator(show: Boolean) {
+        _showAvatarGenerator.value = show
+    }
+
+    fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
     fun isValidPassword(): Boolean =
-        password.length >= 8 &&
-                password.any { it.isUpperCase() } &&
-                password.any { it.isLowerCase() } &&
-                password.any { it.isDigit() } &&
-                password.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
-
-    fun isValidPhoneNumber(): Boolean = phoneNumber.length == 9 && phoneNumber.all { it.isDigit() }
+        _password.value.length >= 8 &&
+                _password.value.any { it.isUpperCase() } &&
+                _password.value.any { it.isLowerCase() } &&
+                _password.value.any { it.isDigit() } &&
+                _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
 
     fun isValidRegister(): Boolean =
         isValidEmail() &&
                 isValidPassword() &&
-                isValidPhoneNumber() &&
-                fullname.isNotEmpty() &&
-                username.isNotEmpty() &&
-                avatarUrl.isNotEmpty()
-
-    fun toUserData(): UserData {
-        return UserData(
-            uid = Firebase.auth.currentUser?.uid ?: "",
-            displayName = fullname,
-            email = email,
-            phoneNumber = phoneNumber,
-            photoUrl = avatarUrl,
-            username = username
-        )
-    }
+                _username.value.isNotEmpty() &&
+                _avatarUrl.value.isNotEmpty()
 }
