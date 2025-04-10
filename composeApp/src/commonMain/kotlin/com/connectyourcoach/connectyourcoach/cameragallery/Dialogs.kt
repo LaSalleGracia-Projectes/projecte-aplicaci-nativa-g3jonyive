@@ -1,6 +1,5 @@
 package com.connectyourcoach.connectyourcoach.cameragallery
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +19,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -61,10 +64,10 @@ fun ImageSourceOptionDialog(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Icona de càmera",
                     tint = MaterialTheme.colors.onSurface,
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource("ic_camera.xml"),
-                    contentDescription = null
+                    modifier = Modifier.size(25.dp)
                 )
                 Text(text = "Camera", color = MaterialTheme.colors.onSurface)
             }
@@ -76,10 +79,10 @@ fun ImageSourceOptionDialog(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Icon(
+                    imageVector = Icons.Default.AccountBox,
+                    contentDescription = "Icona de càmera",
                     tint = MaterialTheme.colors.onSurface,
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource("ic_images.xml"),
-                    contentDescription = null
+                    modifier = Modifier.size(25.dp)
                 )
                 Text(text = "Gallery", color = MaterialTheme.colors.onSurface)
             }
@@ -116,10 +119,10 @@ fun AlertMessageDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 resource?.let {
-                    Image(
-                        modifier = Modifier.size(100.dp),
-                        painter = painterResource(it),
-                        contentDescription = null
+                    KamelImage(
+                        resource = asyncPainterResource(it),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))

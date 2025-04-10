@@ -39,7 +39,7 @@ koin-compose = "1.1.0"
 compose-compiler = "1.5.11"
 
 kotlinx-datetime = "0.4.1"
-
+camerak = "1.0.4"
 
 [libraries]
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
@@ -72,6 +72,10 @@ voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
+
+camerak-core = { module = "io.github.kashif-mehmood-km.camerak:camerak", version.ref = "camerak" }
+camerak-gallery = { module = "io.github.kashif-mehmood-km.camerak:gallery", version.ref = "camerak" }
+camerak-permissions = { module = "io.github.kashif-mehmood-km.camerak:permissions", version.ref = "camerak" }
 
 #API Camera
 

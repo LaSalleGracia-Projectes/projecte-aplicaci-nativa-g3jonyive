@@ -1,3 +1,5 @@
+package com.connectyourcoach.connectyourcoach.cameragallery
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -5,7 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,17 +24,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.cameragallery.AlertMessageDialog
+import com.connectyourcoach.connectyourcoach.cameragallery.ImageSourceOptionDialog
+import com.connectyourcoach.connectyourcoach.cameragallery.PermissionCallback
+import com.connectyourcoach.connectyourcoach.cameragallery.PermissionType
+import com.connectyourcoach.connectyourcoach.cameragallery.createPermissionsManager
+import com.connectyourcoach.connectyourcoach.cameragallery.rememberCameraManager
+import com.connectyourcoach.connectyourcoach.cameragallery.rememberGalleryManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
-import shared.PermissionCallback
 import shared.PermissionStatus
-import com.connectyourcoach.connectyourcoach.cameragallery.PermissionType
-import shared.createPermissionsManager
-import shared.rememberCameraManager
-import shared.rememberGalleryManager
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -141,12 +147,11 @@ fun CameraGallery() {
                     contentScale = ContentScale.Crop
                 )
             } else {
-                Image(
-                    modifier = Modifier.size(100.dp).clip(CircleShape).clickable {
-                        imageSourceOptionDialog = true
-                    },
-                    painter = painterResource("ic_person_circle.xml"),
-                    contentDescription = "Profile",
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Icona de càmera",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier.size(25.dp)
                 )
             }
         }

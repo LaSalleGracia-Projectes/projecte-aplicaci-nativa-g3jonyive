@@ -1,9 +1,9 @@
-package shared
+package com.connectyourcoach.connectyourcoach.cameragallery
 
 import androidx.compose.runtime.Composable
-import com.connectyourcoach.connectyourcoach.cameragallery.PermissionType
+import shared.PermissionStatus
 
-expect class PermissionsManager(callback: PermissionCallback) : PermissionHandler
+expect abstract class PermissionsManager(callback: PermissionCallback) : PermissionHandler
 
 interface PermissionCallback {
     fun onPermissionStatus(permissionType: PermissionType, status: PermissionStatus)

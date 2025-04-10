@@ -39,6 +39,10 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
 
+            implementation(libs.camerak.core)
+            implementation(libs.camerak.gallery)
+            implementation(libs.camerak.permissions)
+
             //API Camera
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)

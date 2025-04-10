@@ -1,6 +1,7 @@
-package shared
+package com.connectyourcoach.connectyourcoach.cameragallery
 
 import androidx.compose.runtime.Composable
+import shared.SharedImage
 
 @Composable
 expect fun rememberCameraManager(onResult: (SharedImage?) -> Unit): CameraManager

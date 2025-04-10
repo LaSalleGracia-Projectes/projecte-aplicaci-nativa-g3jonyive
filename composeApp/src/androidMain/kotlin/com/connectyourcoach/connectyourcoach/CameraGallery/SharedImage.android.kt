@@ -1,13 +1,15 @@
 package shared
 
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import org.jetbrains.skia.Image
 
-actual class SharedImage {
+actual class SharedImage(private val byteArray: ByteArray) {
     actual fun toByteArray(): ByteArray? {
-        TODO("Not yet implemented")
+        return byteArray
     }
 
     actual fun toImageBitmap(): ImageBitmap? {
-        TODO("Not yet implemented")
+        return Image.makeFromEncoded(byteArray).asImageBitmap()
     }
 }
