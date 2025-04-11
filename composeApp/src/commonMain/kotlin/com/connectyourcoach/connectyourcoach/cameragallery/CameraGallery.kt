@@ -1,5 +1,6 @@
 package com.connectyourcoach.connectyourcoach.cameragallery
 
+import PermissionCallback
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,13 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.connectyourcoach.connectyourcoach.cameragallery.AlertMessageDialog
-import com.connectyourcoach.connectyourcoach.cameragallery.ImageSourceOptionDialog
-import com.connectyourcoach.connectyourcoach.cameragallery.PermissionCallback
-import com.connectyourcoach.connectyourcoach.cameragallery.PermissionType
-import com.connectyourcoach.connectyourcoach.cameragallery.createPermissionsManager
-import com.connectyourcoach.connectyourcoach.cameragallery.rememberCameraManager
-import com.connectyourcoach.connectyourcoach.cameragallery.rememberGalleryManager
+import createPermissionsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

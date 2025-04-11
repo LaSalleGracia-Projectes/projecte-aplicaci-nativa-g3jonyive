@@ -1,4 +1,4 @@
-package shared
+package com.connectyourcoach.connectyourcoach.cameragallery
 
 import androidx.compose.ui.graphics.ImageBitmap
 

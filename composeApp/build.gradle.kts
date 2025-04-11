@@ -43,6 +43,9 @@ kotlin {
             implementation(libs.camerak.gallery)
             implementation(libs.camerak.permissions)
 
+            implementation("com.google.accompanist:accompanist-permissions:0.28.0")
+
+
             //API Camera
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)

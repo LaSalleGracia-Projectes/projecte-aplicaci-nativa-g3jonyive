@@ -1,5 +1,3 @@
-package com.connectyourcoach.connectyourcoach.cameragallery
-
 import androidx.compose.runtime.Composable
 
 @Composable
@@ -7,5 +5,4 @@ actual fun createPermissionsManager(callback: PermissionCallback): PermissionsMa
     TODO("Not yet implemented")
 }
 
-actual abstract class PermissionsManager actual constructor(callback: PermissionCallback) :
-    PermissionHandler
+actual class PermissionsManager actual constructor(callback: PermissionCallback) : PermissionHandler
