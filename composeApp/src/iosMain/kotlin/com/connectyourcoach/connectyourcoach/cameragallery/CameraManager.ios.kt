@@ -23,11 +23,15 @@ actual fun rememberCameraManager(onResult: (SharedImage?) -> Unit): CameraManage
                 picker: UIImagePickerController, didFinishPickingMediaWithInfo: Map<Any?, *>
             ) {
                 val image =
-                    didFinishPickingMediaWithInfo.getValue(UIImagePickerControllerEditedImage) as? UIImage
-                        ?: didFinishPickingMediaWithInfo.getValue(
-                            UIImagePickerControllerOriginalImage
-                        ) as? UIImage
-                onResult.invoke(SharedImage(image))
+                    didFinishPickingMediaWithInfo[UIImagePickerControllerEditedImage] as? UIImage
+                        ?: didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
+
+                if (image != null) {
+                    onResult.invoke(SharedImage(image))
+                } else {
+                    onResult.invoke(null)
+                }
+
                 picker.dismissViewControllerAnimated(true, null)
             }
         }

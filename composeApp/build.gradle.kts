@@ -39,12 +39,13 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
 
-            implementation(libs.camerak.core)
-            implementation(libs.camerak.gallery)
-            implementation(libs.camerak.permissions)
+            // Substituïm les dependències de camerak per alternatives d'AndroidX Camera
+            implementation("androidx.camera:camera-core:1.3.1")
+            implementation("androidx.camera:camera-camera2:1.3.1")
+            implementation("androidx.camera:camera-lifecycle:1.3.1")
+            implementation("androidx.camera:camera-view:1.3.1")
 
             implementation("com.google.accompanist:accompanist-permissions:0.28.0")
-
 
             //API Camera
             implementation(libs.koin.android)
@@ -128,6 +129,7 @@ android {
 dependencies {
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
+    implementation(project(":composeApp"))
     debugImplementation(compose.uiTooling)
 }
 

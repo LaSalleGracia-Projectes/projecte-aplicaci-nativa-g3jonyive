@@ -3,7 +3,6 @@ package com.connectyourcoach.connectyourcoach.cameragallery
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.cinterop.*
-import kotlinx.coroutines.*
 import platform.CoreGraphics.CGImageRef
 import platform.Foundation.*
 import platform.UIKit.*
@@ -11,7 +10,8 @@ import platform.UIKit.*
 actual class SharedImage(private val uiImage: UIImage) {
 
     actual fun toByteArray(): ByteArray? {
-        val data = uiImage.PNGRepresentation()
+        // Intentem obtenir el PNG de la imatge amb UIImagePNGRepresentation
+        val data = UIImagePNGRepresentation(uiImage)
         return data?.toByteArray()
     }
 
