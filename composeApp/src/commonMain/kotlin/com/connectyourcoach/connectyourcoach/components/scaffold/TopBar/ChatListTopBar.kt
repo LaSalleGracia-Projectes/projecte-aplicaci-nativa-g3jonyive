@@ -14,26 +14,25 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.screens.ArchivedChatScreen
 import connectyourcoach.composeapp.generated.resources.Res
-import connectyourcoach.composeapp.generated.resources.box_white
+import connectyourcoach.composeapp.generated.resources.box
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ChatListTopBar() {
     val navigator = LocalNavigator.current
 
-    TopAppBar(
+    BaseTopBar(
         title = { Text("Chat") },
-        backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
             Image(
-                painter = painterResource(Res.drawable.box_white),
+                painter = painterResource(Res.drawable.box),
                 contentDescription = "Ver chats archivados",
                 modifier = Modifier
                     .size(36.dp)
                     .clickable {
                         navigator?.push(ArchivedChatScreen())
                     }
-                    .padding(4.dp)
+                    .padding(8.dp)
             )
         }
     )
