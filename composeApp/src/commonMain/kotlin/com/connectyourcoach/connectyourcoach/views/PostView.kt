@@ -1,5 +1,8 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -33,13 +36,15 @@ private val customColors = darkColors(
 @Composable
 fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val post by viewModel.post
+    val scrollState = rememberScrollState()
 
     MaterialTheme(colors = customColors) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background) // Fondo del post
-                .padding(paddingValues),
+                .background(MaterialTheme.colors.background)
+                .padding(paddingValues)
+                .verticalScroll(scrollState), // <- Aquí añadimos scroll
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
         ) {
@@ -49,13 +54,13 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                     contentDescription = post.title,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.primary) // Fondo de imagen
+                        .background(MaterialTheme.colors.primary)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = post.title,
                     style = MaterialTheme.typography.h4,
-                    color = MaterialTheme.colors.surface, // Color del título
+                    color = MaterialTheme.colors.surface,
                     modifier = Modifier.padding(16.dp)
                 )
                 Row(
@@ -67,7 +72,7 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                     Text(
                         text = "By ${post.user_id}",
                         style = MaterialTheme.typography.body2,
-                        color = MaterialTheme.colors.onPrimary, // Color del texto secundario
+                        color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.padding(16.dp)
                     )
                     Text(
@@ -76,27 +81,26 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                         color = MaterialTheme.colors.onBackground,
                         modifier = Modifier.padding(16.dp)
                     )
-                    if (post.updated_at != post.created_at) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Updated on ${post.updated_at}",
-                            style = MaterialTheme.typography.body2,
-                            color = Beige, // Color beige para actualizaciones
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+                }
+                if (post.updated_at != post.created_at) {
                     Text(
-                        text = "Price: ${post.price}",
+                        text = "Updated on ${post.updated_at}",
                         style = MaterialTheme.typography.body2,
-                        color = MintGreen, // Precio en verde menta
+                        color = Beige,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+                Text(
+                    text = "Price: ${post.price}",
+                    style = MaterialTheme.typography.body2,
+                    color = MintGreen,
+                    modifier = Modifier.padding(16.dp)
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = post.description,
                     style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onPrimary, // Color de texto principal
+                    color = MaterialTheme.colors.onPrimary,
                     modifier = Modifier.padding(16.dp)
                 )
             } ?: run {
@@ -108,3 +112,4 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
         }
     }
 }
+
