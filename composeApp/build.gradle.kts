@@ -42,8 +42,11 @@ kotlin {
             //API Camera
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)
+
+            implementation(libs.play.services.auth)
         }
         commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core.v173)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -121,6 +124,7 @@ android {
 dependencies {
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
+    implementation(project(":composeApp"))
     debugImplementation(compose.uiTooling)
 }
 

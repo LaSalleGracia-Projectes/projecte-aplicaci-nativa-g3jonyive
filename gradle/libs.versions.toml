@@ -18,9 +18,11 @@ gservices = "4.4.2"
 firebaseAuth = "1.13.0"
 kotlinx-coroutines = "1.10.1"
 coil = "3.0.0-alpha06"
+kotlinxCoroutinesCore = "1.7.3"
 ktor = "2.3.12"
 material = "1.5.0"
 navigationComposeVersion = "2.7.5"
+playServicesAuth = "20.7.0"
 roomCompilerProcessingTesting = "2.6.1"
 navigationRuntimeKtx = "2.8.7"
 navigationCompose = "2.8.7"
@@ -37,11 +39,12 @@ androidx-compose = "1.6.0"
 koin = "3.5.3"
 koin-compose = "1.1.0"
 compose-compiler = "1.5.11"
-
+googleSignIn = "7.0.0"
 kotlinx-datetime = "0.4.1"
 
 
 [libraries]
+google-sign-in = { module = "com.google.ios.signin:GoogleSignIn", version.ref = "googleSignIn" }
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -56,6 +59,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
+kotlinx-coroutines-core-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor", version.ref = "coil" }
@@ -68,6 +72,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
