@@ -27,6 +27,9 @@ class LoginViewModel : ViewModel() {
     private val _loggedIn: MutableState<Boolean> = mutableStateOf(false)
     val loggedIn: MutableState<Boolean> get() = _loggedIn
 
+    private val _navigateToRegister: MutableState<Boolean> = mutableStateOf(false)
+    val navigateToRegister: MutableState<Boolean> get() = _navigateToRegister
+
     fun onEmailChange(username: String) {
         _email.value = username
     }
@@ -51,14 +54,17 @@ class LoginViewModel : ViewModel() {
                 } ?: run {
                     _loading.value = false
                     _error.value = "Invalid email or password"
-                    _loggedIn.value = false
                 }
             } catch (e: Exception) {
                 _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"
-                _loggedIn.value = false
             }
         }
+    }
+
+    fun onRegister() {
+        // No necessitem càrrega ni lògica complexa, només activar la navegació
+        _navigateToRegister.value = true
     }
 
     fun onForgotPassword() {
@@ -75,5 +81,10 @@ class LoginViewModel : ViewModel() {
                 _error.value = e.message ?: "An unknown error occurred"
             }
         }
+    }
+
+    fun resetNavigation() {
+        _navigateToRegister.value = false
+        _loggedIn.value = false
     }
 }

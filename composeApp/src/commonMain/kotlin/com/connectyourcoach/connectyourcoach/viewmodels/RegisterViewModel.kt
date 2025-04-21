@@ -24,8 +24,8 @@ class RegisterViewModel : ViewModel() {
     private val _registerError = mutableStateOf("")
     val registerError: State<String> get() = _registerError
 
-    private val _avatarUrl = mutableStateOf("")
-    val avatarUrl: State<String> get() = _avatarUrl
+    private val _photoUrl = mutableStateOf("")
+    val photoUrl: State<String> get() = photoUrl
 
     private val _showAvatarGenerator = mutableStateOf(false)
     val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
@@ -44,7 +44,7 @@ class RegisterViewModel : ViewModel() {
                     return@launch
                 }
                 val newAvatarUrl = imageLoader!!.getRandomAvatar()
-                _avatarUrl.value = newAvatarUrl
+                _photoUrl.value = newAvatarUrl
             } catch (e: Exception) {
                 _registerError.value = "Error en generar l'avatar: ${e.message}"
             }
@@ -55,7 +55,10 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val result = Firebase.auth.createUserWithEmailAndPassword(_email.value, _password.value)
-                result.user?.updateProfile(displayName = _username.value)
+                result.user?.updateProfile(
+                    displayName = _username.value,
+                    photoUrl = _photoUrl.value
+                )
                 onRegisterComplete()
             } catch (e: Exception) {
                 updateRegisterError("Error en el registre: ${e.message}")
@@ -76,7 +79,7 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun updateAvatarUrl(newAvatarUrl: String) {
-        _avatarUrl.value = newAvatarUrl
+        _photoUrl.value = newAvatarUrl
     }
 
     fun updateRegisterError(errorMessage: String) {
@@ -99,5 +102,5 @@ class RegisterViewModel : ViewModel() {
         isValidEmail() &&
                 isValidPassword() &&
                 _username.value.isNotEmpty() &&
-                _avatarUrl.value.isNotEmpty()
+                _photoUrl.value.isNotEmpty()
 }

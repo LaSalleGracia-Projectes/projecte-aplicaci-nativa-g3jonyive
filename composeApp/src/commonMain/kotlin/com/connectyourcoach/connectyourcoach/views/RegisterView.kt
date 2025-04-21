@@ -42,9 +42,9 @@ fun RegisterPhotoUsernameView(
         Text("Registre", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (viewModel.avatarUrl.value.isNotBlank()) {
+        if (viewModel.photoUrl.value.isNotBlank()) {
             KamelImage(
-                resource = asyncPainterResource(data = viewModel.avatarUrl.value),
+                resource = asyncPainterResource(data = viewModel.photoUrl.value),
                 contentDescription = "Avatar de l'usuari",
                 modifier = Modifier.size(100.dp)
             )
