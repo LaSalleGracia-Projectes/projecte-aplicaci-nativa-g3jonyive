@@ -25,7 +25,7 @@ class RegisterViewModel : ViewModel() {
     val registerError: State<String> get() = _registerError
 
     private val _photoUrl = mutableStateOf("")
-    val photoUrl: State<String> get() = photoUrl
+    val photoUrl: State<String> get() = _photoUrl
 
     private val _showAvatarGenerator = mutableStateOf(false)
     val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
