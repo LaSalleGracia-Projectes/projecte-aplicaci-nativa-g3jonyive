@@ -29,6 +29,11 @@ fun LoginView(
     val password by viewModel.password
     val loading by viewModel.loading
     val error by viewModel.error
+    val loggedIn by viewModel.loggedIn
+
+    if (loggedIn) {
+        onLogin()
+    }
 
     Column(
         modifier = Modifier
