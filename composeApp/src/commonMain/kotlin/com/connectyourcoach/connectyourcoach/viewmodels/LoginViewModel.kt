@@ -55,6 +55,8 @@ class LoginViewModel : ViewModel() {
                     _loading.value = false
                     _error.value = "Invalid email or password"
                 }
+
+                _loggedIn.value = true
             } catch (e: Exception) {
                 _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"

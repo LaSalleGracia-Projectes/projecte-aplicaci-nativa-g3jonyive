@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 
 @Composable
-fun BaseScaffold(navigator: Navigator?, topBar: @Composable () -> Unit, content: @Composable (paddingValues: PaddingValues) -> Unit) {
+fun BaseScaffold(navigator: Navigator?, showBottomBar: Boolean = true, topBar: @Composable () -> Unit, content: @Composable (paddingValues: PaddingValues) -> Unit) {
     Scaffold(
         topBar = topBar, // Aquí solo tienes un TopBar
-        bottomBar = { BaseBottomBar(navigator) } // Solo la BottomBar que va en la parte inferior
+        bottomBar = { if (showBottomBar) BaseBottomBar(navigator) } // Solo la BottomBar que va en la parte inferior
     ) { paddingValues ->
         content(paddingValues)
     }
