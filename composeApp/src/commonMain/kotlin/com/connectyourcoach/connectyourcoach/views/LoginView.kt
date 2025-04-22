@@ -101,13 +101,7 @@ fun LoginView(
         ) {
             Text("Login")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Column {
             Text(
                 text = "Don't have an account?",
                 modifier = Modifier

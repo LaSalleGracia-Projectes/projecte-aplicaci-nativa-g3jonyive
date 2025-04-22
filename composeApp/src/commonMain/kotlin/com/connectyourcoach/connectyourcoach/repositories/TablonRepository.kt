@@ -30,7 +30,7 @@ class TablonRepository {
 
     // TODO: Implement database connection
     init {
-        for (i in 0..customTitles.size) {
+        for (i in 1..customTitles.size) {
             posts += Post(
                 id = "$i",
                 title = customTitles.getOrNull(i) ?: "Post $i",

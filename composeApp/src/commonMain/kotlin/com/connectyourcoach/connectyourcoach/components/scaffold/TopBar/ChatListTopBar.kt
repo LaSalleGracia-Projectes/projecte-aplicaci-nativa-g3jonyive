@@ -12,25 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.connectyourcoach.connectyourcoach.screens.AddCardScreen
+import com.connectyourcoach.connectyourcoach.screens.ArchivedChatScreen
 import connectyourcoach.composeapp.generated.resources.Res
-import connectyourcoach.composeapp.generated.resources.add
+import connectyourcoach.composeapp.generated.resources.box
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun TablonTopBar(onMoreOptions: () -> Unit) {
+fun ChatListTopBar() {
     val navigator = LocalNavigator.current
 
     BaseTopBar(
-        title = { Text("Tablon") },
+        title = { Text("Chat") },
         actions = {
             Image(
-                painter = painterResource(Res.drawable.add),
-                contentDescription = "Añadir Anuncio",
+                painter = painterResource(Res.drawable.box),
+                contentDescription = "Ver chats archivados",
                 modifier = Modifier
                     .size(36.dp)
                     .clickable {
-                        navigator?.push(AddCardScreen())
+                        navigator?.push(ArchivedChatScreen())
                     }
                     .padding(8.dp)
             )
