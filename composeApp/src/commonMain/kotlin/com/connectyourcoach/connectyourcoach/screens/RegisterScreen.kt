@@ -5,28 +5,22 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import com.connectyourcoach.connectyourcoach.views.RegisterPhotoUsernameView
-import com.connectyourcoach.connectyourcoach.views.RegisterView
+import io.ktor.client.HttpClient
 
 class RegisterScreen : Screen {
-
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val registerViewModel by remember { mutableStateOf(RegisterViewModel()) }
-        var showPhotoUsernameView by remember { mutableStateOf(false) }
+        val registerViewModel = remember { RegisterViewModel() }
+        val httpClient = remember { HttpClient() }
 
-        if (showPhotoUsernameView) {
-            RegisterPhotoUsernameView(
-                viewModel = registerViewModel,
-                onRegisterComplete = { showPhotoUsernameView = false },
-                onLogin = { navigator?.pop() }
-            )
-        } else {
-            RegisterView(
-                viewModel = registerViewModel,
-                onRegisterComplete = { navigator?.pop() },
-                onLogin = { navigator?.pop() }
-            )
-        }
+        RegisterPhotoUsernameView(
+            viewModel = registerViewModel,
+            onRegisterComplete = {
+                navigator?.pop()
+            },
+            httpClient = httpClient,
+            onLogin = { navigator?.pop() }
+        )
     }
 }

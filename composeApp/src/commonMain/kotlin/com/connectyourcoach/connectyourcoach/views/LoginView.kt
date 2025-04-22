@@ -1,36 +1,34 @@
 package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> Unit) {
+fun LoginView(
+    viewModel: LoginViewModel,
+    onLogin: () -> Unit,
+    onRegister: () -> Unit
+) {
     val email by viewModel.email
     val password by viewModel.password
     val loading by viewModel.loading
     val error by viewModel.error
-    val loguedIt by viewModel.loggedIn
-
-    if (loguedIt) {
-        onLogin()
-    }
 
     Column(
         modifier = Modifier
@@ -44,15 +42,16 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
             return@Column
         }
 
-        Spacer(modifier = Modifier.weight(10f))
+        Spacer(modifier = Modifier.weight(1f))
+
         Image(
             painter = painterResource(Res.drawable.logo),
             contentDescription = "Logo",
-            modifier = Modifier
-                .size(256.dp)
-                .background(Color.Transparent)
+            modifier = Modifier.size(256.dp)
         )
-        Spacer(modifier = Modifier.weight(3f))
+
+        Spacer(modifier = Modifier.height(32.dp))
+
         if (error.isNotEmpty()) {
             Text(
                 text = error,
@@ -60,9 +59,10 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 modifier = Modifier.padding(8.dp)
             )
         }
+
         TextField(
             value = email,
-            onValueChange = { viewModel.onEmailChange(it) },
+            onValueChange = viewModel::onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -71,10 +71,12 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 imeAction = ImeAction.Next
             )
         )
-        Spacer(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = password,
-            onValueChange = { viewModel.onPasswordChange(it) },
+            onValueChange = viewModel::onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
@@ -84,36 +86,45 @@ fun LoginView(viewModel: LoginViewModel, onLogin: () -> Unit, onRegister: () -> 
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    viewModel.onLogin()
-                }
+                onDone = { viewModel.onLogin() }
             )
         )
-        Spacer(modifier = Modifier.weight(3f))
+
+        Spacer(modifier = Modifier.height(32.dp))
+
         Button(
-            onClick = {
-                viewModel.onLogin()
-            },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { viewModel.onLogin() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            enabled = !loading
         ) {
             Text("Login")
         }
-        Row {
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = "Don't have an account?",
-                color = MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable { onRegister() },
+                color = MaterialTheme.colors.onBackground
             )
+
             Text(
                 text = "Forgot password?",
-                color = MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable { viewModel.onForgotPassword() },
+                color = MaterialTheme.colors.onBackground
             )
         }
-        Spacer(modifier = Modifier.weight(10f))
+
+        Spacer(modifier = Modifier.weight(1f))
     }
 }

@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.models.Post
 
 @Composable
-fun PostCard(post: Post, onClick: (String) -> Unit) {
+fun PostCard(post: Post, onClick: (String) -> Unit, backgroundColor: Color) {
     Card(
         modifier = Modifier
             .padding(8.dp)

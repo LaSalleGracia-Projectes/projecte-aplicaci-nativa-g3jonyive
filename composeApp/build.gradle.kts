@@ -14,10 +14,10 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,9 +28,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
 
@@ -38,8 +38,15 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+
+            //API Camera
+            implementation(libs.koin.android)
+            implementation(libs.compose.ui.tooling)
+
+            implementation(libs.play.services.auth)
         }
         commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core.v173)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -55,14 +62,34 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
+
+            //API Camera
+            implementation(libs.kamel.core)
+            implementation(libs.kamel.image)
+
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
+
+            //API Camera
+            implementation(libs.compose.desktop)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.ui.tooling)
         }
     }
 }
@@ -89,14 +116,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
+    implementation(project(":composeApp"))
     debugImplementation(compose.uiTooling)
 }
 
