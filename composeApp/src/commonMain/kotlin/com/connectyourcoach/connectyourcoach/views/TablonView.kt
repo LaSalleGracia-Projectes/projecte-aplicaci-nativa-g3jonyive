@@ -14,14 +14,12 @@ import com.connectyourcoach.connectyourcoach.components.tablon.PostCard
 import com.connectyourcoach.connectyourcoach.components.tablon.TablonSearchBar
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 
-// Definir la paleta de colores personalizada
 private val DarkBlue = Color(0xFF173040)
 private val Turquoise = Color(0xFF038C8C)
 private val MintGreen = Color(0xFF5FD9AC)
 private val LightGray = Color(0xFFD9D8D2)
 private val Beige = Color(0xFFBFBCB4)
 
-// Definir el tema con la paleta de colores
 private val customColors = darkColors(
     primary = Turquoise,
     secondary = MintGreen,
@@ -39,17 +37,14 @@ fun TablonView(viewModel: TablonViewModel, paddingValues: PaddingValues, onClick
     val query by viewModel.query
     val loading by viewModel.loading
 
-    // Aplicamos el tema de colores personalizados
     MaterialTheme(colors = customColors) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background) // Fondo de la pantalla
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Barra de búsqueda con color de superficie
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -65,7 +60,7 @@ fun TablonView(viewModel: TablonViewModel, paddingValues: PaddingValues, onClick
             Spacer(modifier = Modifier.height(8.dp))
 
             if (loading) {
-                CircularProgressIndicator(color = MaterialTheme.colors.secondary) // Indicador de carga en verde menta
+                CircularProgressIndicator(color = MaterialTheme.colors.secondary)
                 return@Column
             }
 
@@ -75,7 +70,7 @@ fun TablonView(viewModel: TablonViewModel, paddingValues: PaddingValues, onClick
                         PostCard(
                             post = post,
                             onClick = onClickPost,
-                            backgroundColor = MaterialTheme.colors.surface // Color de fondo para las tarjetas
+                            backgroundColor = MaterialTheme.colors.surface
                         )
                     }
                 }
@@ -83,7 +78,7 @@ fun TablonView(viewModel: TablonViewModel, paddingValues: PaddingValues, onClick
                 Text(
                     text = "No posts found",
                     style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary, // Turquesa para resaltar el texto
+                    color = MaterialTheme.colors.primary,
                     modifier = Modifier.padding(16.dp)
                 )
             }
