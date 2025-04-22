@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.models.Post
 import kotlinx.coroutines.delay
@@ -17,7 +18,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun PostCard(post: Post, backgroundColor: Color, onClick: (String) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
-
     Card(
         modifier = Modifier
             .background(backgroundColor)

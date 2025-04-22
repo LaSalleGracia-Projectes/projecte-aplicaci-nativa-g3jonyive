@@ -7,12 +7,10 @@ import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.PostTopBar
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.SettingsTopBar
-import com.connectyourcoach.connectyourcoach.viewmodels.PostViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
-import com.connectyourcoach.connectyourcoach.views.PostView
 import com.connectyourcoach.connectyourcoach.views.SettingsProfileView
+import io.ktor.client.HttpClient
 
 class SettingsScreen : Screen {
 
@@ -20,21 +18,24 @@ class SettingsScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val viewModel by remember { mutableStateOf(SettingsViewModel()) }
+        val httpClient = remember { HttpClient() }
 
         BaseScaffold(
             navigator = navigator,
-            topBar = { SettingsTopBar(
-                onBack = { navigator?.pop() },
-            ) },
+            topBar = {
+                SettingsTopBar(
+                    onBack = { navigator?.pop() },
+                )
+            },
         ) { paddingValues ->
-            SettingsProfileView (
+            SettingsProfileView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 onSave = {
                     navigator?.pop()
-                }
+                },
+                httpClient = httpClient
             )
         }
     }
 }
-

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ProfileTopBar
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
@@ -15,20 +16,25 @@ class ProfileScreen : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel by remember { mutableStateOf(ProfileViewModel()) }
 
         BaseScaffold(
             navigator = navigator,
-            topBar = { ProfileTopBar(onNavigateToSettings = { navigator?.push(SettingsScreen()) }) },
+            topBar = {
+                ProfileTopBar(
+                    onNavigateToSettings = { navigator.push(SettingsScreen()) }
+                )
+            },
         ) { paddingValues ->
             ProfileView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 onLogout = {
-                    navigator?.popAll()
-                    navigator?.push(LoginScreen())
-                }
+                    navigator.popAll()
+                    navigator.push(LoginScreen())
+                },
+                onSettingsClick = { navigator.push(SettingsScreen()) }
             )
         }
     }
