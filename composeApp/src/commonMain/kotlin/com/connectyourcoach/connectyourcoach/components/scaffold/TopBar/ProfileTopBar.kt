@@ -7,14 +7,20 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
+private val Black = Color(0xFF0A0A0A)
 
 @Composable
 fun ProfileTopBar(onNavigateToSettings: () -> Unit) {
-    TopAppBar(
+    BaseTopBar(
         title = { Text("User profile") },
         actions = {
             IconButton(onClick = onNavigateToSettings) {
-                Icon(Icons.Default.Settings, contentDescription = "Configuration")
+                Icon(Icons.Default.Settings,
+                    contentDescription = "Configuration",
+                    tint = Black
+                )
             }
         }
     )

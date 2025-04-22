@@ -3,10 +3,13 @@ package com.connectyourcoach.connectyourcoach.components.scaffold.TopBar
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
+
 @Composable
-fun PostTopBar(title: String, onBack: () -> Unit) {
+fun ArchivedChatTopBar(
+    onBackClick: () -> Unit,
+){
     BaseTopBar(
-        title = { Text(title) },
-        onBack = onBack
+        title = { Text("Chats Archivados") },
+        onBack = onBackClick
     )
 }

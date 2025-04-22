@@ -29,6 +29,11 @@ fun LoginView(
     val password by viewModel.password
     val loading by viewModel.loading
     val error by viewModel.error
+    val loggedIn by viewModel.loggedIn
+
+    if (loggedIn) {
+        onLogin()
+    }
 
     Column(
         modifier = Modifier
@@ -101,13 +106,7 @@ fun LoginView(
         ) {
             Text("Login")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Column {
             Text(
                 text = "Don't have an account?",
                 modifier = Modifier
