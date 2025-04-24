@@ -13,12 +13,13 @@ import com.connectyourcoach.connectyourcoach.models.CustomException
 import io.ktor.client.request.delete
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
 class BaseRepository {
-    inline fun <reified T> getData(
+    suspend inline fun <reified T> getData(
         url: String,
         token: String? = null,
         crossinline onSuccessResponse: (T) -> Unit,
@@ -53,7 +54,7 @@ class BaseRepository {
         }
     }
 
-    inline fun <reified T> postData(
+    suspend inline fun <reified T> postData(
         url: String,
         token: String? = null,
         body: T? = null,
@@ -93,7 +94,7 @@ class BaseRepository {
         }
     }
 
-    inline fun <reified T> deleteData(
+    suspend inline fun <reified T> deleteData(
         url: String,
         token: String? = null,
         body: T? = null,
@@ -119,6 +120,46 @@ class BaseRepository {
                         onSuccessResponse(null)
                         return@launch
                     }
+                    val data = response.body<T>()
+                    onSuccessResponse(data)
+                } else {
+                    if (response.status.value == 502) throw Exception("Could not connect to the server")
+                    val errorResponse = response.body<ErrorResponse>()
+                    onErrorResponse(errorResponse)
+                }
+            } catch (e: Exception) {
+                val errorResponse = ErrorResponse(
+                    error = "Connection Error",
+                    details = e.message ?: "Failed to connect",
+                    exception = CustomException.FailedToConnectException
+                )
+                onErrorResponse(errorResponse)
+            }
+        }
+    }
+
+    suspend inline fun <reified T> putData(
+        url: String,
+        token: String? = null,
+        body: T? = null,
+        crossinline onSuccessResponse: (T) -> Unit,
+        crossinline onErrorResponse: (ErrorResponse) -> Unit
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = httpClient.put(url) {
+                    token?.let {
+                        headers {
+                            append("Authorization", it)
+                        }
+                    }
+                    body?.let {
+                        contentType(ContentType.Application.Json)
+                        setBody(it)
+                    }
+                }
+
+                if (response.status.isSuccess()) {
                     val data = response.body<T>()
                     onSuccessResponse(data)
                 } else {

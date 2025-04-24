@@ -15,39 +15,18 @@ class UserRepository {
     val URL = "$BASE_URL/user"
     val baseRepository = BaseRepository()
 
-    fun getUsers(
+    suspend fun getUsers(
         onSuccessResponse: (List<User>) -> Unit,
         onErrorResponse: (ErrorResponse) -> Unit
     ) {
         baseRepository.getData<List<User>>(
             url = URL,
-            onSuccessResponse = { response ->
-                onSuccessResponse(response)
-            },
-            onErrorResponse = { errorResponse ->
-                onErrorResponse(errorResponse)
-            }
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse
         )
     }
 
-    fun getUserByUUID(
-        UUID: String,
-        onSuccessResponse: (User) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
-    ) {
-        val URL = "$BASE_URL/user/$UUID"
-        baseRepository.getData<User>(
-            url = URL,
-            onSuccessResponse = { response ->
-                onSuccessResponse(response)
-            },
-            onErrorResponse = { errorResponse ->
-                onErrorResponse(errorResponse)
-            }
-        )
-    }
-
-    fun getUserByNickname(
+    suspend fun getUserByNickname(
         nickname: String,
         onSuccessResponse: (User) -> Unit,
         onErrorResponse: (ErrorResponse) -> Unit
@@ -55,16 +34,12 @@ class UserRepository {
         val URL = "$BASE_URL/user/$nickname"
         baseRepository.getData<User>(
             url = URL,
-            onSuccessResponse = { response ->
-                onSuccessResponse(response)
-            },
-            onErrorResponse = { errorResponse ->
-                onErrorResponse(errorResponse)
-            }
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse
         )
     }
 
-    fun createUser(
+    suspend fun createUser(
         user: User,
         onSuccessResponse: (User) -> Unit,
         onErrorResponse: (ErrorResponse) -> Unit
@@ -72,16 +47,12 @@ class UserRepository {
         baseRepository.postData<User>(
             url = URL,
             body = user,
-            onSuccessResponse = { response ->
-                onSuccessResponse(response)
-            },
-            onErrorResponse = { errorResponse ->
-                onErrorResponse(errorResponse)
-            }
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse
         )
     }
 
-    fun deleteUser(
+    suspend fun deleteUser(
         nickname: String,
         token: String,
         onSuccessResponse: (User?) -> Unit,
@@ -91,12 +62,24 @@ class UserRepository {
         baseRepository.deleteData<User>(
             url = URL,
             token = token,
-            onSuccessResponse = {
-                onSuccessResponse(it)
-            },
-            onErrorResponse = { errorResponse ->
-                onErrorResponse(errorResponse)
-            }
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse
+        )
+    }
+
+    suspend fun updateUser(
+        user: User,
+        token: String,
+        onSuccessResponse: (User) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit
+    ) {
+        val URL = "$BASE_URL/user/${user.username}"
+        baseRepository.putData<User>(
+            url = URL,
+            token = token,
+            body = user,
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse
         )
     }
 }
