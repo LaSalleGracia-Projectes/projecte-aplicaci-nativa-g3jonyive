@@ -28,24 +28,38 @@ class TablonViewModel : ViewModel() {
     }
 
     suspend fun loadPosts() {
+        repository.getPosts(
+            onSuccessResponse = { posts ->
+                _posts.value = posts
+                _loading.value = false
+            },
+            onErrorResponse = { error ->
+                //TODO Handle error
+                _posts.value = emptyList()
+                println("Error loading posts: ${error.details}")
+                _loading.value = false
+            }
+        )
         _loading.value = true
-        delay(1000)
-        _posts.value = repository.getPosts()
-        _loading.value = false
     }
 
     fun onSearch(query: String) {
         _query.value = query
 
         viewModelScope.launch {
-            searchPosts(query)
+            repository.searchPosts(
+                query = query,
+                onSuccessResponse = { posts ->
+                    _posts.value = posts
+                    _loading.value = false
+                },
+                onErrorResponse = { error ->
+                    //TODO Handle error
+                    _posts.value = emptyList()
+                    println("Error loading posts: ${error.details}")
+                    _loading.value = false
+                }
+            )
         }
-    }
-
-    suspend fun searchPosts(query: String) {
-        _loading.value = true
-        delay(500)
-        _posts.value = repository.searchPosts(query)
-        _loading.value = false
     }
 }
