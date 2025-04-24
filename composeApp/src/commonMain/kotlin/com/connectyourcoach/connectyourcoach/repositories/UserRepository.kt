@@ -12,7 +12,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
 class UserRepository {
-    val URL = "$BASE_URL/users"
+    val URL = "$BASE_URL/user"
     val baseRepository = BaseRepository()
 
     fun getUsers(
@@ -55,6 +55,23 @@ class UserRepository {
         val URL = "$BASE_URL/user/$nickname"
         baseRepository.getData<User>(
             url = URL,
+            onSuccessResponse = { response ->
+                onSuccessResponse(response)
+            },
+            onErrorResponse = { errorResponse ->
+                onErrorResponse(errorResponse)
+            }
+        )
+    }
+
+    fun createUser(
+        user: User,
+        onSuccessResponse: (User) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit
+    ) {
+        baseRepository.postData<User>(
+            url = URL,
+            body = user,
             onSuccessResponse = { response ->
                 onSuccessResponse(response)
             },

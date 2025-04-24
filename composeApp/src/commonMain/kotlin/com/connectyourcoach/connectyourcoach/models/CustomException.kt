@@ -3,7 +3,7 @@ package com.connectyourcoach.connectyourcoach.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Exception {
+enum class CustomException {
     ModelNotFoundException,
     ModelAlreadyExistsException,
     ValidationException,
@@ -13,4 +13,5 @@ enum class Exception {
     PageNotFound,
     MethodNotAllowed,
     FirebaseException,
+    FailedToConnectException,
 }

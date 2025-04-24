@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ErrorResponse(
     val error: String,
     val details: String,
-    val exception: Exception
+    val exception: CustomException
 )
