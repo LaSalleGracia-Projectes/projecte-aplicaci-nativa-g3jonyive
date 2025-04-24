@@ -11,7 +11,7 @@ import com.connectyourcoach.connectyourcoach.views.TablonView
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        actionBar?.hide()
         setContent {
             App()
         }

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.connectyourcoach.connectyourcoach.viewmodels.AddCardViewModel
 
 private val DarkBlue = Color(0xFF173040)
 private val Turquoise = Color(0xFF038C8C)
@@ -33,12 +34,9 @@ private val customColors = darkColors(
 @Composable
 fun AddCardView(
     paddingValues: PaddingValues,
+    viewModel: AddCardViewModel = remember { AddCardViewModel() },
     onSubmit: (String, String, String) -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-
     MaterialTheme(colors = customColors) {
         Box(
             modifier = Modifier
@@ -67,16 +65,16 @@ fun AddCardView(
                     )
 
                     OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
+                        value = viewModel.title,
+                        onValueChange = { viewModel.updateTitle(it) },
                         label = { Text("Título") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     OutlinedTextField(
-                        value = content,
-                        onValueChange = { content = it },
+                        value = viewModel.content,
+                        onValueChange = { viewModel.updateContent(it) },
                         label = { Text("Contenido") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -84,12 +82,8 @@ fun AddCardView(
                     )
 
                     OutlinedTextField(
-                        value = price,
-                        onValueChange = { input ->
-                            if (input.matches(Regex("^\\d*(\\.\\d{0,2})?$"))) {
-                                price = input
-                            }
-                        },
+                        value = viewModel.price,
+                        onValueChange = { viewModel.updatePrice(it) },
                         label = { Text("Precio (€)") },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -97,11 +91,9 @@ fun AddCardView(
 
                     Button(
                         onClick = {
-                            if (title.isNotBlank() && content.isNotBlank() && price.isNotBlank()) {
-                                onSubmit(title, content, price)
-                                title = ""
-                                content = ""
-                                price = ""
+                            if (viewModel.isFormValid()) {
+                                onSubmit(viewModel.title, viewModel.content, viewModel.price)
+                                viewModel.clear()
                             }
                         },
                         modifier = Modifier
