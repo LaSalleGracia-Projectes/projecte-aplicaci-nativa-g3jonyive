@@ -65,7 +65,6 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onRegister() {
-        // No necessitem càrrega ni lògica complexa, només activar la navegació
         _navigateToRegister.value = true
     }
 

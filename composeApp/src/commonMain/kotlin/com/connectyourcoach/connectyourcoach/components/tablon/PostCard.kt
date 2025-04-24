@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.models.Post
 import kotlinx.coroutines.delay
@@ -55,7 +54,7 @@ fun PostCard(post: Post, backgroundColor: Color, onClick: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Price: \$${post.price}",
+                    text = "Price: ${post.price}€",
                     style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.secondary
                 )
@@ -219,5 +218,3 @@ fun PagoTarjeta(showDialog: Boolean, onDismiss: () -> Unit) {
         )
     }
 }
-
-
