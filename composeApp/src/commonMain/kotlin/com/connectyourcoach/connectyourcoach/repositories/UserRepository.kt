@@ -80,4 +80,23 @@ class UserRepository {
             }
         )
     }
+
+    fun deleteUser(
+        nickname: String,
+        token: String,
+        onSuccessResponse: (User?) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit
+    ) {
+        val URL = "$BASE_URL/user/$nickname"
+        baseRepository.deleteData<User>(
+            url = URL,
+            token = token,
+            onSuccessResponse = {
+                onSuccessResponse(it)
+            },
+            onErrorResponse = { errorResponse ->
+                onErrorResponse(errorResponse)
+            }
+        )
+    }
 }

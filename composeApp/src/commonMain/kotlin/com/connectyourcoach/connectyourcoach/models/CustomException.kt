@@ -8,7 +8,7 @@ enum class CustomException {
     ModelAlreadyExistsException,
     ValidationException,
     UnauthorizedException,
-    InternalServerErrorException,
+    InternalServerError,
     BadRequestException,
     PageNotFound,
     MethodNotAllowed,
