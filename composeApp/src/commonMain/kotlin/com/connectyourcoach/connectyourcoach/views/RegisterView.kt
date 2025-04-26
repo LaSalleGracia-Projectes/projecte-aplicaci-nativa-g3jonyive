@@ -9,6 +9,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
+import dev.gitlive.firebase.auth.FirebaseAuth
+import dev.gitlive.firebase.auth.auth
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.client.HttpClient
@@ -106,6 +108,16 @@ fun RegisterPhotoUsernameView(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Registrar-se")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botó de registre amb Google
+        Button(
+            onClick = { viewModel.onGoogleRegister() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Registra't amb Google")
         }
     }
 }

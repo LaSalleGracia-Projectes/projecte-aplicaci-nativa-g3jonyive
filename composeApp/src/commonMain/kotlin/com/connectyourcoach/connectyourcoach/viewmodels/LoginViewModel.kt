@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
+import dev.gitlive.firebase.auth.GoogleAuthProvider
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -56,7 +58,6 @@ class LoginViewModel : ViewModel() {
                     _error.value = "Invalid email or password"
                 }
 
-                _loggedIn.value = true
             } catch (e: Exception) {
                 _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"
@@ -65,8 +66,34 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onRegister() {
-        // No necessitem càrrega ni lògica complexa, només activar la navegació
         _navigateToRegister.value = true
+    }
+
+    fun onGoogleLogin() {
+        _loading.value = true
+
+        viewModelScope.launch {
+            try {
+                val googleCredential = GoogleAuthProvider.getCredential(
+                    idToken = null,
+                    accessToken = null
+                )
+
+                auth.value.signInWithCredential(googleCredential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            _loading.value = false
+                            _loggedIn.value = true
+                        } else {
+                            _loading.value = false
+                            _error.value = task.exception?.message ?: "Google login failed"
+                        }
+                    }
+            } catch (e: Exception) {
+                _loading.value = false
+                _error.value = e.message ?: "An unknown error occurred"
+            }
+        }
     }
 
     fun onForgotPassword() {

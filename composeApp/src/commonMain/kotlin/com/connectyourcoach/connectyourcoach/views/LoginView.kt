@@ -2,14 +2,25 @@ package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -23,7 +34,8 @@ import org.jetbrains.compose.resources.painterResource
 fun LoginView(
     viewModel: LoginViewModel,
     onLogin: () -> Unit,
-    onRegister: () -> Unit
+    onRegister: () -> Unit,
+    onGoogleLogin: (String) -> Unit
 ) {
     val email by viewModel.email
     val password by viewModel.password
@@ -31,6 +43,7 @@ fun LoginView(
     val error by viewModel.error
     val loggedIn by viewModel.loggedIn
 
+    // Si l'usuari ja està connectat, anem a la pantalla principal
     if (loggedIn) {
         onLogin()
     }
@@ -106,6 +119,22 @@ fun LoginView(
         ) {
             Text("Login")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botó per login amb Google
+        Button(
+            onClick = {
+                // Aquí hauríem de cridar una funció per obtenir el token de Google
+                val googleToken = "token_obtingut_dels_google_services"
+                onGoogleLogin(googleToken)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !loading
+        ) {
+            Text("Login with Google")
+        }
+
         Column {
             Text(
                 text = "Don't have an account?",

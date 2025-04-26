@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.FirebaseAuth
+import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
@@ -103,4 +105,26 @@ class RegisterViewModel : ViewModel() {
                 isValidPassword() &&
                 _username.value.isNotEmpty() &&
                 _photoUrl.value.isNotEmpty()
+
+    fun onGoogleRegister() {
+        viewModelScope.launch {
+            try {
+                val googleCredential = GoogleAuthProvider.getCredential(
+                    idToken = null,
+                    accessToken = null
+                )
+
+                Firebase.auth.signInWithCredential(googleCredential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Process successful login
+                        } else {
+                            updateRegisterError(task.exception?.message ?: "Google login failed")
+                        }
+                    }
+            } catch (e: Exception) {
+                updateRegisterError(e.message ?: "Google login failed")
+            }
+        }
+    }
 }

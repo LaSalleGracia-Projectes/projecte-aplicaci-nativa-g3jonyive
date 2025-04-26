@@ -44,7 +44,6 @@ compose-compiler = "1.5.11"
 googleSignIn = "7.0.0"
 kotlinx-datetime = "0.4.1"
 
-
 [libraries]
 google-sign-in = { module = "com.google.ios.signin:GoogleSignIn", version.ref = "googleSignIn" }
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }

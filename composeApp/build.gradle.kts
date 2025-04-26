@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -43,7 +44,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)
 
-            implementation(libs.play.services.auth)
+            implementation(libs.play.services.auth) // Google Sign-In
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core.v173)
@@ -62,6 +63,7 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
+            implementation(libs.play.services.auth)
 
             //API Camera
             implementation(libs.kamel.core)
