@@ -106,22 +106,15 @@ class RegisterViewModel : ViewModel() {
                 _username.value.isNotEmpty() &&
                 _photoUrl.value.isNotEmpty()
 
-    fun onGoogleRegister() {
+    fun onGoogleRegister(idToken: String, onRegisterComplete: () -> Unit) {
         viewModelScope.launch {
             try {
-                val googleCredential = GoogleAuthProvider.getCredential(
-                    idToken = null,
+                val googleCredential = GoogleAuthProvider.credential(
+                    idToken = idToken,
                     accessToken = null
                 )
-
                 Firebase.auth.signInWithCredential(googleCredential)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Process successful login
-                        } else {
-                            updateRegisterError(task.exception?.message ?: "Google login failed")
-                        }
-                    }
+                onRegisterComplete()
             } catch (e: Exception) {
                 updateRegisterError(e.message ?: "Google login failed")
             }

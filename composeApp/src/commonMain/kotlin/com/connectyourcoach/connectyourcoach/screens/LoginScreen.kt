@@ -20,7 +20,8 @@ class LoginScreen : Screen {
         LoginView(
             viewModel = viewModel,
             onLogin = { navigator?.push(TablonScreen()) },
-            onRegister = { navigator?.push(RegisterScreen()) }
+            onRegister = { navigator?.push(RegisterScreen()) },
+            onGoogleLogin = { idToken -> viewModel.onGoogleLogin(idToken) }
         )
     }
 }

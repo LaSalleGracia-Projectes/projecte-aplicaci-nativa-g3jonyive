@@ -14,6 +14,7 @@ import dev.gitlive.firebase.auth.auth
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.client.HttpClient
+import com.connectyourcoach.connectyourcoach.auth.launchGoogleSignIn
 
 @Composable
 fun RegisterPhotoUsernameView(
@@ -114,7 +115,15 @@ fun RegisterPhotoUsernameView(
 
         // Botó de registre amb Google
         Button(
-            onClick = { viewModel.onGoogleRegister() },
+            onClick = {
+                launchGoogleSignIn { idToken ->
+                    if (idToken != null) {
+                        viewModel.onGoogleRegister(idToken, onRegisterComplete)
+                    } else {
+                        // Mostra error si cal
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Registra't amb Google")

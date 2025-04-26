@@ -1,5 +1,6 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.connectyourcoach.connectyourcoach.MainActivity
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
@@ -125,9 +128,26 @@ fun LoginView(
         // Botó per login amb Google
         Button(
             onClick = {
-                // Aquí hauríem de cridar una funció per obtenir el token de Google
-                val googleToken = "token_obtingut_dels_google_services"
-                onGoogleLogin(googleToken)
+                val context = LocalContext.current
+                if (context is Activity) {
+                    val helper = MainActivity.googleAuthHelper
+                    helper.setActivity(context)
+                    helper.setCallbacks(
+                        onSuccess = { idToken ->
+                            if (idToken != null) {
+                                onGoogleLogin(idToken)
+                            } else {
+                                viewModel.error.value = "Google login failed"
+                            }
+                        },
+                        onError = {
+                            viewModel.error.value = "Google login error"
+                        }
+                    )
+                    helper.signIn()
+                } else {
+                    viewModel.error.value = "Invalid context"
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !loading

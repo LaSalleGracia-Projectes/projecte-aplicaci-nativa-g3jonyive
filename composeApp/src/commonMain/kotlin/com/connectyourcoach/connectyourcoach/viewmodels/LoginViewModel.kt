@@ -69,29 +69,20 @@ class LoginViewModel : ViewModel() {
         _navigateToRegister.value = true
     }
 
-    fun onGoogleLogin() {
+    fun onGoogleLogin(idToken: String) {
         _loading.value = true
-
         viewModelScope.launch {
             try {
-                val googleCredential = GoogleAuthProvider.getCredential(
-                    idToken = null,
+                val googleCredential = GoogleAuthProvider.credential(
+                    idToken = idToken,
                     accessToken = null
                 )
-
                 auth.value.signInWithCredential(googleCredential)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            _loading.value = false
-                            _loggedIn.value = true
-                        } else {
-                            _loading.value = false
-                            _error.value = task.exception?.message ?: "Google login failed"
-                        }
-                    }
+                _loading.value = false
+                _loggedIn.value = true
             } catch (e: Exception) {
                 _loading.value = false
-                _error.value = e.message ?: "An unknown error occurred"
+                _error.value = e.message ?: "Google login failed"
             }
         }
     }
