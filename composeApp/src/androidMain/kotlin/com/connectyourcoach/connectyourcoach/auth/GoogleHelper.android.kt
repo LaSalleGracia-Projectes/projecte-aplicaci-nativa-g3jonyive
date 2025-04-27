@@ -2,6 +2,8 @@ package com.connectyourcoach.connectyourcoach.auth
 
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -9,31 +11,25 @@ import com.google.android.gms.common.api.ApiException
 
 actual class GoogleAuthHelper actual constructor() {
     private lateinit var googleSignInClient: GoogleSignInClient
-    private var onSuccess: ((String) -> Unit)? = null
-    private var onError: ((Throwable) -> Unit)? = null
-    private var activity: Activity? = null
+    private var onResultCallback: ((String?) -> Unit)? = null
 
-    fun setActivity(activity: Activity) {
-        this.activity = activity
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("YOUR_ANDROID_CLIENT_ID")
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(activity, gso)
-    }
+    @Composable
+    actual fun LaunchSignIn(onResult: (idToken: String?) -> Unit) {
+        val context = LocalContext.current
+        onResultCallback = onResult
 
-    actual fun signIn() {
-        val currentActivity = activity ?: throw IllegalStateException("Activity not set")
-        val signInIntent = googleSignInClient.signInIntent
-        currentActivity.startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
+        if (context is Activity) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("TU_CLIENT_ID") // Reemplaza con tu client ID
+                .requestEmail()
+                .build()
 
-    actual fun setCallbacks(
-        onSuccess: (String) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        this.onSuccess = onSuccess
-        this.onError = onError
+            googleSignInClient = GoogleSignIn.getClient(context, gso)
+            val signInIntent = googleSignInClient.signInIntent
+            context.startActivityForResult(signInIntent, RC_SIGN_IN)
+        } else {
+            onResult(null)
+        }
     }
 
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -41,18 +37,17 @@ actual class GoogleAuthHelper actual constructor() {
             try {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = task.getResult(ApiException::class.java)
-                account.idToken?.let { token ->
-                    onSuccess?.invoke(token)
-                } ?: run {
-                    onError?.invoke(Exception("No token received"))
-                }
-            } catch (e: Exception) {
-                onError?.invoke(e)
+                onResultCallback?.invoke(account.idToken)
+            } catch (e: ApiException) {
+                onResultCallback?.invoke(null)
             }
         }
     }
 
     companion object {
-        const val RC_SIGN_IN = 9001
+        private const val RC_SIGN_IN = 9001
+    }
+
+    actual fun launchSignIn(onResult: (idToken: String?) -> Unit) {
     }
 }

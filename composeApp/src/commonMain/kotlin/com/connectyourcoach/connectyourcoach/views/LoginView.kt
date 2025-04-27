@@ -1,33 +1,19 @@
 package com.connectyourcoach.connectyourcoach.views
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.connectyourcoach.connectyourcoach.MainActivity
+import com.connectyourcoach.connectyourcoach.auth.GoogleAuthHelper
 import com.connectyourcoach.connectyourcoach.viewmodels.LoginViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
@@ -45,10 +31,13 @@ fun LoginView(
     val loading by viewModel.loading
     val error by viewModel.error
     val loggedIn by viewModel.loggedIn
+    val googleAuthHelper = remember { GoogleAuthHelper() }
 
     // Si l'usuari ja està connectat, anem a la pantalla principal
     if (loggedIn) {
-        onLogin()
+        LaunchedEffect(Unit) {
+            onLogin()
+        }
     }
 
     Column(
@@ -126,33 +115,12 @@ fun LoginView(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botó per login amb Google
-        Button(
-            onClick = {
-                val context = LocalContext.current
-                if (context is Activity) {
-                    val helper = MainActivity.googleAuthHelper
-                    helper.setActivity(context)
-                    helper.setCallbacks(
-                        onSuccess = { idToken ->
-                            if (idToken != null) {
-                                onGoogleLogin(idToken)
-                            } else {
-                                viewModel.error.value = "Google login failed"
-                            }
-                        },
-                        onError = {
-                            viewModel.error.value = "Google login error"
-                        }
-                    )
-                    helper.signIn()
-                } else {
-                    viewModel.error.value = "Invalid context"
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !loading
-        ) {
-            Text("Login with Google")
+        googleAuthHelper.LaunchSignIn { idToken ->
+            if (idToken != null) {
+                onGoogleLogin(idToken)
+            } else {
+                viewModel.error.value = "Error en l'autenticació amb Google"
+            }
         }
 
         Column {

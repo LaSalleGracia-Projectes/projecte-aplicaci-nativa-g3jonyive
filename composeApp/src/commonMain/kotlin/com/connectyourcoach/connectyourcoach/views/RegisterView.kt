@@ -8,13 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
+import com.connectyourcoach.connectyourcoach.auth.GoogleAuthHelper
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.client.HttpClient
-import com.connectyourcoach.connectyourcoach.auth.launchGoogleSignIn
 
 @Composable
 fun RegisterPhotoUsernameView(
@@ -23,6 +23,8 @@ fun RegisterPhotoUsernameView(
     httpClient: HttpClient,
     onLogin: () -> Boolean?
 ) {
+    val googleAuthHelper = remember { GoogleAuthHelper() }
+
     LaunchedEffect(Unit) {
         viewModel.initialize(httpClient)
     }
@@ -114,19 +116,12 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botó de registre amb Google
-        Button(
-            onClick = {
-                launchGoogleSignIn { idToken ->
-                    if (idToken != null) {
-                        viewModel.onGoogleRegister(idToken, onRegisterComplete)
-                    } else {
-                        // Mostra error si cal
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Registra't amb Google")
+        googleAuthHelper.LaunchSignIn { idToken ->
+            if (idToken != null) {
+                viewModel.onGoogleRegister(idToken, onRegisterComplete)
+            } else {
+                viewModel.updateRegisterError("Error en l'autenticació amb Google")
+            }
         }
     }
 }

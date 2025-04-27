@@ -1,12 +1,13 @@
 package com.connectyourcoach.connectyourcoach.auth
 
+import androidx.compose.runtime.Composable
+
 actual class GoogleAuthHelper actual constructor() {
-    actual fun signIn() {
+    actual fun launchSignIn(onResult: (idToken: String?) -> Unit) {
     }
 
-    actual fun setCallbacks(
-        onSuccess: (String) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
+    @Composable
+    actual fun LaunchSignIn(onResult: (idToken: String?) -> Unit) {
     }
+
 }
