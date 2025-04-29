@@ -37,7 +37,7 @@ fun ProfileView(
     ) {
         // Foto de perfil
         AsyncImage(
-            model = photoUrl,
+            model = viewModel.photoUrl.value,
             contentDescription = "Profile picture",
             modifier = Modifier
                 .size(128.dp)
@@ -47,20 +47,27 @@ fun ProfileView(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Informació de l'usuari
-        Text("Full Name: $fullname", style = MaterialTheme.typography.h6)
+        Text("Nom complet: $fullname", style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
         Text("Email: $email", style = MaterialTheme.typography.body1)
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Telèfon - amb comprovació de null
-        phoneNumber?.let { phone ->
-            Text(
-                text = "Phone: ${phone.ifEmpty { "Not provided" }}",
-                style = MaterialTheme.typography.body1
-            )
-        } ?: Text("Phone: Not provided", style = MaterialTheme.typography.body1)
+        Text(
+            text = "Telèfon: ${viewModel.phoneNumber.value.ifEmpty { "No proporcionat" }}",
+            style = MaterialTheme.typography.body1
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        // Botó de configuració
+        Button(
+            onClick = onSettingsClick,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary)
+        ) {
+            Text("Configuració")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Botó de tancar sessió
         Button(
@@ -71,7 +78,7 @@ fun ProfileView(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
         ) {
-            Text("Sign out", color = Color.White)
+            Text("Tancar sessió", color = Color.White)
         }
     }
 }

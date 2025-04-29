@@ -22,9 +22,6 @@ class SettingsViewModel : ViewModel() {
     private val _email: MutableState<String> = mutableStateOf("")
     val email: MutableState<String> get() = _email
 
-    private val _phone: MutableState<String> = mutableStateOf("")
-    val phone: MutableState<String> get() = _phone
-
     private val _password: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> get() = _password
 
@@ -50,6 +47,21 @@ class SettingsViewModel : ViewModel() {
 
     private lateinit var imageLoader: ImageLoader
 
+    private val _phone: MutableState<String> = mutableStateOf(SharedRepository.phoneNumber.value)
+    val phone: MutableState<String> get() = _phone
+
+    init {
+        auth.currentUser?.let { user ->
+            // ... (altres inicialitzacions)
+            _phone.value = SharedRepository.phoneNumber.value.ifEmpty { user.phoneNumber ?: "" }
+        }
+    }
+
+    fun updatePhone(phone: String) {
+        _phone.value = phone
+        SharedRepository.phoneNumber.value = phone
+    }
+
     init {
         auth.currentUser?.let { user ->
             user.displayName?.let { _fullName.value = it }
@@ -70,10 +82,6 @@ class SettingsViewModel : ViewModel() {
 
     fun updateEmail(email: String) {
         _email.value = email
-    }
-
-    fun updatePhone(phone: String) {
-        _phone.value = phone
     }
 
     fun updatePassword(password: String) {
@@ -128,7 +136,7 @@ class SettingsViewModel : ViewModel() {
         try {
             _loading.value = true
             auth.currentUser?.let { user ->
-                // Actualitzar nom i foto
+                // Actualitzar nom, foto i telèfon
                 user.updateProfile(
                     displayName = _fullName.value,
                     photoUrl = _photoUrl.value.ifEmpty { user.photoURL }
@@ -143,7 +151,6 @@ class SettingsViewModel : ViewModel() {
                 if (_password.value.isNotEmpty()) {
                     user.updatePassword(_password.value)
                 }
-
             }
             _saved.value = true
         } catch (e: Exception) {

@@ -60,7 +60,7 @@ fun SettingsProfileView(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Settings de Perfil", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
+        Text("Configuració del Perfil", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
         Spacer(modifier = Modifier.height(50.dp))
 
         // Secció d'avatar
@@ -93,16 +93,17 @@ fun SettingsProfileView(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Edit profile",
+            text = "Editar perfil",
             style = MaterialTheme.typography.h5,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Camp Nom complet
         OutlinedTextField(
             value = fullname,
             onValueChange = { viewModel.updateFullname(it) },
-            label = { Text("Full name") },
+            label = { Text("Nom complet") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -113,6 +114,7 @@ fun SettingsProfileView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Camp Email
         OutlinedTextField(
             value = email,
             onValueChange = { viewModel.updateEmail(it) },
@@ -128,7 +130,7 @@ fun SettingsProfileView(
 
         if (!viewModel.isValidEmail() && email.isNotEmpty()) {
             Text(
-                text = "Email must contain '@' and '.'",
+                text = "L'email ha de contenir '@' i '.'",
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -136,10 +138,11 @@ fun SettingsProfileView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Camp Telèfon
         OutlinedTextField(
             value = phone,
             onValueChange = { viewModel.updatePhone(it) },
-            label = { Text("Phone (optional)") },
+            label = { Text("Telèfon (opcional)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -150,7 +153,7 @@ fun SettingsProfileView(
 
         if (!viewModel.isValidPhone() && phone.isNotEmpty()) {
             Text(
-                text = "Please enter a valid phone number",
+                text = "Si us plau, introdueix un número de telèfon vàlid",
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -158,10 +161,11 @@ fun SettingsProfileView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Camp Contrasenya
         OutlinedTextField(
             value = password,
             onValueChange = { viewModel.updatePassword(it) },
-            label = { Text("New password (optional)") },
+            label = { Text("Nova contrasenya (opcional)") },
             visualTransformation = PasswordVisualTransformation(),
             isError = password.isNotEmpty() && !viewModel.isValidPassword(),
             modifier = Modifier.fillMaxWidth(),
@@ -177,7 +181,7 @@ fun SettingsProfileView(
 
         if (password.isNotEmpty() && !viewModel.isValidPassword()) {
             Text(
-                text = "Password must contain at least 8 characters with uppercase, lowercase, digit and special character",
+                text = "La contrasenya ha de contenir com a mínim 8 caràcters amb majúscules, minúscules, números i caràcters especials",
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -185,6 +189,7 @@ fun SettingsProfileView(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Botó Guardar
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = viewModel.isValidSave(),
@@ -193,13 +198,13 @@ fun SettingsProfileView(
             if (viewModel.loading.value) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
             } else {
-                Text("Save Changes")
+                Text("Guardar Canvis")
             }
         }
 
-        if (saveError != null) {
+        if (viewModel.saveError.value != null) {
             Text(
-                text = saveError!!,
+                text = viewModel.saveError.value!!,
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 8.dp)
             )
