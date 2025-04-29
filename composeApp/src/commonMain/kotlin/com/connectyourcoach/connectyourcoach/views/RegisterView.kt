@@ -116,12 +116,21 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botó de registre amb Google
-        googleAuthHelper.LaunchSignIn { idToken ->
-            if (idToken != null) {
-                viewModel.onGoogleRegister(idToken, onRegisterComplete)
-            } else {
-                viewModel.updateRegisterError("Error en l'autenticació amb Google")
-            }
+        Button(
+            onClick = {
+                googleAuthHelper.LaunchSignIn { idToken ->
+                    if (idToken != null) {
+                        viewModel.onGoogleRegister(idToken, onRegisterComplete)
+                    } else {
+                        viewModel.updateRegisterError("Error en l'autenticació amb Google")
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Text("Registrar-se amb Google")
         }
     }
 }

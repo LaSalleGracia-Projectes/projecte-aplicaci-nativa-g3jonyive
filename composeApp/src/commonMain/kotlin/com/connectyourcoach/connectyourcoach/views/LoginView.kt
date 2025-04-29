@@ -115,12 +115,22 @@ fun LoginView(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botó per login amb Google
-        googleAuthHelper.LaunchSignIn { idToken ->
-            if (idToken != null) {
-                onGoogleLogin(idToken)
-            } else {
-                viewModel.error.value = "Error en l'autenticació amb Google"
-            }
+        Button(
+            onClick = {
+                googleAuthHelper.LaunchSignIn { idToken ->
+                    if (idToken != null) {
+                        viewModel.onGoogleLogin(idToken)
+                    } else {
+                        viewModel.error.value = "Error en l'autenticació amb Google"
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            enabled = !loading
+        ) {
+            Text("Inicia sessió amb Google")
         }
 
         Column {

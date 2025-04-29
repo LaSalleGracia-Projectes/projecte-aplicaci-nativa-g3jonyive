@@ -113,7 +113,13 @@ class RegisterViewModel : ViewModel() {
                     idToken = idToken,
                     accessToken = null
                 )
-                Firebase.auth.signInWithCredential(googleCredential)
+                val result = Firebase.auth.signInWithCredential(googleCredential)
+
+                result.user?.updateProfile(
+                    displayName = _username.value.takeIf { it.isNotBlank() },
+                    photoUrl = _photoUrl.value.takeIf { it.isNotBlank() }
+                )
+
                 onRegisterComplete()
             } catch (e: Exception) {
                 updateRegisterError(e.message ?: "Google login failed")

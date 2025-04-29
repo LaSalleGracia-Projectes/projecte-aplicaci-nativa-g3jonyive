@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
-import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
-import io.ktor.client.HttpClient
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -42,69 +41,52 @@ class LoginViewModel : ViewModel() {
 
     fun onLogin() {
         _loading.value = true
+        _error.value = ""
 
         viewModelScope.launch {
             try {
-                val authResult = auth.value.signInWithEmailAndPassword(
-                    email = _email.value,
-                    password = _password.value
-                )
-
-                authResult.user?.let {
-                    _loading.value = false
-                    _loggedIn.value = true
-                } ?: run {
-                    _loading.value = false
-                    _error.value = "Invalid email or password"
-                }
-
-            } catch (e: Exception) {
-                _loading.value = false
-                _error.value = e.message ?: "An unknown error occurred"
-            }
-        }
-    }
-
-    fun onRegister() {
-        _navigateToRegister.value = true
-    }
-
-    fun onGoogleLogin(idToken: String) {
-        _loading.value = true
-        viewModelScope.launch {
-            try {
-                val googleCredential = GoogleAuthProvider.credential(
-                    idToken = idToken,
-                    accessToken = null
-                )
-                auth.value.signInWithCredential(googleCredential)
-                _loading.value = false
+                auth.value.signInWithEmailAndPassword(_email.value, _password.value)
                 _loggedIn.value = true
             } catch (e: Exception) {
+                _error.value = "Error iniciant sessió: ${e.message}"
+                _loggedIn.value = false
+            } finally {
                 _loading.value = false
-                _error.value = e.message ?: "Google login failed"
             }
         }
     }
 
     fun onForgotPassword() {
+        _loading.value = true
+        _error.value = ""
+
         viewModelScope.launch {
             try {
-                if (_email.value.isEmpty()) {
-                    _error.value = "Please enter your email"
-                    return@launch
-                }
-
-                auth.value.sendPasswordResetEmail(email = _email.value)
-                _error.value = "Password reset email sent"
+                auth.value.sendPasswordResetEmail(_email.value)
+                _error.value = "S'ha enviat un correu per restablir la contrasenya."
             } catch (e: Exception) {
-                _error.value = e.message ?: "An unknown error occurred"
+                _error.value = "Error enviant l'email: ${e.message}"
+            } finally {
+                _loading.value = false
             }
         }
     }
 
-    fun resetNavigation() {
-        _navigateToRegister.value = false
-        _loggedIn.value = false
+    fun onGoogleLogin(idToken: String) {
+        _loading.value = true
+        _error.value = ""
+
+        viewModelScope.launch {
+            try {
+                val credential = GoogleAuthProvider.credential(idToken, null)
+                auth.value.signInWithCredential(credential)
+                _loggedIn.value = true
+            } catch (e: Exception) {
+                _error.value = "Error iniciant sessió amb Google: ${e.message}"
+                _loggedIn.value = false
+            } finally {
+                _loading.value = false
+            }
+        }
     }
 }
