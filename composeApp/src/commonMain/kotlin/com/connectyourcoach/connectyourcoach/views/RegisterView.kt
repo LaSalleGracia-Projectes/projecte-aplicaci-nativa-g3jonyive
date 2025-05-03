@@ -1,5 +1,6 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -56,13 +57,13 @@ fun RegisterPhotoUsernameView(
         if (viewModel.isAvatarGenerated.value) {
             KamelImage(
                 resource = asyncPainterResource(data = viewModel.photoUrl.value),
-                contentDescription = "Avatar de l'usuari",
+                contentDescription = "User Avatar",
                 modifier = Modifier.size(100.dp),
                 onFailure = {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         modifier = Modifier.size(100.dp),
-                        contentDescription = "Error al carregar l'avatar",
+                        contentDescription = "Error on loading image",
                     )
                 },
                 onLoading = {
@@ -80,7 +81,7 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(8.dp))
         Row {
             Button(onClick = { viewModel.onGenerateRandomAvatar() }) {
-                Text("Generar Nou Avatar")
+                Text("Generate Avatar")
             }
         }
 
@@ -89,7 +90,7 @@ fun RegisterPhotoUsernameView(
         TextField(
             value = viewModel.fullName.value,
             onValueChange = { viewModel.updateFullName(it) },
-            label = { Text("Nom complet") },
+            label = { Text("Full name") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -98,7 +99,7 @@ fun RegisterPhotoUsernameView(
         TextField(
             value = viewModel.username.value,
             onValueChange = { viewModel.updateUsername(it) },
-            label = { Text("Nom d'usuari") },
+            label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -107,7 +108,7 @@ fun RegisterPhotoUsernameView(
         TextField(
             value = viewModel.birthDate.value,
             onValueChange = { viewModel.updateBirthDate(it) },
-            label = { Text("Data de neixement") },
+            label = { Text("Birth date") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -116,7 +117,7 @@ fun RegisterPhotoUsernameView(
         TextField(
             value = viewModel.phoneNumber.value,
             onValueChange = { viewModel.updatePhoneNumber(it) },
-            label = { Text("Telefon") },
+            label = { Text("Phone") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone
@@ -140,7 +141,7 @@ fun RegisterPhotoUsernameView(
         TextField(
             value = viewModel.password.value,
             onValueChange = { viewModel.updatePassword(it) },
-            label = { Text("Contrasenya") },
+            label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password
@@ -165,7 +166,18 @@ fun RegisterPhotoUsernameView(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Registrar-se")
+            Text("Register")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Already have an account?",
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.End)
+                .clickable { onLogin() },
+            color = MaterialTheme.colors.onBackground
+        )
     }
 }
