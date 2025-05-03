@@ -15,6 +15,15 @@ class RegisterViewModel : ViewModel() {
     private val _username = mutableStateOf("")
     val username: State<String> get() = _username
 
+    private val _fullName = mutableStateOf("")
+    val fullName: State<String> get() = _fullName
+
+    private val _phoneNumber = mutableStateOf("")
+    val phoneNumber: State<String> get() = _phoneNumber
+
+    private val _birthDate = mutableStateOf("")
+    val birthDate: State<String> get() = _birthDate
+
     private val _email = mutableStateOf("")
     val email: State<String> get() = _email
 
@@ -30,32 +39,47 @@ class RegisterViewModel : ViewModel() {
     private val _showAvatarGenerator = mutableStateOf(false)
     val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
 
+    private val _isAvatarGenerated = mutableStateOf(false)
+    val isAvatarGenerated: State<Boolean> get() = _isAvatarGenerated
+
+    private val _isLoading = mutableStateOf(false)
+    val isLoading: State<Boolean> get() = _isLoading
+
     private val repository = UserRepository();
 
     private var imageLoader: ImageLoader? = null
 
     fun initialize(httpClient: HttpClient) {
         imageLoader = ImageLoader(httpClient)
-        generateRandomAvatar()
+        viewModelScope.launch {
+            generateRandomAvatar()
+        }
     }
 
-    fun generateRandomAvatar() {
-        viewModelScope.launch {
-            try {
-                if (imageLoader == null) {
-                    _registerError.value = "ImageLoader no inicialitzat"
-                    return@launch
-                }
-                val newAvatarUrl = imageLoader!!.getRandomAvatar()
-                _photoUrl.value = newAvatarUrl
-            } catch (e: Exception) {
-                _registerError.value = "Error en generar l'avatar: ${e.message}"
+    suspend fun generateRandomAvatar() {
+        try {
+            _isAvatarGenerated.value = false
+            if (imageLoader == null) {
+                _registerError.value = "ImageLoader no inicialitzat"
+                return
             }
+            val newAvatarUrl = imageLoader!!.getRandomAvatar()
+            _photoUrl.value = newAvatarUrl
+            _isAvatarGenerated.value = true
+        } catch (e: Exception) {
+            _registerError.value = "Error en generar l'avatar: ${e.message}"
+        }
+    }
+
+    fun onGenerateRandomAvatar() {
+        viewModelScope.launch {
+            generateRandomAvatar()
         }
     }
 
     fun onRegister(onRegisterComplete: () -> Unit) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val result = Firebase.auth.createUserWithEmailAndPassword(_email.value, _password.value)
                 result.user?.updateProfile(
@@ -65,12 +89,26 @@ class RegisterViewModel : ViewModel() {
                 onRegisterComplete()
             } catch (e: Exception) {
                 updateRegisterError("Error en el registre: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
     fun updateUsername(newUsername: String) {
         _username.value = newUsername
+    }
+
+    fun updateFullName(newFullName: String) {
+        _fullName.value = newFullName
+    }
+
+    fun updatePhoneNumber(newPhoneNumber: String) {
+        _phoneNumber.value = newPhoneNumber
+    }
+
+    fun updateBirthDate(newBirthDate: String) {
+        _birthDate.value = newBirthDate
     }
 
     fun updateEmail(newEmail: String) {
@@ -94,6 +132,7 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
+
     fun isValidPassword(): Boolean =
         _password.value.length >= 8 &&
                 _password.value.any { it.isUpperCase() } &&
