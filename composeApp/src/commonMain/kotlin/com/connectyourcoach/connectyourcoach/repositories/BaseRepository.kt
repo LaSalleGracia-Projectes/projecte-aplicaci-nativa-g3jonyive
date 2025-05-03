@@ -23,7 +23,8 @@ class BaseRepository {
         url: String,
         token: String? = null,
         crossinline onSuccessResponse: (T) -> Unit,
-        crossinline onErrorResponse: (ErrorResponse) -> Unit
+        crossinline onErrorResponse: (ErrorResponse) -> Unit,
+        crossinline onFinish: () -> Unit = {}
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -50,6 +51,8 @@ class BaseRepository {
                     exception = CustomException.FailedToConnectException
                 )
                 onErrorResponse(errorResponse)
+            } finally {
+                onFinish()
             }
         }
     }
@@ -59,7 +62,8 @@ class BaseRepository {
         token: String? = null,
         body: T? = null,
         crossinline onSuccessResponse: (T) -> Unit,
-        crossinline onErrorResponse: (ErrorResponse) -> Unit
+        crossinline onErrorResponse: (ErrorResponse) -> Unit,
+        crossinline onFinish: () -> Unit = {}
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -90,6 +94,8 @@ class BaseRepository {
                     exception = CustomException.FailedToConnectException
                 )
                 onErrorResponse(errorResponse)
+            } finally {
+                onFinish()
             }
         }
     }
@@ -99,7 +105,8 @@ class BaseRepository {
         token: String? = null,
         body: T? = null,
         crossinline onSuccessResponse: (T?) -> Unit,
-        crossinline onErrorResponse: (ErrorResponse) -> Unit
+        crossinline onErrorResponse: (ErrorResponse) -> Unit,
+        crossinline onFinish: () -> Unit = {}
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -134,6 +141,8 @@ class BaseRepository {
                     exception = CustomException.FailedToConnectException
                 )
                 onErrorResponse(errorResponse)
+            } finally {
+                onFinish()
             }
         }
     }
@@ -143,7 +152,8 @@ class BaseRepository {
         token: String? = null,
         body: T? = null,
         crossinline onSuccessResponse: (T) -> Unit,
-        crossinline onErrorResponse: (ErrorResponse) -> Unit
+        crossinline onErrorResponse: (ErrorResponse) -> Unit,
+        crossinline onFinish: () -> Unit = {}
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -174,6 +184,8 @@ class BaseRepository {
                     exception = CustomException.FailedToConnectException
                 )
                 onErrorResponse(errorResponse)
+            } finally {
+                onFinish()
             }
         }
     }

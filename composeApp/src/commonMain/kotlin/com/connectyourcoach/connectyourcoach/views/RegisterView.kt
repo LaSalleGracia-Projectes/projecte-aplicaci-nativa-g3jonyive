@@ -87,7 +87,7 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(24.dp))
 
         TextField(
-            value = viewModel.username.value,
+            value = viewModel.fullName.value,
             onValueChange = { viewModel.updateFullName(it) },
             label = { Text("Nom complet") },
             modifier = Modifier.fillMaxWidth()
@@ -105,7 +105,7 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = viewModel.username.value,
+            value = viewModel.birthDate.value,
             onValueChange = { viewModel.updateBirthDate(it) },
             label = { Text("Data de neixement") },
             modifier = Modifier.fillMaxWidth()
@@ -114,7 +114,7 @@ fun RegisterPhotoUsernameView(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = viewModel.username.value,
+            value = viewModel.phoneNumber.value,
             onValueChange = { viewModel.updatePhoneNumber(it) },
             label = { Text("Telefon") },
             modifier = Modifier.fillMaxWidth(),

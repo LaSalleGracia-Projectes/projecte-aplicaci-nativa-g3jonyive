@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
+import com.connectyourcoach.connectyourcoach.models.User
 import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -86,11 +87,52 @@ class RegisterViewModel : ViewModel() {
                     displayName = _username.value,
                     photoUrl = _photoUrl.value
                 )
-                onRegisterComplete()
+
+                val user = User(
+                    username = _username.value,
+                    full_name = _fullName.value,
+                    phone = _phoneNumber.value,
+                    birth_date = _birthDate.value,
+                    email = _email.value,
+                    profile_picture = _photoUrl.value,
+                    uid = result.user?.uid ?: "",
+                )
+
+                repository.createUser(
+                    user = user,
+                    onSuccessResponse = {
+                        onRegisterComplete()
+                    },
+                    onErrorResponse = { error ->
+                        onError(Exception(error.details))
+                    },
+                    onFinish = {
+                        _isLoading.value = false
+                    }
+                )
             } catch (e: Exception) {
-                updateRegisterError("Error en el registre: ${e.message}")
-            } finally {
-                _isLoading.value = false
+                onError(e)
+            }
+        }
+    }
+
+    fun onError(e: Exception) {
+        viewModelScope.launch {
+            updateRegisterError("Error en el registre: ${e.message}")
+
+            repository.deleteUser(
+                nickname = _username.value,
+                token = Firebase.auth.currentUser?.getIdToken(false) ?: "",
+                onSuccessResponse = {
+                    // User deleted successfully
+                },
+                onErrorResponse = { error ->
+                    // Handle error
+                }
+            )
+
+            if (Firebase.auth.currentUser != null) {
+                Firebase.auth.currentUser?.delete()
             }
         }
     }
