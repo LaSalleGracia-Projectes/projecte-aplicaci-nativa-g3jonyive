@@ -15,6 +15,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -44,20 +46,20 @@ fun RegisterView(
         }
 
         if (viewModel.isAvatarGenerated.value) {
-            KamelImage(
-                resource = asyncPainterResource(data = viewModel.photoUrl.value),
+            SubcomposeAsyncImage(
+                model = viewModel.photoUrl.value,
                 contentDescription = "User Avatar",
                 modifier = Modifier.size(100.dp),
-                onFailure = {
+                loading = {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary
+                    )
+                },
+                error = {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         modifier = Modifier.size(100.dp),
                         contentDescription = "Error on loading image",
-                    )
-                },
-                onLoading = {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colors.primary
                     )
                 }
             )
