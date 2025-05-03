@@ -14,6 +14,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.models.User
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun ProfileView(
@@ -84,6 +87,39 @@ fun ProfileView(
                 style = MaterialTheme.typography.body1
             )
         } ?: Text("Phone: Not provided", style = MaterialTheme.typography.body1)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        user?.birth_date?.let { birthDate ->
+            val formattedDate = try {
+                val parts = birthDate.split(" ")
+                val day = parts[1]
+                val month = when (parts[2].lowercase()) {
+                    "jan" -> "01"
+                    "feb" -> "02"
+                    "mar" -> "03"
+                    "apr" -> "04"
+                    "may" -> "05"
+                    "jun" -> "06"
+                    "jul" -> "07"
+                    "aug" -> "08"
+                    "sep" -> "09"
+                    "oct" -> "10"
+                    "nov" -> "11"
+                    "dec" -> "12"
+                    else -> "??"
+                }
+                val year = parts[3]
+                "$day/$month/$year"
+            } catch (e: Exception) {
+                "Not provided"
+            }
+
+            Text(
+                text = "Birth Date: $formattedDate",
+                style = MaterialTheme.typography.body1
+            )
+        } ?: Text("Birth Date: Not provided", style = MaterialTheme.typography.body1)
 
         Spacer(modifier = Modifier.height(24.dp))
 
