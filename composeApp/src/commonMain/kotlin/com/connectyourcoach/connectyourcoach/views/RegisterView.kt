@@ -15,14 +15,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import io.ktor.client.HttpClient
 
 @Composable
-fun RegisterPhotoUsernameView(
+fun RegisterView(
     viewModel: RegisterViewModel,
     onRegisterComplete: () -> Unit,
     onLogin: () -> Unit,
@@ -201,7 +199,7 @@ fun RegisterPhotoUsernameView(
         Button(
             onClick = {
                 if (viewModel.isValidRegister()) {
-                    viewModel.onRegister(onRegisterComplete)
+                    viewModel.onRegister()
                 } else {
                     viewModel.updateRegisterError("Please fill all fields correctly")
                 }
@@ -221,5 +219,23 @@ fun RegisterPhotoUsernameView(
                 .clickable { onLogin() },
             color = MaterialTheme.colors.onBackground
         )
+
+        if (viewModel.showDialog.value) {
+            AlertDialog(
+                title = { Text("Register complete") },
+                text = { Text("You have been registered successfully") },
+                onDismissRequest = { viewModel.onDismissDialog() },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.onDismissDialog()
+                            onRegisterComplete()
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
     }
 }

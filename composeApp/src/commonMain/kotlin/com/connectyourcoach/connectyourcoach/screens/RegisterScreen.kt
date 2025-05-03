@@ -4,8 +4,7 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
-import com.connectyourcoach.connectyourcoach.views.RegisterPhotoUsernameView
-import io.ktor.client.HttpClient
+import com.connectyourcoach.connectyourcoach.views.RegisterView
 
 class RegisterScreen : Screen {
     @Composable
@@ -13,7 +12,7 @@ class RegisterScreen : Screen {
         val navigator = LocalNavigator.current
         val registerViewModel = remember { RegisterViewModel() }
 
-        RegisterPhotoUsernameView(
+        RegisterView(
             viewModel = registerViewModel,
             onRegisterComplete = {
                 navigator?.pop()

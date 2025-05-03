@@ -66,6 +66,9 @@ class RegisterViewModel : ViewModel() {
 
     private var imageLoader: ImageLoader? = null
 
+    private val _showDialog = mutableStateOf(false)
+    val showDialog: State<Boolean> get() = _showDialog
+
     init {
         imageLoader = ImageLoader(
             httpClient = HttpClient(),
@@ -97,7 +100,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    fun onRegister(onRegisterComplete: () -> Unit) {
+    fun onRegister() {
         viewModelScope.launch {
             _isLoading.value = true
             resetErrors()
@@ -122,7 +125,7 @@ class RegisterViewModel : ViewModel() {
                 repository.createUser(
                     user = user,
                     onSuccessResponse = {
-                        onRegisterComplete()
+                        _showDialog.value = true
                     },
                     onErrorResponse = { error ->
                         if (error.exception == CustomException.ValidationError) {
@@ -174,6 +177,10 @@ class RegisterViewModel : ViewModel() {
                 Firebase.auth.currentUser?.delete()
             }
         }
+    }
+
+    fun onDismissDialog() {
+        _showDialog.value = false
     }
 
     fun updateUsername(newUsername: String) {
