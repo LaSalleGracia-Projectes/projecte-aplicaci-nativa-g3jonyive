@@ -10,38 +10,44 @@ class UserRepository {
 
     suspend fun getUsers(
         onSuccessResponse: (List<User>) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         baseRepository.getData<List<User>>(
             url = URL,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
     suspend fun getUserByNicknameOrUID(
         nickname: String,
         onSuccessResponse: (User) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/$nickname"
         baseRepository.getData<User>(
             url = URL,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
     suspend fun createUser(
         user: User,
         onSuccessResponse: (User) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         baseRepository.postData<User>(
             url = URL,
             body = user,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -49,14 +55,16 @@ class UserRepository {
         nickname: String,
         token: String,
         onSuccessResponse: (User?) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/$nickname"
         baseRepository.deleteData<User>(
             url = URL,
             token = token,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -64,7 +72,8 @@ class UserRepository {
         user: User,
         token: String,
         onSuccessResponse: (User) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/${user.username}"
         baseRepository.putData<User>(
@@ -72,7 +81,8 @@ class UserRepository {
             token = token,
             body = user,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 }

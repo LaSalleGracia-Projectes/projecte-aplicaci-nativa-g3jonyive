@@ -11,32 +11,37 @@ class TablonRepository {
 
     suspend fun getPosts(
         onSuccessResponse: (List<Post>) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         baseRepository.getData<List<Post>>(
             url = URL,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
     suspend fun getPostById(
         id: String,
         onSuccessResponse: (Post) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/$id"
         baseRepository.getData<Post>(
             url = URL,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
     suspend fun searchPosts(
         query: String,
         onSuccessResponse: (List<Post>) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         baseRepository.getData<List<Post>>(
             url = URL,
@@ -47,20 +52,23 @@ class TablonRepository {
                 }
                 onSuccessResponse(filteredPosts)
             },
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
     suspend fun createPost(
         post: Post,
         onSuccessResponse: (Post) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         baseRepository.postData<Post>(
             url = URL,
             body = post,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -68,14 +76,16 @@ class TablonRepository {
         id: String,
         token: String,
         onSuccessResponse: (Post?) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/$id"
         baseRepository.deleteData<Post>(
             url = URL,
             token = token,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -83,7 +93,8 @@ class TablonRepository {
         post: Post,
         token: String,
         onSuccessResponse: (Post) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/${post.id}"
         baseRepository.putData<Post>(
@@ -91,7 +102,8 @@ class TablonRepository {
             token = token,
             body = post,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -99,14 +111,16 @@ class TablonRepository {
         id: String,
         token: String,
         onSuccessResponse: (Int) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/like/$id"
         baseRepository.getData<Int>(
             url = URL,
             token = token,
             onSuccessResponse = onSuccessResponse,
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 
@@ -114,7 +128,8 @@ class TablonRepository {
         id: String,
         token: String,
         onSuccessResponse: (Boolean) -> Unit,
-        onErrorResponse: (ErrorResponse) -> Unit
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/like/$id"
         baseRepository.postData<Like?>(
@@ -123,7 +138,8 @@ class TablonRepository {
             onSuccessResponse = {
                 onSuccessResponse(it != null)
             },
-            onErrorResponse = onErrorResponse
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
         )
     }
 }
