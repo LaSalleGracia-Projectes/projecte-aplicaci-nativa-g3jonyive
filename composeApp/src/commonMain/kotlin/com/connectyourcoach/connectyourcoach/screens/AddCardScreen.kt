@@ -8,6 +8,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.AddCardTopBar
+import com.connectyourcoach.connectyourcoach.viewmodels.AddCardViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 import com.connectyourcoach.connectyourcoach.views.AddCardView
 
@@ -16,7 +17,7 @@ class AddCardScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val viewModel by remember { mutableStateOf(TablonViewModel()) }
+        val viewModel by remember { mutableStateOf(AddCardViewModel()) }
 
         BaseScaffold(
             navigator = navigator,
@@ -27,9 +28,10 @@ class AddCardScreen : Screen {
             },
         ) { paddingValues ->
             AddCardView(
-                paddingValues = paddingValues
-            ) { title, content, price ->
-
+                paddingValues = paddingValues,
+                viewModel = viewModel,
+            ) {
+                navigator?.pop()
             }
         }
     }
