@@ -60,6 +60,7 @@ class TablonViewModel : ViewModel() {
                     _loading.value = false
                 }
             )
+            _loading.value = true
         }
     }
 }
