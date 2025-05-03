@@ -1,11 +1,11 @@
 package com.connectyourcoach.connectyourcoach.viewmodels
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
+import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import io.ktor.client.HttpClient
@@ -30,10 +30,13 @@ class RegisterViewModel : ViewModel() {
     private val _showAvatarGenerator = mutableStateOf(false)
     val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
 
+    private val repository = UserRepository();
+
     private var imageLoader: ImageLoader? = null
 
     fun initialize(httpClient: HttpClient) {
         imageLoader = ImageLoader(httpClient)
+        generateRandomAvatar()
     }
 
     fun generateRandomAvatar() {

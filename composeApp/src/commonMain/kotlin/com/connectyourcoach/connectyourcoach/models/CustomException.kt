@@ -1,13 +1,17 @@
 package com.connectyourcoach.connectyourcoach.models
 
-enum class Exception {
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class CustomException {
     ModelNotFoundException,
     ModelAlreadyExistsException,
-    ValidationException,
+    ValidationError,
     UnauthorizedException,
-    InternalServerErrorException,
+    InternalServerError,
     BadRequestException,
     PageNotFound,
     MethodNotAllowed,
     FirebaseException,
+    FailedToConnectException,
 }

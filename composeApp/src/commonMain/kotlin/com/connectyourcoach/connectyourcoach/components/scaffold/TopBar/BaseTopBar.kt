@@ -3,6 +3,7 @@ package com.connectyourcoach.connectyourcoach.components.scaffold.TopBar
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -26,7 +27,7 @@ fun BaseTopBar(
     if (onBack != null) {
         newNavigationIcon = {
             IconButton(onClick = { onBack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Black)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Black)
             }
         }
     }

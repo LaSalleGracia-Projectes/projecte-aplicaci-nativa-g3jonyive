@@ -1,16 +1,19 @@
 package com.connectyourcoach.connectyourcoach.models
 
+import kotlinx.serialization.Serializable
 
+
+@Serializable
 data class Post(
-    val id: String,
-    val created_at: String,
-    val updated_at: String,
+    val id: Int,
+    val created_at: String? = null,
+    val updated_at: String? = null,
 
-    val price: Float,
+    val price: Double,
     val user_id: Int,
-    val title: String,
-    val description: String,
-    val photo: String? = null,
-    val company_id: Int? = null,
-    val specialization_id: Int? = null,
+    var title: String,
+    var description: String,
+    var photo: String? = null,
+    var company_id: Int? = null,
+    var specialization_id: Int? = null,
 )

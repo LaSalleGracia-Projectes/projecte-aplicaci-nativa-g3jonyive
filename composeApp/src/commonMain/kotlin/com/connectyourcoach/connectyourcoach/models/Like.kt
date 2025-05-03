@@ -1,5 +1,8 @@
 package com.connectyourcoach.connectyourcoach.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Like(
     val id: String,
     val created_at: String,

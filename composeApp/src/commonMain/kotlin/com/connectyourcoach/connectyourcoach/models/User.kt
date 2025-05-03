@@ -1,15 +1,17 @@
 package com.connectyourcoach.connectyourcoach.models
 
-data class User(
-    val id: String,
-    val created_at: String,
-    val updated_at: String,
+import kotlinx.serialization.Serializable
 
-    val uid: String,
-    val username: String,
+@Serializable
+data class User(
+    var birth_date: String? = null,
+    val created_at: String? = null,
     val email: String,
-    val full_name: String,
-    val phone: String? = null,
-    val birth_date: String,
-    val profile_picture: String? = null
+    var full_name: String,
+    val id: Int? = null,
+    var phone: String? = null,
+    var profile_picture: String? = null,
+    val uid: String,
+    val updated_at: String? = null,
+    var username: String
 )

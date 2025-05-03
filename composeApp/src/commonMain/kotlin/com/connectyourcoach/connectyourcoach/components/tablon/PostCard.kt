@@ -21,7 +21,7 @@ fun PostCard(post: Post, backgroundColor: Color, onClick: (String) -> Unit) {
         modifier = Modifier
             .background(backgroundColor)
             .padding(8.dp)
-            .clickable { onClick(post.id) },
+            .clickable { onClick(post.id.toString()) },
         elevation = 4.dp,
         backgroundColor = MaterialTheme.colors.onSurface
     ) {
