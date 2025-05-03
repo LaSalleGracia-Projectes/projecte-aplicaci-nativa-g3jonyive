@@ -232,7 +232,7 @@ fun RegisterView(
                             onRegisterComplete()
                         }
                     ) {
-                        Text("OK")
+                        Text("Ok!")
                     }
                 },
             )

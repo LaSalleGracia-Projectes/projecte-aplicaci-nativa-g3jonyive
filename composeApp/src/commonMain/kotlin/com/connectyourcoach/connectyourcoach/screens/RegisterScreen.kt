@@ -15,7 +15,7 @@ class RegisterScreen : Screen {
         RegisterView(
             viewModel = registerViewModel,
             onRegisterComplete = {
-                navigator?.pop()
+                navigator?.replaceAll(TablonScreen())
             },
             onLogin = { navigator?.pop() }
         )
