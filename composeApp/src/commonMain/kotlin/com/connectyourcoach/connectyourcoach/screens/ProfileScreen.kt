@@ -33,8 +33,7 @@ class ProfileScreen : Screen {
                 onLogout = {
                     navigator.popAll()
                     navigator.push(LoginScreen())
-                },
-                onSettingsClick = { navigator.push(SettingsScreen()) }
+                }
             )
         }
     }

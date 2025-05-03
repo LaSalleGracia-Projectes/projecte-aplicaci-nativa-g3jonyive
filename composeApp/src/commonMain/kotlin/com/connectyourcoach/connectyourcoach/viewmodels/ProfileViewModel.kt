@@ -3,6 +3,8 @@ package com.connectyourcoach.connectyourcoach.viewmodels
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.connectyourcoach.connectyourcoach.models.User
+import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -10,39 +12,40 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
     private val auth by mutableStateOf(Firebase.auth)
 
-    val fullname = mutableStateOf("")
-    val phoneNumber = mutableStateOf("")
-    val email = mutableStateOf("")
-    val photoUrl = mutableStateOf("")
+    private val repository = UserRepository()
+
+    private val _user = mutableStateOf<User?>(null)
+    val user: State<User?> get() = _user
+
+    private val _isLoading = mutableStateOf(true)
+    val isLoading: State<Boolean> get() = _isLoading
 
     init {
-        loadUserData()
-    }
-
-    private fun loadUserData() {
-        auth.currentUser?.let { user ->
-            fullname.value = user.displayName ?: ""
-            phoneNumber.value = user.phoneNumber ?: ""
-            email.value = user.email ?: ""
-            photoUrl.value = user.photoURL ?: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-        }
-    }
-
-    fun refreshUserData() {
         viewModelScope.launch {
-            auth.currentUser?.reload()
             loadUserData()
         }
     }
 
-    fun onLogout() {
+    private suspend fun loadUserData() {
+        _isLoading.value = true
+        repository.getUserByNicknameOrUID(
+            nickname = auth.currentUser?.uid ?: "",
+            onSuccessResponse = { user ->
+                _user.value = user
+            },
+            onErrorResponse = { error ->
+
+            },
+            onFinish = {
+                _isLoading.value = false
+            }
+        )
+    }
+
+    fun onClickLogout(onLogout: () -> Unit) {
         viewModelScope.launch {
             auth.signOut()
-            // Reset values after logout
-            fullname.value = ""
-            phoneNumber.value = ""
-            email.value = ""
-            photoUrl.value = ""
+            onLogout()
         }
     }
 }
