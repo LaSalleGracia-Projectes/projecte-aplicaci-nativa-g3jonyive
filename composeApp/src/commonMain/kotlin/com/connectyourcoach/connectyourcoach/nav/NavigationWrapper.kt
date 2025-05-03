@@ -14,7 +14,7 @@ import dev.gitlive.firebase.auth.auth
 fun NavigationWrapper() {
     val user = Firebase.auth.currentUser
 
-    val screen = if (user != null) TablonScreen() else RegisterScreen()
+    val screen = if (user != null) TablonScreen() else LoginScreen()
 
     Navigator(screen = screen) { navigator ->
         SlideTransition(navigator)

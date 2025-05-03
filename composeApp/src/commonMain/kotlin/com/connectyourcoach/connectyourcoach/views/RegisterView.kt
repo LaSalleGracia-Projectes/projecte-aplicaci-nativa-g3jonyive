@@ -2,13 +2,16 @@ package com.connectyourcoach.connectyourcoach.views
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -22,25 +25,13 @@ import io.ktor.client.HttpClient
 fun RegisterPhotoUsernameView(
     viewModel: RegisterViewModel,
     onRegisterComplete: () -> Unit,
-    httpClient: HttpClient,
-    onLogin: () -> Boolean?
+    onLogin: () -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.initialize(httpClient)
-    }
-
-    if (viewModel.showAvatarGenerator.value) {
-        ApiCamera(httpClient) { imageUrl ->
-            viewModel.updateAvatarUrl(imageUrl)
-            viewModel.showAvatarGenerator(false)
-        }
-        return
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -91,8 +82,17 @@ fun RegisterPhotoUsernameView(
             value = viewModel.fullName.value,
             onValueChange = { viewModel.updateFullName(it) },
             label = { Text("Full name") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
+        if (viewModel.fullNameError.value.isNotBlank()) {
+            Text(
+                text = viewModel.fullNameError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -100,8 +100,17 @@ fun RegisterPhotoUsernameView(
             value = viewModel.username.value,
             onValueChange = { viewModel.updateUsername(it) },
             label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
+        if (viewModel.usernameError.value.isNotBlank()) {
+            Text(
+                text = viewModel.usernameError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -109,8 +118,17 @@ fun RegisterPhotoUsernameView(
             value = viewModel.birthDate.value,
             onValueChange = { viewModel.updateBirthDate(it) },
             label = { Text("Birth date") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
+        if (viewModel.birthDateError.value.isNotBlank()) {
+            Text(
+                text = viewModel.birthDateError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -120,9 +138,17 @@ fun RegisterPhotoUsernameView(
             label = { Text("Phone") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone
+                keyboardType = KeyboardType.Phone,
+                autoCorrect = false,
+                imeAction = ImeAction.Next
             )
         )
+        if (viewModel.phoneNumberError.value.isNotBlank()) {
+            Text(
+                text = viewModel.phoneNumberError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -132,9 +158,17 @@ fun RegisterPhotoUsernameView(
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                autoCorrect = false,
+                imeAction = ImeAction.Next
             )
         )
+        if (viewModel.emailError.value.isNotBlank()) {
+            Text(
+                text = viewModel.emailError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -144,15 +178,23 @@ fun RegisterPhotoUsernameView(
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
+                keyboardType = KeyboardType.Password,
+                autoCorrect = false,
+                imeAction = ImeAction.Done
             ),
             modifier = Modifier.fillMaxWidth()
         )
+        if (viewModel.passwordError.value.isNotBlank()) {
+            Text(
+                text = viewModel.passwordError.value,
+                color = MaterialTheme.colors.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         if (viewModel.registerError.value.isNotBlank()) {
-            Text(viewModel.registerError.value, color = MaterialTheme.colors.error)
+            Text(text = viewModel.registerError.value, color = MaterialTheme.colors.error)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -161,7 +203,7 @@ fun RegisterPhotoUsernameView(
                 if (viewModel.isValidRegister()) {
                     viewModel.onRegister(onRegisterComplete)
                 } else {
-                    viewModel.updateRegisterError("Si us plau, omple tots els camps correctament i selecciona un avatar")
+                    viewModel.updateRegisterError("Please fill all fields correctly")
                 }
             },
             modifier = Modifier.fillMaxWidth()

@@ -12,14 +12,12 @@ class RegisterScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val registerViewModel = remember { RegisterViewModel() }
-        val httpClient = remember { HttpClient() }
 
         RegisterPhotoUsernameView(
             viewModel = registerViewModel,
             onRegisterComplete = {
                 navigator?.pop()
             },
-            httpClient = httpClient,
             onLogin = { navigator?.pop() }
         )
     }
