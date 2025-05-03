@@ -17,6 +17,9 @@ class ProfileViewModel : ViewModel() {
     private val _user = mutableStateOf<User?>(null)
     val user: State<User?> get() = _user
 
+    private val _isLoading = mutableStateOf(true)
+    val isLoading: State<Boolean> get() = _isLoading
+
     init {
         viewModelScope.launch {
             loadUserData()
@@ -24,13 +27,17 @@ class ProfileViewModel : ViewModel() {
     }
 
     private suspend fun loadUserData() {
+        _isLoading.value = true
         repository.getUserByNicknameOrUID(
             nickname = auth.currentUser?.uid ?: "",
             onSuccessResponse = { user ->
                 _user.value = user
             },
             onErrorResponse = { error ->
-                // Handle error
+
+            },
+            onFinish = {
+                _isLoading.value = false
             }
         )
     }

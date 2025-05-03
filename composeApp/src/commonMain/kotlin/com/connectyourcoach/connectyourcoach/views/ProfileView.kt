@@ -34,6 +34,12 @@ fun ProfileView(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (viewModel.isLoading.value) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary
+            )
+            return@Column
+        }
         SubcomposeAsyncImage(
             model = user?.profile_picture ?: "",
             contentDescription = "User Avatar",
