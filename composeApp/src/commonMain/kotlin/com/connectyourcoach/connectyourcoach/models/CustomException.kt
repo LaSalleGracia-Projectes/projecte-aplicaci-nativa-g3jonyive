@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 enum class CustomException {
     ModelNotFoundException,
     ModelAlreadyExistsException,
-    ValidationException,
+    ValidationError,
     UnauthorizedException,
     InternalServerError,
     BadRequestException,

@@ -36,6 +36,7 @@ class RegisterViewModel : ViewModel() {
 
     fun initialize(httpClient: HttpClient) {
         imageLoader = ImageLoader(httpClient)
+        generateRandomAvatar()
     }
 
     fun generateRandomAvatar() {
