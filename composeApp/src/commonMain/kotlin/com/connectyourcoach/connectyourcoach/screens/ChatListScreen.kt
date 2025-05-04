@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ChatListTopBar
+import com.connectyourcoach.connectyourcoach.viewmodels.ListChatViewModel
 import com.connectyourcoach.connectyourcoach.views.ListChatView
 
 class ChatListScreen : Screen {
@@ -18,6 +19,7 @@ class ChatListScreen : Screen {
             topBar = { ChatListTopBar() },
         ) { paddingValues ->
             ListChatView(
+                viewModel = ListChatViewModel(),
                 paddingValues = paddingValues
             ) { chatPreview ->
                 navigator?.push(ChatScreen())

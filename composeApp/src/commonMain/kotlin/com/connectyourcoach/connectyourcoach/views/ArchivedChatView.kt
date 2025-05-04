@@ -16,15 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import com.connectyourcoach.connectyourcoach.models.FirestoreChat
 import connectyourcoach.composeapp.generated.resources.Res
+import connectyourcoach.composeapp.generated.resources.logo
 import connectyourcoach.composeapp.generated.resources.undo
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ArchivedChatView(
-    chatsArchivados: List<ChatPreview>,
+    chatsArchivados: List<FirestoreChat>,
     paddingValues: PaddingValues,
-    onRestore: (ChatPreview) -> Unit
+    onRestore: (FirestoreChat) -> Unit
 ) {
     if (chatsArchivados.isEmpty()) {
         Box(
@@ -45,7 +47,7 @@ fun ArchivedChatView(
 }
 
 @Composable
-fun ChatArchivedItem(chat: ChatPreview, onRestore: () -> Unit) {
+fun ChatArchivedItem(chat: FirestoreChat, onRestore: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +55,7 @@ fun ChatArchivedItem(chat: ChatPreview, onRestore: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(chat.avatar),
+            painter = painterResource(Res.drawable.logo),
             contentDescription = "Avatar",
             modifier = Modifier
                 .size(50.dp)
@@ -62,8 +64,8 @@ fun ChatArchivedItem(chat: ChatPreview, onRestore: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(chat.userName, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text(chat.lastMessage, fontSize = 14.sp, color = Color.Gray)
+            Text("Usuario", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Ultimo mensaje", fontSize = 14.sp, color = Color.Gray)
         }
         Image(
             painter = painterResource(Res.drawable.undo),
