@@ -17,16 +17,9 @@ class ListChatViewModel : ViewModel() {
 
     val chats = firestoreChatRepository.getChats()
 
-    private val _querySearch = mutableStateOf("")
-    val querySearch: State<String> get() = _querySearch
-
     fun getUser(chat: FirestoreChat): Flow<FirestoreUser> {
         val uid = Firebase.auth.currentUser?.uid ?: ""
         val userID = chat.participants.find { it != uid }
         return firestoreUserRepository.getUserById(userID!!)
-    }
-
-    fun updateQuerySearch(query: String) {
-        _querySearch.value = query
     }
 }

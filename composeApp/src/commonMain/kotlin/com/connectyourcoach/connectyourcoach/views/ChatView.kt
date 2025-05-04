@@ -65,7 +65,6 @@ fun ChatView(
             }
         }
 
-        // Input de mensaje
         Row(
             modifier = Modifier
                 .fillMaxWidth()
