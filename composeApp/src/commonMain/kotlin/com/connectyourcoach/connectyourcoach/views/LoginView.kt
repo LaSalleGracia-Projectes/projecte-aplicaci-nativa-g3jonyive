@@ -73,7 +73,8 @@ fun LoginView(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Next,
+                autoCorrect = false
             )
         )
 
@@ -88,7 +89,8 @@ fun LoginView(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
+                autoCorrect = false
             ),
             keyboardActions = KeyboardActions(
                 onDone = { viewModel.onLogin() }
