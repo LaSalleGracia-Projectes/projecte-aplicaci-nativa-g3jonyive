@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.painterResource
 fun ListChatView(
     viewModel: ListChatViewModel,
     paddingValues: PaddingValues,
-    onChatSelected: (String) -> Unit
+    onChatSelected: (String, FirestoreUser) -> Unit
 ) {
     val chats by viewModel.chats.collectAsState(initial = emptyList())
     val querySearch by viewModel.querySearch
@@ -62,11 +62,14 @@ fun ListChatView(
 
         LazyColumn {
             items(chats) { chat ->
-                viewModel.getUser(chat).collectAsState(initial = null).value?.let {
+                viewModel.getUser(chat).collectAsState(initial = null).value?.let { user ->
                     ChatListItem(
                         chat = chat,
-                        user = it,
-                        onClick = { onChatSelected(chat.id) },
+                        user = user,
+                        onClick = { onChatSelected(
+                            chat.id,
+                            user
+                        ) },
                         onArchive = {
 
                         }

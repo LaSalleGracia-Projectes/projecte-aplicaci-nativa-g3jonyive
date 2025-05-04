@@ -13,6 +13,7 @@ import com.connectyourcoach.connectyourcoach.views.ChatView
 
 class ChatScreen(
     private val chatId: String,
+    private val user: FirestoreUser
 ) : Screen {
 
     @Composable
@@ -24,7 +25,7 @@ class ChatScreen(
         BaseScaffold(
             navigator = navigator,
             topBar = { ChatTopBar(
-                userName = "Usuario",
+                user = user,
                 onAvatarClick = {  },
                 onBackClick = {
                     navigator?.pop()
