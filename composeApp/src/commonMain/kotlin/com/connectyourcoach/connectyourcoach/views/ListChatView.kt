@@ -41,9 +41,7 @@ fun ListChatView(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(64.dp)
-                )
+                Text("No chats available")
             }
             return@Column
         }

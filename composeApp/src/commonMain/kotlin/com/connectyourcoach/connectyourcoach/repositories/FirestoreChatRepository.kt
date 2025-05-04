@@ -32,8 +32,12 @@ class FirestoreChatRepository {
     fun getChats() = flow {
         collection
             .snapshots.collect { querySnapshot ->
-                val chats = querySnapshot.documents.map { documentSnapshot ->
-                    documentSnapshot.data<FirestoreChat>()
+                val chats = try {
+                    querySnapshot.documents.map { documentSnapshot ->
+                        documentSnapshot.data<FirestoreChat>()
+                    }
+                } catch (e: Exception) {
+                    emptyList<FirestoreChat>()
                 }
             emit(chats)
         }
@@ -51,14 +55,18 @@ class FirestoreChatRepository {
     fun getChatByUserId(userId: String) = flow {
         collection
             .snapshots.collect { querySnapshot ->
-                val chats = querySnapshot.documents.mapNotNull { documentSnapshot ->
-                    val chat = documentSnapshot.data<FirestoreChat>()
-                    if (chat.participants.contains(userId)) {
-                        chat
-                    } else {
-                        null
+                val allChats = try {
+                    querySnapshot.documents.map { documentSnapshot ->
+                        documentSnapshot.data<FirestoreChat>()
                     }
+                } catch (e: Exception) {
+                    emptyList<FirestoreChat>()
                 }
+
+                val chats: List<FirestoreChat> = allChats.filter { chat ->
+                    chat.participants.contains(userId)
+                }
+
                 emit(chats)
             }
     }
