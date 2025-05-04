@@ -45,6 +45,9 @@ googleSignIn = "7.0.0"
 kotlinx-datetime = "0.4.1"
 firebaseCommonKtx = "21.0.0"
 
+# Firestore
+firebase-bom = "33.1.1"
+gitlive = "1.13.0"
 
 [libraries]
 google-sign-in = { module = "com.google.ios.signin:GoogleSignIn", version.ref = "googleSignIn" }
@@ -119,6 +122,10 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 # Compose Desktop
 compose-desktop = { module = "org.jetbrains.compose.desktop:desktop-jvm", version.ref = "compose-multiplatform" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+
+# Firestore
+android-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+gitlive-firebase-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "gitlive" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

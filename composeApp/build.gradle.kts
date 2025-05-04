@@ -45,6 +45,9 @@ kotlin {
             implementation(libs.compose.ui.tooling)
 
             implementation(libs.play.services.auth)
+
+            // Firestore
+            implementation(project.dependencies.platform(libs.android.firebase.bom))
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core.v173)
@@ -76,6 +79,9 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+
+            // Firestore
+            implementation(libs.gitlive.firebase.firestore)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
