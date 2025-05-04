@@ -56,7 +56,6 @@ fun ChatView(
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
             reverseLayout = true
         ) {

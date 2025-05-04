@@ -7,5 +7,4 @@ import kotlinx.serialization.Serializable
 data class FirestoreChatMessage(
     val message: String,
     val sender: String,
-    val created: Timestamp = Timestamp.now(),
 )

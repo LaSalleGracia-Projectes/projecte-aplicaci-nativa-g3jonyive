@@ -11,9 +11,9 @@ class FirestoreChatRepository {
     private val firestore = Firebase.firestore
     private val collection = firestore.collection("chats")
 
-    suspend fun addChat(chatId: String, chat: FirestoreChat) {
+    suspend fun addChat(chat: FirestoreChat) {
         collection
-            .document(chatId)
+            .document(chat.id)
             .set(chat)
     }
 

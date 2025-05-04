@@ -84,7 +84,7 @@ fun ChatListItem(
             Text(chat.messages.last().message, fontSize = 14.sp, color = Color.Gray)
         }
         Column(horizontalAlignment = Alignment.End) {
-            val date = chat.messages.last().created.toDuration().let { period ->
+            val date = chat.created.toDuration().let { period ->
                     val createdDateTime = kotlinx.datetime.Clock.System.now()
                         .minus(period)
                     "${createdDateTime.toLocalDateTime(TimeZone.UTC).date}"
