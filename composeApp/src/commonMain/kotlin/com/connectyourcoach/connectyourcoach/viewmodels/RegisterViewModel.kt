@@ -166,6 +166,7 @@ class RegisterViewModel : ViewModel() {
                         uid = result.user?.uid ?: "",
                         username = _username.value,
                         phone = _phoneNumber.value,
+                        photoUrl = _photoUrl.value,
                     )
                 )
             } catch (e: Exception) {

@@ -7,5 +7,6 @@ data class FirestoreUser (
     val uid: String,
     val username: String,
     val phone: String,
+    val photoUrl: String,
     val tokens: List<String> = emptyList(),
 )
