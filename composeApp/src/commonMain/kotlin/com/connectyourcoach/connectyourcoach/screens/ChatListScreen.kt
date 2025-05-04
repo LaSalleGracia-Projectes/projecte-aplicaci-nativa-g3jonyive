@@ -21,8 +21,10 @@ class ChatListScreen : Screen {
             ListChatView(
                 viewModel = ListChatViewModel(),
                 paddingValues = paddingValues
-            ) { chatPreview ->
-                navigator?.push(ChatScreen())
+            ) { chatId ->
+                navigator?.push(ChatScreen(
+                    chatId = chatId
+                ))
             }
         }
     }

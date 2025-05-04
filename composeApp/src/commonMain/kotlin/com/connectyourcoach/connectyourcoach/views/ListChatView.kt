@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
+import com.connectyourcoach.connectyourcoach.components.AvatarIcon
 import com.connectyourcoach.connectyourcoach.models.FirestoreChat
 import com.connectyourcoach.connectyourcoach.models.FirestoreUser
 import com.connectyourcoach.connectyourcoach.viewmodels.ListChatViewModel
@@ -40,7 +41,7 @@ import org.jetbrains.compose.resources.painterResource
 fun ListChatView(
     viewModel: ListChatViewModel,
     paddingValues: PaddingValues,
-    onChatSelected: (FirestoreChat) -> Unit
+    onChatSelected: (String) -> Unit
 ) {
     val chats by viewModel.chats.collectAsState(initial = emptyList())
     val querySearch by viewModel.querySearch
@@ -65,7 +66,7 @@ fun ListChatView(
                     ChatListItem(
                         chat = chat,
                         user = it,
-                        onClick = { onChatSelected(chat) },
+                        onClick = { onChatSelected(chat.id) },
                         onArchive = {
 
                         }
@@ -90,27 +91,7 @@ fun ChatListItem(
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SubcomposeAsyncImage(
-            model = user.photoUrl,
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Color.Gray),
-            contentDescription = "Avatar",
-            loading = {
-                CircularProgressIndicator(
-                    color = Color.Gray,
-                    modifier = Modifier.size(50.dp)
-                )
-            },
-            error = {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    modifier = Modifier.size(50.dp),
-                    contentDescription = "Error on loading image",
-                )
-            }
-        )
+        AvatarIcon(user.photoUrl)
 
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,27 +18,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
+import com.connectyourcoach.connectyourcoach.components.AvatarIcon
+import com.connectyourcoach.connectyourcoach.models.FirestoreChat
+import com.connectyourcoach.connectyourcoach.models.FirestoreChatMessage
+import com.connectyourcoach.connectyourcoach.models.FirestoreUser
+import com.connectyourcoach.connectyourcoach.viewmodels.ChatViewModel
 import connectyourcoach.composeapp.generated.resources.Res
 import connectyourcoach.composeapp.generated.resources.logo
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-data class ChatMessage(val id: String, val text: String, val userId: String, val avatar: DrawableResource)
-
-// Simulación de imágenes de usuario
-fun getUserAvatar(userId: String): DrawableResource {
-    return if (userId == "Tú") Res.drawable.logo else Res.drawable.logo
-}
-
 @Composable
-fun ChatView(paddingValues: PaddingValues) {
-    var messages by remember { mutableStateOf(listOf(
-        ChatMessage("1", "Hola! ¿Cómo estás?", "Usuario1", getUserAvatar("Usuario1")),
-        ChatMessage("2", "Todo bien, ¿y tú?", "Usuario2", getUserAvatar("Usuario2")),
-        ChatMessage("3", "También bien, gracias!", "Usuario1", getUserAvatar("Usuario1"))
-    )) }
+fun ChatView(
+    viewModel: ChatViewModel,
+    paddingValues: PaddingValues
+) {
+    val chat by viewModel.chat.collectAsState(initial = null)
 
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+    val user by viewModel.user.collectAsState(initial = null)
+
+    val newMessage by viewModel.message
 
     Column(
         modifier = Modifier
@@ -51,8 +54,11 @@ fun ChatView(paddingValues: PaddingValues) {
                 .fillMaxWidth(),
             reverseLayout = true
         ) {
-            items(messages.reversed()) { message ->
-                ChatBubble(message)
+            items(chat?.messages?.reversed() ?: emptyList()) { message ->
+                ChatBubble(
+                    message = message,
+                    user = viewModel.firestoreUserRepository.getUserById(message.sender).collectAsState(initial = user).value
+                )
             }
         }
 
@@ -64,8 +70,8 @@ fun ChatView(paddingValues: PaddingValues) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
+                value = newMessage,
+                onValueChange = { viewModel.updateMessage(it) },
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(20.dp),
                 placeholder = { Text("Escribe un mensaje...") },
@@ -77,17 +83,7 @@ fun ChatView(paddingValues: PaddingValues) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
-                onClick = {
-                    if (text.text.isNotBlank()) {
-                        messages = messages + ChatMessage(
-                            (messages.size + 1).toString(),
-                            text.text,
-                            "Tú",
-                            getUserAvatar("Tú")
-                        )
-                        text = TextFieldValue("")
-                    }
-                }
+                onClick = { viewModel.sendMessage() }
             ) {
                 Icon(Icons.Filled.Send, contentDescription = "Enviar", tint = Color(0xFF173040))
             }
@@ -96,21 +92,24 @@ fun ChatView(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun ChatBubble(message: ChatMessage) {
-    val isCurrentUser = message.userId == "Tú"
+fun ChatBubble(
+    message: FirestoreChatMessage,
+    user: FirestoreUser?
+) {
+    val isCurrentUser = message.sender == Firebase.auth.currentUser?.uid
     val bubbleColor = if (isCurrentUser) Color(0xFF5FD9AC) else Color(0xFFD9D8D2)
     val textColor = if (isCurrentUser) Color.White else Color.Black
-    val alignment = if (isCurrentUser) Alignment.End else Alignment.Start
+    val arragement = if (isCurrentUser) Arrangement.End else Arrangement.Start
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start,
+        horizontalArrangement = arragement,
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (!isCurrentUser) {
-            AvatarIcon(message.avatar)
+            AvatarIcon(user?.photoUrl ?: "")
             Spacer(modifier = Modifier.width(8.dp))
         }
 
@@ -120,26 +119,12 @@ fun ChatBubble(message: ChatMessage) {
                 .background(bubbleColor)
                 .padding(12.dp)
         ) {
-            Text(text = message.text, fontSize = 16.sp, color = textColor)
+            Text(text = message.message, fontSize = 16.sp, color = textColor)
         }
 
         if (isCurrentUser) {
             Spacer(modifier = Modifier.width(16.dp))
-            AvatarIcon(message.avatar)
+            AvatarIcon(user?.photoUrl ?: "")
         }
     }
-}
-
-@Composable
-fun AvatarIcon(imageRes: DrawableResource) {
-    Icon(
-        painter = painterResource(
-            resource = imageRes
-        ),
-        contentDescription = "Avatar",
-        modifier = Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(Color.Gray)
-    )
 }
