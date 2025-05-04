@@ -59,6 +59,7 @@ class TablonRepository {
 
     suspend fun createPost(
         post: Post,
+        token: String,
         onSuccessResponse: (Post) -> Unit,
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
@@ -66,6 +67,7 @@ class TablonRepository {
         baseRepository.postData<Post>(
             url = URL,
             body = post,
+            token = token,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
             onFinish = onFinish

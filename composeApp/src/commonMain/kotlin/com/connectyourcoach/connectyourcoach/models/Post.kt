@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Post(
-    val id: Int,
+    val id: Int? = null,
     val created_at: String? = null,
     val updated_at: String? = null,
 
