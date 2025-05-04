@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
 import com.connectyourcoach.connectyourcoach.models.CustomException
+import com.connectyourcoach.connectyourcoach.models.FirestoreUser
 import com.connectyourcoach.connectyourcoach.models.User
+import com.connectyourcoach.connectyourcoach.repositories.FirestoreUserRepository
 import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -62,7 +64,9 @@ class RegisterViewModel : ViewModel() {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> get() = _isLoading
 
-    private val repository = UserRepository();
+    private val userRepository = UserRepository();
+
+    private val firestoreUserRepository = FirestoreUserRepository()
 
     private var imageLoader: ImageLoader? = null
 
@@ -101,6 +105,11 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun onRegister() {
+        if (!isValidRegister()) {
+            updateRegisterError("Please fill all fields correctly")
+            return
+        }
+
         viewModelScope.launch {
             _isLoading.value = true
             resetErrors()
@@ -122,7 +131,7 @@ class RegisterViewModel : ViewModel() {
                     uid = result.user?.uid ?: "",
                 )
 
-                repository.createUser(
+                userRepository.createUser(
                     user = user,
                     onSuccessResponse = {
                         _showDialog.value = true
@@ -151,6 +160,14 @@ class RegisterViewModel : ViewModel() {
                         _isLoading.value = false
                     }
                 )
+
+                firestoreUserRepository.addUser(
+                    user = FirestoreUser(
+                        uid = result.user?.uid ?: "",
+                        username = _username.value,
+                        phone = _phoneNumber.value,
+                    )
+                )
             } catch (e: Exception) {
                 onError(e)
                 _isLoading.value = false
@@ -162,7 +179,7 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             updateRegisterError("Error en el registre: ${e.message}")
 
-            repository.deleteUser(
+            userRepository.deleteUser(
                 nickname = _username.value,
                 token = Firebase.auth.currentUser?.getIdToken(false) ?: "",
                 onSuccessResponse = {
@@ -176,6 +193,10 @@ class RegisterViewModel : ViewModel() {
             if (Firebase.auth.currentUser != null) {
                 Firebase.auth.currentUser?.delete()
             }
+
+            firestoreUserRepository.deleteUser(
+                userId = Firebase.auth.currentUser?.uid ?: "",
+            )
         }
     }
 

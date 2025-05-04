@@ -199,13 +199,7 @@ fun RegisterView(
         }
 
         Button(
-            onClick = {
-                if (viewModel.isValidRegister()) {
-                    viewModel.onRegister()
-                } else {
-                    viewModel.updateRegisterError("Please fill all fields correctly")
-                }
-            },
+            onClick = { viewModel.onRegister() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")
