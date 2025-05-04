@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,18 +77,24 @@ fun ChatView(
                 onValueChange = { viewModel.updateMessage(it) },
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(20.dp),
-                placeholder = { Text("Escribe un mensaje...") },
+                placeholder = { Text("Message...") },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = Color.White,
                     focusedBorderColor = Color(0xFF173040),
                     unfocusedBorderColor = Color.Gray
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        viewModel.sendMessage()
+                    }
                 )
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
                 onClick = { viewModel.sendMessage() }
             ) {
-                Icon(Icons.Filled.Send, contentDescription = "Enviar", tint = Color(0xFF173040))
+                Icon(Icons.Filled.Send, contentDescription = "Send", tint = Color(0xFF173040))
             }
         }
     }

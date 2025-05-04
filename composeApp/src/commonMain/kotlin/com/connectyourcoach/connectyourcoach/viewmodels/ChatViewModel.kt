@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.connectyourcoach.connectyourcoach.models.FirestoreChatMessage
 import com.connectyourcoach.connectyourcoach.models.FirestoreUser
 import com.connectyourcoach.connectyourcoach.repositories.FirestoreChatRepository
 import com.connectyourcoach.connectyourcoach.repositories.FirestoreUserRepository
@@ -42,11 +43,16 @@ class ChatViewModel(
     }
 
     suspend fun onSendMessage() {
-        /* val currentUser = Firebase.auth.currentUser?.uid
+        val currentUser = Firebase.auth.currentUser?.uid
         if (currentUser != null) {
-            firestoreChatRepository.addMessageToChat(
-                chatId = chatId, message = message.value
+            val message = FirestoreChatMessage(
+                sender = currentUser,
+                message = message.value,
             )
-        } */
+            firestoreChatRepository.addMessageToChat(
+                chatId = chatId, message = message
+            )
+            _message.value = ""
+        }
     }
 }
