@@ -17,7 +17,7 @@ class ListChatViewModel : ViewModel() {
 
     val chats = firestoreChatRepository.getChats()
 
-    fun getUser(chat: FirestoreChat): Flow<FirestoreUser> {
+    fun getUser(chat: FirestoreChat): Flow<FirestoreUser?> {
         val uid = Firebase.auth.currentUser?.uid ?: ""
         val userID = chat.participants.find { it != uid }
         return firestoreUserRepository.getUserById(userID ?: "")

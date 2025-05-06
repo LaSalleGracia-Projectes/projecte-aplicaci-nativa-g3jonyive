@@ -31,7 +31,7 @@ class FirestoreUserRepository {
         collection
             .document(userId)
             .snapshots.collect { documentSnapshot ->
-                val user = documentSnapshot.data<FirestoreUser>()
+                val user = documentSnapshot.data<FirestoreUser?>()
                 emit(user)
             }
     }
