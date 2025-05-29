@@ -48,6 +48,7 @@ kotlin {
 
             // Firestore
             implementation(project.dependencies.platform(libs.android.firebase.bom))
+            implementation(libs.kotlinx.serialization.json)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core.v173)
