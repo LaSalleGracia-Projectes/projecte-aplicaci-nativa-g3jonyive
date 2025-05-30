@@ -13,7 +13,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
@@ -23,8 +22,8 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+    ).forEach {
+        it.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
@@ -33,70 +32,84 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        val desktopMain by getting
+        val commonMain by getting {
+            dependencies {
+                // KotlinX Coroutines
+                implementation(libs.kotlinx.coroutines.core.v173)
 
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
+                // Compose common UI
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
 
-            //API Camera
-            implementation(libs.koin.android)
-            implementation(libs.compose.ui.tooling)
+                // Lifecycle & ViewModel
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.play.services.auth)
+                // Image loading
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
 
-            // Firestore
-            implementation(project.dependencies.platform(libs.android.firebase.bom))
-        }
-        commonMain.dependencies {
-            implementation(libs.kotlinx.coroutines.core.v173)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor)
-            implementation(libs.ktor.client.core)
-            implementation(libs.firebase.auth)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.tabNavigator)
+                // Networking
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
 
-            //API Camera
-            implementation(libs.kamel.core)
-            implementation(libs.kamel.image)
+                // DateTime
+                implementation(libs.kotlinx.datetime)
 
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
+                // Dependency Injection
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
 
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.datetime)
+                // Navigation
+                implementation(libs.voyager.transitions)
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.tabNavigator)
 
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-
-            // Firestore
-            implementation(libs.gitlive.firebase.firestore)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+                // Camera / Image loading multiplatform
+                implementation(libs.kamel.core)
+                implementation(libs.kamel.image)
+            }
         }
 
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.ktor.client.okhttp)
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.ktor.client.okhttp)
 
-            //API Camera
-            implementation(libs.compose.desktop)
-            implementation(libs.ktor.client.cio)
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.compose.ui.tooling)
+                // Camera & lifecycle android
+                implementation(libs.koin.android)
+                implementation(libs.compose.ui.tooling)
+
+                // Firebase Android SDK BOM (for Google services, analytics, etc)
+                implementation(platform(libs.android.firebase.bom))
+
+                // Google Play services Auth (only on Android)
+                implementation(libs.play.services.auth)
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.ktor.client.okhttp)
+
+                // Compose Desktop tooling
+                implementation(libs.compose.ui.tooling.preview)
+                implementation(libs.compose.ui.tooling)
+            }
         }
     }
 }
@@ -132,7 +145,11 @@ dependencies {
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
     implementation(libs.androidx.material3.android)
+
+    // Firebase Android SDK (some extra core stuff if needed)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.storage.ktx)
+
     debugImplementation(compose.uiTooling)
 }
 
@@ -154,3 +171,4 @@ compose.desktop {
         }
     }
 }
+
