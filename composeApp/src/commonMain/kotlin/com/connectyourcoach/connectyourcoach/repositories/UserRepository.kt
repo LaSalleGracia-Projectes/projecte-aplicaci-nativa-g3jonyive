@@ -1,8 +1,8 @@
 package com.connectyourcoach.connectyourcoach.repositories
 
+import com.connectyourcoach.connectyourcoach.models.User
 import com.connectyourcoach.connectyourcoach.BASE_URL
 import com.connectyourcoach.connectyourcoach.models.ErrorResponse
-import com.connectyourcoach.connectyourcoach.models.User
 
 class UserRepository {
     val URL = "$BASE_URL/user"

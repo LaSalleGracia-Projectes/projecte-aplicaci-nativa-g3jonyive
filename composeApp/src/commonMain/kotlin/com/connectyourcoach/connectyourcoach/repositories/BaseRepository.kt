@@ -4,19 +4,19 @@ import com.connectyourcoach.connectyourcoach.models.ErrorResponse
 import com.connectyourcoach.connectyourcoach.network.NetworkUtils.httpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.http.isSuccess
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
-import com.connectyourcoach.connectyourcoach.models.CustomException
-import io.ktor.client.request.delete
-import io.ktor.client.request.headers
 import io.ktor.client.request.post
+import io.ktor.client.request.delete
 import io.ktor.client.request.put
+import io.ktor.client.request.headers
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.isSuccess
 import io.ktor.http.contentType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.connectyourcoach.connectyourcoach.models.CustomException
+import kotlinx.coroutines.IO
 
 class BaseRepository {
     suspend inline fun <reified T> getData(
