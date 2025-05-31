@@ -9,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -130,11 +129,11 @@ fun LoginView(
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        if (isActive) {
-                            viewModel.onRegister()
-                        } else {
-                            showBlockedAlert = true
-                        }
+                         if (isActive) {
+                             onRegister()
+                         } else {
+                             showBlockedAlert = true
+                         }
                     },
                 color = MaterialTheme.colors.onBackground
             )
