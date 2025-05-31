@@ -11,7 +11,7 @@ import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ProfileTopBar
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
 import com.connectyourcoach.connectyourcoach.views.ProfileView
-import com.connectyourcoach.connectyourcoach.screens.BlockScreen
+import com.connectyourcoach.connectyourcoach.screens.LockScreen
 
 class ProfileScreen : Screen {
 
@@ -36,7 +36,7 @@ class ProfileScreen : Screen {
                     navigator.push(LoginScreen())
                 },
                 onNavigateToBlock = {
-                    navigator.push(BlockScreen())
+                    navigator.push(LockScreen())
                 }
             )
         }
