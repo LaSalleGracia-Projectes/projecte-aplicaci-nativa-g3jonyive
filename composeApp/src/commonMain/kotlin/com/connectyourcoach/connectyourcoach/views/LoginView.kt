@@ -30,6 +30,9 @@ fun LoginView(
     val loading by viewModel.loading
     val error by viewModel.error
     val loggedIn by viewModel.loggedIn
+    val isActive by viewModel.active
+
+    var showBlockedAlert by remember { mutableStateOf(false) }
 
     if (loggedIn) {
         onLogin()
@@ -93,14 +96,26 @@ fun LoginView(
                 autoCorrect = false
             ),
             keyboardActions = KeyboardActions(
-                onDone = { viewModel.onLogin() }
+                onDone = {
+                    if (isActive) {
+                        viewModel.onLogin()
+                    } else {
+                        showBlockedAlert = true
+                    }
+                }
             )
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { viewModel.onLogin() },
+            onClick = {
+                if (isActive) {
+                    viewModel.onLogin()
+                } else {
+                    showBlockedAlert = true
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -108,12 +123,19 @@ fun LoginView(
         ) {
             Text("Login")
         }
+
         Column {
             Text(
                 text = "Don't have an account?",
                 modifier = Modifier
                     .padding(8.dp)
-                    .clickable { onRegister() },
+                    .clickable {
+                        if (isActive) {
+                            viewModel.onRegister()
+                        } else {
+                            showBlockedAlert = true
+                        }
+                    },
                 color = MaterialTheme.colors.onBackground
             )
 
@@ -121,11 +143,30 @@ fun LoginView(
                 text = "Forgot password?",
                 modifier = Modifier
                     .padding(8.dp)
-                    .clickable { viewModel.onForgotPassword() },
+                    .clickable {
+                        if (isActive) {
+                            viewModel.onForgotPassword()
+                        } else {
+                            showBlockedAlert = true
+                        }
+                    },
                 color = MaterialTheme.colors.onBackground
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
+    }
+
+    if (showBlockedAlert) {
+        AlertDialog(
+            onDismissRequest = { showBlockedAlert = false },
+            title = { Text("Blocked") },
+            text = { Text("Sorry, you are blocked!") },
+            confirmButton = {
+                Button(onClick = { showBlockedAlert = false }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }

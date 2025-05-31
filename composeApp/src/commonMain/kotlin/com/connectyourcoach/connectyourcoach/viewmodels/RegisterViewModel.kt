@@ -14,6 +14,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class RegisterViewModel : ViewModel() {
     private val _username = mutableStateOf("")
@@ -64,7 +65,10 @@ class RegisterViewModel : ViewModel() {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> get() = _isLoading
 
-    private val userRepository = UserRepository();
+    private val _active = mutableStateOf(true)
+    val active: State<Boolean> get() = _active
+
+    private val userRepository = UserRepository()
 
     private val firestoreUserRepository = FirestoreUserRepository()
 
@@ -121,6 +125,8 @@ class RegisterViewModel : ViewModel() {
                     photoUrl = _photoUrl.value
                 )
 
+                val now = Clock.System.now().toString()
+
                 val user = User(
                     username = _username.value,
                     full_name = _fullName.value,
@@ -129,6 +135,10 @@ class RegisterViewModel : ViewModel() {
                     email = _email.value,
                     profile_picture = _photoUrl.value,
                     uid = result.user?.uid ?: "",
+                    created_at = now,
+                    id = 0,
+                    updated_at = now,
+                    active = _active.value
                 )
 
                 userRepository.createUser(
@@ -183,12 +193,8 @@ class RegisterViewModel : ViewModel() {
             userRepository.deleteUser(
                 nickname = _username.value,
                 token = Firebase.auth.currentUser?.getIdToken(false) ?: "",
-                onSuccessResponse = {
-                    // User deleted successfully
-                },
-                onErrorResponse = { error ->
-                    // Handle error
-                }
+                onSuccessResponse = {},
+                onErrorResponse = {}
             )
 
             if (Firebase.auth.currentUser != null) {
