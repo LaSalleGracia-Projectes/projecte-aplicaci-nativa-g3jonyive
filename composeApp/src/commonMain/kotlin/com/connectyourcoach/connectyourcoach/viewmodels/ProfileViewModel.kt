@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
     private val auth by mutableStateOf(Firebase.auth)
-
     private val repository = UserRepository()
 
     private val _user = mutableStateOf<User?>(null)
@@ -19,6 +18,9 @@ class ProfileViewModel : ViewModel() {
 
     private val _isLoading = mutableStateOf(true)
     val isLoading: State<Boolean> get() = _isLoading
+
+    val isAdmin: Boolean
+        get() = _user.value?.username == "admin"
 
     init {
         viewModelScope.launch {
@@ -30,15 +32,9 @@ class ProfileViewModel : ViewModel() {
         _isLoading.value = true
         repository.getUserByNicknameOrUID(
             nickname = auth.currentUser?.uid ?: "",
-            onSuccessResponse = { user ->
-                _user.value = user
-            },
-            onErrorResponse = { error ->
-
-            },
-            onFinish = {
-                _isLoading.value = false
-            }
+            onSuccessResponse = { user -> _user.value = user },
+            onErrorResponse = { /* Tractament d'errors si cal */ },
+            onFinish = { _isLoading.value = false }
         )
     }
 
