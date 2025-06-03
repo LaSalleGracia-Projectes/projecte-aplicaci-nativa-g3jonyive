@@ -1,156 +1,126 @@
 package com.connectyourcoach.connectyourcoach.viewmodels
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
-import io.ktor.client.HttpClient
+import coil3.Uri
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.*
 
-class SettingsViewModel : ViewModel() {
-    private val auth by mutableStateOf(Firebase.auth)
+data class ProfileUiState(
+    val displayName: String = "",
+    val email: String = "",
+    val password: String = "",
+    val photoUrl: String? = null,
+    val photoUri: Uri? = null,
+    val isLoading: Boolean = false,
+    val message: String? = null
+)
 
-    // Estats del formulari
-    private val _fullName: MutableState<String> = mutableStateOf("")
-    val fullname: MutableState<String> get() = _fullName
+class ProfileViewModel : ViewModel() {
 
-    private val _email: MutableState<String> = mutableStateOf("")
-    val email: MutableState<String> get() = _email
+    private val auth = FirebaseAuth.getInstance()
+    private val storage = FirebaseStorage.getInstance()
 
-    private val _phone: MutableState<String> = mutableStateOf("")
-    val phone: MutableState<String> get() = _phone
-
-    private val _password: MutableState<String> = mutableStateOf("")
-    val password: MutableState<String> get() = _password
-
-    // Estats de la UI
-    private val _saveError: MutableState<String?> = mutableStateOf(null)
-    val saveError: MutableState<String?> get() = _saveError
-
-    private val _saved: MutableState<Boolean> = mutableStateOf(false)
-    val saved: MutableState<Boolean> get() = _saved
-
-    private val _loading: MutableState<Boolean> = mutableStateOf(false)
-    val loading: MutableState<Boolean> get() = _loading
-
-    private val _settingsError: MutableState<String> = mutableStateOf("")
-    val settingsError: State<String> get() = _settingsError
-
-    // Gestió d'avatar
-    private val _photoUrl: MutableState<String> = mutableStateOf("")
-    val photoUrl: State<String> get() = _photoUrl
-
-    private val _showAvatarGenerator: MutableState<Boolean> = mutableStateOf(false)
-    val showAvatarGenerator: State<Boolean> get() = _showAvatarGenerator
-
-    private lateinit var imageLoader: ImageLoader
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    val uiState: StateFlow<ProfileUiState> = _uiState
 
     init {
-        auth.currentUser?.let { user ->
-            user.displayName?.let { _fullName.value = it }
-            user.email?.let { _email.value = it }
-            user.phoneNumber?.let { _phone.value = it }
-            user.photoURL?.let { _photoUrl.value = it }
+        loadUserData()
+    }
+
+    private fun loadUserData() {
+        val user = auth.currentUser
+        _uiState.value = _uiState.value.copy(
+            displayName = user?.displayName ?: "",
+            email = user?.email ?: "",
+            photoUrl = user?.photoUrl?.toString()
+        )
+    }
+
+    fun onNameChange(newName: String) {
+        _uiState.value = _uiState.value.copy(displayName = newName)
+    }
+
+    fun onEmailChange(newEmail: String) {
+        _uiState.value = _uiState.value.copy(email = newEmail)
+    }
+
+    fun onPasswordChange(newPassword: String) {
+        _uiState.value = _uiState.value.copy(password = newPassword)
+    }
+
+    fun onImageSelected(uri: Uri) {
+        _uiState.value = _uiState.value.copy(photoUri = uri)
+    }
+
+    fun saveChanges(context: Context) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, message = null)
+
+            val user = auth.currentUser ?: return@launch
+
+            try {
+                val updates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(_uiState.value.displayName)
+                    .apply {
+                        if (_uiState.value.photoUri != null) {
+                            val url = uploadImageToStorage(_uiState.value.photoUri!!)
+                            setPhotoUri(Uri.parse(url))
+                        }
+                    }.build()
+
+                user.updateProfile(updates).await()
+
+                if (user.email != _uiState.value.email) {
+                    user.updateEmail(_uiState.value.email).await()
+                }
+
+                if (_uiState.value.password.isNotBlank()) {
+                    user.updatePassword(_uiState.value.password).await()
+                }
+
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    message = "Perfil actualizado exitosamente"
+                )
+                loadUserData()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    message = "Error: ${e.message}"
+                )
+            }
         }
     }
 
-    fun initialize(httpClient: HttpClient) {
-        imageLoader = ImageLoader(httpClient)
+    private suspend fun uploadImageToStorage(uri: Uri): String {
+        val fileName = "profile_images/${UUID.randomUUID()}.jpg"
+        val ref = storage.reference.child(fileName)
+        ref.putFile(uri).await()
+        return ref.downloadUrl.await().toString()
     }
 
-    // Actualitzacions dels camps
-    fun updateFullname(fullname: String) {
-        _fullName.value = fullname
+    fun logout(context: Context) {
+        auth.signOut()
+        _uiState.value = _uiState.value.copy(message = "Sesión cerrada")
     }
 
-    fun updateEmail(email: String) {
-        _email.value = email
-    }
-
-    fun updatePhone(phone: String) {
-        _phone.value = phone
-    }
-
-    fun updatePassword(password: String) {
-        _password.value = password
-    }
-
-    // Gestió d'avatar
-    fun updateAvatarUrl(newAvatarUrl: String) {
-        _photoUrl.value = newAvatarUrl
-    }
-
-    fun generateRandomAvatar() {
+    fun deleteAccount(context: Context) {
         viewModelScope.launch {
             try {
-                _photoUrl.value = imageLoader.getRandomAvatar()
+                auth.currentUser?.delete()?.await()
+                _uiState.value = _uiState.value.copy(message = "Cuenta eliminada")
             } catch (e: Exception) {
-                _settingsError.value = "Error en generar l'avatar: ${e.message}"
+                _uiState.value = _uiState.value.copy(message = "Error: ${e.message}")
             }
-        }
-    }
-
-    fun showAvatarGenerator(show: Boolean) {
-        _showAvatarGenerator.value = show
-    }
-
-    // Validacions
-    fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
-
-    fun isValidPhone(): Boolean {
-        if (_phone.value.isEmpty()) return true
-        return _phone.value.length >= 9 && _phone.value.all { it.isDigit() }
-    }
-
-    fun isValidPassword(): Boolean {
-        if (_password.value.isEmpty()) return true
-        return _password.value.length >= 8 &&
-                _password.value.any { it.isUpperCase() } &&
-                _password.value.any { it.isLowerCase() } &&
-                _password.value.any { it.isDigit() } &&
-                _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
-    }
-
-    fun isValidSave(): Boolean = isValidEmail() && isValidPhone() &&
-            (_password.value.isEmpty() || isValidPassword())
-
-    // Operacions
-    fun onSave() {
-        viewModelScope.launch { save() }
-    }
-
-    suspend fun save() {
-        try {
-            _loading.value = true
-            auth.currentUser?.let { user ->
-                // Actualitzar nom i foto
-                user.updateProfile(
-                    displayName = _fullName.value,
-                    photoUrl = _photoUrl.value.ifEmpty { user.photoURL }
-                )
-
-                // Actualitzar email si ha canviat
-                if (_email.value != user.email) {
-                    user.updateEmail(_email.value)
-                }
-
-                // Actualitzar contrasenya si s'ha introduït
-                if (_password.value.isNotEmpty()) {
-                    user.updatePassword(_password.value)
-                }
-
-            }
-            _saved.value = true
-        } catch (e: Exception) {
-            _saveError.value = e.message ?: "Error desconegut"
-            _saved.value = false
-        } finally {
-            _loading.value = false
         }
     }
 }

@@ -1,210 +1,139 @@
-package com.connectyourcoach.connectyourcoach.views
-
+import android.Manifest
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
-import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
-import io.ktor.client.HttpClient
+import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsProfileView(
-    viewModel: SettingsViewModel,
-    paddingValues: PaddingValues,
-    onSave: () -> Unit,
-    httpClient: HttpClient
+    viewModel: ProfileViewModel = viewModel()
 ) {
-    val email by viewModel.email
-    val fullname by viewModel.fullname
-    val phone by viewModel.phone
-    val password by viewModel.password
-    val saved by viewModel.saved
-    val loading by viewModel.loading
-    val saveError by viewModel.saveError
-    val profileImageUrl by viewModel.photoUrl
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
 
-    if (saved) {
-        onSave()
-    }
+    val permissionState = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
 
-    LaunchedEffect(httpClient) {
-        viewModel.initialize(httpClient)
-    }
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri -> uri?.let { viewModel.onImageSelected(it) } }
+    )
 
-    if (viewModel.showAvatarGenerator.value) {
-        ApiCamera(httpClient) { imageUrl ->
-            viewModel.updateAvatarUrl(imageUrl)
-            viewModel.showAvatarGenerator(false)
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.message) {
+        uiState.message?.let {
+            snackbarHostState.showSnackbar(it)
         }
-        return
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        Text("Settings de Perfil", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
-        Spacer(modifier = Modifier.height(50.dp))
-
-        // Secció d'avatar
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (viewModel.photoUrl.value.isNotBlank()) {
-                KamelImage(
-                    resource = asyncPainterResource(data = viewModel.photoUrl.value),
-                    contentDescription = "Avatar de l'usuari",
-                    modifier = Modifier.size(100.dp)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = { viewModel.generateRandomAvatar() },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                ) {
-                    Text("Generar Nou Avatar")
-                }
-            } else {
-                Button(
-                    onClick = { viewModel.showAvatarGenerator(true) },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                ) {
-                    Text("Seleccionar Avatar")
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Edit profile",
-            style = MaterialTheme.typography.h5,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = fullname,
-            onValueChange = { viewModel.updateFullname(it) },
-            label = { Text("Full name") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { viewModel.updateEmail(it) },
-            label = { Text("Email") },
-            isError = !viewModel.isValidEmail(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        if (!viewModel.isValidEmail() && email.isNotEmpty()) {
-            Text(
-                text = "Email must contain '@' and '.'",
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { viewModel.updatePhone(it) },
-            label = { Text("Phone (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        if (!viewModel.isValidPhone() && phone.isNotEmpty()) {
-            Text(
-                text = "Please enter a valid phone number",
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { viewModel.updatePassword(it) },
-            label = { Text("New password (optional)") },
-            visualTransformation = PasswordVisualTransformation(),
-            isError = password.isNotEmpty() && !viewModel.isValidPassword(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { viewModel.onSave() }
-            )
-        )
-
-        if (password.isNotEmpty() && !viewModel.isValidPassword()) {
-            Text(
-                text = "Password must contain at least 8 characters with uppercase, lowercase, digit and special character",
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            enabled = viewModel.isValidSave(),
-            onClick = { viewModel.onSave() }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (viewModel.loading.value) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
-            } else {
-                Text("Save Changes")
+            Text("Editar Perfil", style = MaterialTheme.typography.h5)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(128.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray)
+                    .clickable {
+                        if (permissionState.status.isGranted) {
+                            imagePicker.launch("image/*")
+                        } else {
+                            permissionState.launchPermissionRequest()
+                        }
+                    }
+            ) {
+                if (uiState.photoUrl != null) {
+                    AsyncImage(model = uiState.photoUrl, contentDescription = "Foto de perfil")
+                } else {
+                    Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(64.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.displayName,
+                onValueChange = viewModel::onNameChange,
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = viewModel::onEmailChange,
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.password,
+                onValueChange = viewModel::onPasswordChange,
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { viewModel.saveChanges(context) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Guardar Cambios")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = { viewModel.logout(context) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+            ) {
+                Text("Cerrar sesión")
+            }
+
+            OutlinedButton(
+                onClick = { viewModel.deleteAccount(context) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+            ) {
+                Text("Eliminar cuenta")
             }
         }
-
-        if (saveError != null) {
-            Text(
-                text = saveError!!,
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
     }
 }

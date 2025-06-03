@@ -40,15 +40,18 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
 
-            //API Camera
             implementation(libs.koin.android)
             implementation(libs.compose.ui.tooling)
-
             implementation(libs.play.services.auth)
 
-            // Firestore
             implementation(project.dependencies.platform(libs.android.firebase.bom))
+            implementation(libs.firebase.auth.ktx)
+            implementation("com.google.firebase:firebase-storage-ktx")
+            implementation(libs.coil.compose)
+            implementation("com.google.accompanist:accompanist-permissions:0.34.0-alpha")
         }
+
+
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core.v173)
             implementation(compose.runtime)
@@ -83,6 +86,7 @@ kotlin {
             // Firestore
             implementation(libs.gitlive.firebase.firestore)
         }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
@@ -133,6 +137,10 @@ dependencies {
     implementation(libs.androidx.ui.text.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0-alpha")
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation(libs.androidx.activity.ktx)
     debugImplementation(compose.uiTooling)
 }
 

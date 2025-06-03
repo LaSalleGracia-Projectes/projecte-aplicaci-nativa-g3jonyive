@@ -48,6 +48,8 @@ firebaseCommonKtx = "21.0.0"
 # Firestore
 firebase-bom = "33.1.1"
 gitlive = "1.13.0"
+firebaseAuthKtx = "23.2.1"
+activityKtx = "1.10.1"
 
 [libraries]
 google-sign-in = { module = "com.google.ios.signin:GoogleSignIn", version.ref = "googleSignIn" }
@@ -126,6 +128,8 @@ firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-k
 # Firestore
 android-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 gitlive-firebase-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "gitlive" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
