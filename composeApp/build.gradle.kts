@@ -1,24 +1,21 @@
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.googleServices)
-    alias(libs.plugins.kotlinxSerialization)
+    kotlin("multiplatform") version "2.1.0"
+    id("com.android.application") version "8.5.2"
+    id("org.jetbrains.compose") version "1.7.0"
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
         }
     }
-
+    
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,88 +26,33 @@ kotlin {
             isStatic = true
         }
     }
-
-    jvm("desktop")
-
+    
     sourceSets {
-        val desktopMain by getting
-
+        
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
-
-            implementation(libs.koin.android)
-            implementation(libs.compose.ui.tooling)
-            implementation(libs.play.services.auth)
-
-            implementation(project.dependencies.platform(libs.android.firebase.bom))
-            implementation(libs.firebase.auth.ktx)
-            implementation("com.google.firebase:firebase-storage-ktx")
-            implementation(libs.coil.compose)
-            implementation("com.google.accompanist:accompanist-permissions:0.34.0-alpha")
-        }
-
-
+            implementation("com.google.accompanist:accompanist-permissions:0.34.0")        }
         commonMain.dependencies {
-            implementation(libs.kotlinx.coroutines.core.v173)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor)
-            implementation(libs.ktor.client.core)
-            implementation(libs.firebase.auth)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.tabNavigator)
-
-            //API Camera
-            implementation(libs.kamel.core)
-            implementation(libs.kamel.image)
-
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.datetime)
-
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-
-            // Firestore
-            implementation(libs.gitlive.firebase.firestore)
-        }
-
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-        }
-
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.ktor.client.okhttp)
-
-            //API Camera
-            implementation(libs.compose.desktop)
-            implementation(libs.ktor.client.cio)
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.compose.ui.tooling)
         }
     }
 }
 
 android {
-    namespace = "com.connectyourcoach.connectyourcoach"
+    namespace = "kmp.image.picker"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+
     defaultConfig {
-        applicationId = "com.connectyourcoach.connectyourcoach"
+        applicationId = "kmp.image.picker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -127,38 +69,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    dependencies {
+        debugImplementation(libs.compose.ui.tooling)
     }
 }
 
-dependencies {
-    implementation(libs.androidx.ui.android)
-    implementation(libs.androidx.ui.text.android)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.firebase.common.ktx)
-    implementation(libs.firebase.auth.ktx)
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0-alpha")
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation(libs.androidx.activity.ktx)
-    debugImplementation(compose.uiTooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.connectyourcoach.connectyourcoach.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.connectyourcoach.connectyourcoach"
-            packageVersion = "1.0.0"
-
-            macOS {
-                iconFile.set(project.file("resources/AppIcon.icns"))
-            }
-            windows {
-                iconFile.set(project.file("resources/AppIcon.ico"))
-            }
-        }
-    }
-}
