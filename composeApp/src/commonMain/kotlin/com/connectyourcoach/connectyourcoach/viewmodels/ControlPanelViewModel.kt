@@ -18,6 +18,7 @@ class ControlPanelViewModel : ViewModel() {
         private set
 
     private val repository = UserRepository()
+    private val dummyToken = "TOKEN" // Canvia això si tens autenticació real
 
     init {
         loadUsers()
@@ -30,8 +31,27 @@ class ControlPanelViewModel : ViewModel() {
                     _users.clear()
                     _users.addAll(userList)
                 },
-                onErrorResponse = { errorResponse ->
+                onErrorResponse = { _ ->
                     error = "Error desconegut"
+                }
+            )
+        }
+    }
+
+    fun toggleUserActiveStatus(user: User) {
+        val updatedUser = user.copy(active = !user.active)
+        viewModelScope.launch {
+            repository.updateUser(
+                user = updatedUser,
+                token = dummyToken,
+                onSuccessResponse = { updated ->
+                    val index = _users.indexOfFirst { it.username == updated.username }
+                    if (index != -1) {
+                        _users[index] = updated
+                    }
+                },
+                onErrorResponse = { _ ->
+                    error = "No s'ha pogut actualitzar l'usuari."
                 }
             )
         }

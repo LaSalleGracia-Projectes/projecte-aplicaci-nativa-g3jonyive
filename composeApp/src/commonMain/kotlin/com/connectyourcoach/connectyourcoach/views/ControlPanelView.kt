@@ -1,9 +1,9 @@
 package com.connectyourcoach.connectyourcoach.views
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,10 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.connectyourcoach.connectyourcoach.viewmodels.ControlPanelViewModel
 
-
 @Composable
 fun ControlPanelView(
-    viewModel: ControlPanelViewModel, // <- aquí el canvi correcte
+    viewModel: ControlPanelViewModel,
     onGoToProfile: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
@@ -46,8 +45,38 @@ fun ControlPanelView(
                 Text("Error: $error", color = Color.Red)
             }
             else -> {
-                users.forEach { user ->
-                    Text("Usuari: ${user.username}")
+                // Capçalera de la taula
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Color.Black)
+                        .padding(8.dp)
+                ) {
+                    Text("ID", modifier = Modifier.weight(1f))
+                    Text("Nom", modifier = Modifier.weight(1f))
+                    Text("Estat", modifier = Modifier.weight(1f)) // Nom de la columna
+                }
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(users) { user ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(0.5.dp, Color.Gray)
+                                .padding(8.dp)
+                        ) {
+                            Text(user.id?.toString() ?: "—", modifier = Modifier.weight(1f))
+                            Text(user.username ?: "—", modifier = Modifier.weight(1f))
+                            Button(
+                                onClick = { viewModel.toggleUserActiveStatus(user) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(if (user.active) "Bloquejar" else "Activar")
+                            }
+                        }
+                    }
                 }
             }
         }
