@@ -64,6 +64,9 @@ class RegisterViewModel : ViewModel() {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> get() = _isLoading
 
+    private val _active = mutableStateOf(true)
+    val active: State<Boolean> get() = _active
+
     private val userRepository = UserRepository();
 
     private val firestoreUserRepository = FirestoreUserRepository()

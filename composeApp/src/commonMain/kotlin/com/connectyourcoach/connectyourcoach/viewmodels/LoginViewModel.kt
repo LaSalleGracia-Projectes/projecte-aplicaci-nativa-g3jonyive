@@ -30,6 +30,9 @@ class LoginViewModel : ViewModel() {
     private val _navigateToRegister: MutableState<Boolean> = mutableStateOf(false)
     val navigateToRegister: MutableState<Boolean> get() = _navigateToRegister
 
+    private val _active: MutableState<Boolean> = mutableStateOf(true)
+    val active: MutableState<Boolean> get() = _active
+
     fun onEmailChange(username: String) {
         _email.value = username
     }

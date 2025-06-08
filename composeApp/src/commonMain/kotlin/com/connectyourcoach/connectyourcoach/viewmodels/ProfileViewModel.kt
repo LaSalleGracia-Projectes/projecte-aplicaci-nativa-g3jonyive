@@ -20,6 +20,9 @@ class ProfileViewModel : ViewModel() {
     private val _isLoading = mutableStateOf(true)
     val isLoading: State<Boolean> get() = _isLoading
 
+    private val _active = mutableStateOf(true)
+    val active: State<Boolean> get() = _active
+
     init {
         viewModelScope.launch {
             loadUserData()
