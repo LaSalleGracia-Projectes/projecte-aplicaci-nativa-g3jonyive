@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.models.User
-import kotlinx.coroutines.delay
+import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class ControlPanelViewModel : ViewModel() {
@@ -17,43 +17,23 @@ class ControlPanelViewModel : ViewModel() {
     var error: String? by mutableStateOf(null)
         private set
 
+    private val repository = UserRepository()
+
     init {
         loadUsers()
     }
 
     fun loadUsers() {
         viewModelScope.launch {
-            try {
-                // Exemple fake, posa aquí la teva crida real
-                delay(1000)
-                _users.addAll(listOf(User(
-                    "Anna",
-                    created_at = TODO(),
-                    email = TODO(),
-                    full_name = TODO(),
-                    id = TODO(),
-                    phone = TODO(),
-                    profile_picture = TODO(),
-                    uid = TODO(),
-                    updated_at = TODO(),
-                    username = TODO(),
-                    active = true
-                ), User(
-                    "Marc",
-                    created_at = TODO(),
-                    email = TODO(),
-                    full_name = TODO(),
-                    id = TODO(),
-                    phone = TODO(),
-                    profile_picture = TODO(),
-                    uid = TODO(),
-                    updated_at = TODO(),
-                    username = TODO(),
-                    active = TODO()
-                )))
-            } catch (e: Exception) {
-                error = e.message
-            }
+            repository.getUsers(
+                onSuccessResponse = { userList ->
+                    _users.clear()
+                    _users.addAll(userList)
+                },
+                onErrorResponse = { errorResponse ->
+                    error = "Error desconegut"
+                }
+            )
         }
     }
 }
