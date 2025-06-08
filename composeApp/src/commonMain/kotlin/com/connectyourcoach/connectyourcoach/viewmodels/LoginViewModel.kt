@@ -30,9 +30,6 @@ class LoginViewModel : ViewModel() {
     private val _navigateToRegister: MutableState<Boolean> = mutableStateOf(false)
     val navigateToRegister: MutableState<Boolean> get() = _navigateToRegister
 
-    private val _active: MutableState<Boolean> = mutableStateOf(true)
-    val active: MutableState<Boolean> get() = _active
-
     fun onEmailChange(username: String) {
         _email.value = username
     }
@@ -59,6 +56,7 @@ class LoginViewModel : ViewModel() {
                     _error.value = "Invalid email or password"
                 }
 
+                _loggedIn.value = true
             } catch (e: Exception) {
                 _loading.value = false
                 _error.value = e.message ?: "An unknown error occurred"

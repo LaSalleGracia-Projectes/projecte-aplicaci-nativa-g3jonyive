@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,9 +30,6 @@ fun LoginView(
     val loading by viewModel.loading
     val error by viewModel.error
     val loggedIn by viewModel.loggedIn
-    val isActive by viewModel.active
-
-    var showBlockedAlert by remember { mutableStateOf(false) }
 
     if (loggedIn) {
         onLogin()
@@ -95,26 +93,14 @@ fun LoginView(
                 autoCorrect = false
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    if (isActive) {
-                        viewModel.onLogin()
-                    } else {
-                        showBlockedAlert = true
-                    }
-                }
+                onDone = { viewModel.onLogin() }
             )
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = {
-                if (isActive) {
-                    viewModel.onLogin()
-                } else {
-                    showBlockedAlert = true
-                }
-            },
+            onClick = { viewModel.onLogin() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -122,19 +108,12 @@ fun LoginView(
         ) {
             Text("Login")
         }
-
         Column {
             Text(
                 text = "Don't have an account?",
                 modifier = Modifier
                     .padding(8.dp)
-                    .clickable {
-                         if (isActive) {
-                             onRegister()
-                         } else {
-                             showBlockedAlert = true
-                         }
-                    },
+                    .clickable { onRegister() },
                 color = MaterialTheme.colors.onBackground
             )
 
@@ -142,30 +121,11 @@ fun LoginView(
                 text = "Forgot password?",
                 modifier = Modifier
                     .padding(8.dp)
-                    .clickable {
-                        if (isActive) {
-                            viewModel.onForgotPassword()
-                        } else {
-                            showBlockedAlert = true
-                        }
-                    },
+                    .clickable { viewModel.onForgotPassword() },
                 color = MaterialTheme.colors.onBackground
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
-    }
-
-    if (showBlockedAlert) {
-        AlertDialog(
-            onDismissRequest = { showBlockedAlert = false },
-            title = { Text("Blocked") },
-            text = { Text("Sorry, you are blocked!") },
-            confirmButton = {
-                Button(onClick = { showBlockedAlert = false }) {
-                    Text("OK")
-                }
-            }
-        )
     }
 }

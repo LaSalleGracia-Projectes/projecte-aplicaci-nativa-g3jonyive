@@ -14,7 +14,6 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 class RegisterViewModel : ViewModel() {
     private val _username = mutableStateOf("")
@@ -65,19 +64,23 @@ class RegisterViewModel : ViewModel() {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> get() = _isLoading
 
-    private val _active = mutableStateOf(true)
-    val active: State<Boolean> get() = _active
+    private val userRepository = UserRepository();
 
-    private val userRepository = UserRepository()
     private val firestoreUserRepository = FirestoreUserRepository()
+
     private var imageLoader: ImageLoader? = null
 
     private val _showDialog = mutableStateOf(false)
     val showDialog: State<Boolean> get() = _showDialog
 
     init {
-        imageLoader = ImageLoader(httpClient = HttpClient())
-        viewModelScope.launch { generateRandomAvatar() }
+        imageLoader = ImageLoader(
+            httpClient = HttpClient(),
+        )
+
+        viewModelScope.launch {
+            generateRandomAvatar()
+        }
     }
 
     suspend fun generateRandomAvatar() {
@@ -96,7 +99,9 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun onGenerateRandomAvatar() {
-        viewModelScope.launch { generateRandomAvatar() }
+        viewModelScope.launch {
+            generateRandomAvatar()
+        }
     }
 
     fun onRegister() {
@@ -116,8 +121,6 @@ class RegisterViewModel : ViewModel() {
                     photoUrl = _photoUrl.value
                 )
 
-                val now = Clock.System.now().toString()
-
                 val user = User(
                     username = _username.value,
                     full_name = _fullName.value,
@@ -126,33 +129,36 @@ class RegisterViewModel : ViewModel() {
                     email = _email.value,
                     profile_picture = _photoUrl.value,
                     uid = result.user?.uid ?: "",
-                    created_at = now,
-                    id = 0,
-                    updated_at = now,
-                    active = _active.value
                 )
 
                 userRepository.createUser(
                     user = user,
-                    onSuccessResponse = { _showDialog.value = true },
+                    onSuccessResponse = {
+                        _showDialog.value = true
+                    },
                     onErrorResponse = { error ->
-                        if (error.exception == CustomException.ValidationError && error.validationError?.isNotEmpty() == true) {
-                            for (validationError in error.validationError) {
-                                for ((key, value) in validationError) {
-                                    when (key) {
-                                        "username" -> _usernameError.value = value
-                                        "full_name" -> _fullNameError.value = value
-                                        "phone" -> _phoneNumberError.value = value
-                                        "birth_date" -> _birthDateError.value = value
-                                        "email" -> _emailError.value = value
-                                        "password" -> _passwordError.value = value
+                        if (error.exception == CustomException.ValidationError) {
+                            if (error.validationError != null && error.validationError.isNotEmpty()) {
+                                for (validationError in error.validationError) {
+                                    for ((key, value) in validationError) {
+                                        when (key) {
+                                            "username" -> _usernameError.value = value
+                                            "full_name" -> _fullNameError.value = value
+                                            "phone" -> _phoneNumberError.value = value
+                                            "birth_date" -> _birthDateError.value = value
+                                            "email" -> _emailError.value = value
+                                            "password" -> _passwordError.value = value
+                                        }
                                     }
                                 }
                             }
                         }
+
                         onError(Exception(error.details))
                     },
-                    onFinish = { _isLoading.value = false }
+                    onFinish = {
+                        _isLoading.value = false
+                    }
                 )
 
                 firestoreUserRepository.addUser(
@@ -177,11 +183,17 @@ class RegisterViewModel : ViewModel() {
             userRepository.deleteUser(
                 nickname = _username.value,
                 token = Firebase.auth.currentUser?.getIdToken(false) ?: "",
-                onSuccessResponse = {},
-                onErrorResponse = {}
+                onSuccessResponse = {
+                    // User deleted successfully
+                },
+                onErrorResponse = { error ->
+                    // Handle error
+                }
             )
 
-            Firebase.auth.currentUser?.delete()
+            if (Firebase.auth.currentUser != null) {
+                Firebase.auth.currentUser?.delete()
+            }
 
             firestoreUserRepository.deleteUser(
                 userId = Firebase.auth.currentUser?.uid ?: "",
@@ -193,14 +205,33 @@ class RegisterViewModel : ViewModel() {
         _showDialog.value = false
     }
 
-    fun updateUsername(newUsername: String) { _username.value = newUsername }
-    fun updateFullName(newFullName: String) { _fullName.value = newFullName }
-    fun updatePhoneNumber(newPhoneNumber: String) { _phoneNumber.value = newPhoneNumber }
-    fun updateBirthDate(newBirthDate: String) { _birthDate.value = newBirthDate }
-    fun updateEmail(newEmail: String) { _email.value = newEmail }
-    fun updatePassword(newPassword: String) { _password.value = newPassword }
+    fun updateUsername(newUsername: String) {
+        _username.value = newUsername
+    }
 
-    fun updateRegisterError(errorMessage: String) { _registerError.value = errorMessage }
+    fun updateFullName(newFullName: String) {
+        _fullName.value = newFullName
+    }
+
+    fun updatePhoneNumber(newPhoneNumber: String) {
+        _phoneNumber.value = newPhoneNumber
+    }
+
+    fun updateBirthDate(newBirthDate: String) {
+        _birthDate.value = newBirthDate
+    }
+
+    fun updateEmail(newEmail: String) {
+        _email.value = newEmail
+    }
+
+    fun updatePassword(newPassword: String) {
+        _password.value = newPassword
+    }
+
+    fun updateRegisterError(errorMessage: String) {
+        _registerError.value = errorMessage
+    }
 
     fun resetErrors() {
         _registerError.value = ""
@@ -213,6 +244,69 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun isValidEmail(): Boolean = _email.value.contains("@") && _email.value.contains(".")
-    fun isValidPassword(): Boolean = _password.value.length >= 8 && _password.value.any { it.isUpperCase() }
-    fun isValidRegister(): Boolean = isValidEmail() && isValidPassword()
+
+    fun isValidPassword(): Boolean =
+        _password.value.length >= 8 &&
+                _password.value.any { it.isUpperCase() } &&
+                _password.value.any { it.isLowerCase() } &&
+                _password.value.any { it.isDigit() } &&
+                _password.value.any { "!@#\$%^&*()_+{}[]:;<>,.?/~`".contains(it) }
+
+    fun isValidPhone(): Boolean = _phoneNumber.value.length == 9 && _phoneNumber.value.all { it.isDigit() }
+
+    fun isValidaBirthDate(): Boolean {
+        val dateParts = _birthDate.value.split("-")
+        if (dateParts.size != 3) return false
+        val year = dateParts[0].toIntOrNull()
+        val month = dateParts[1].toIntOrNull()
+        val day = dateParts[2].toIntOrNull()
+        if (day == null || month == null || year == null) return false
+        return day in 1..31 && month in 1..12 && year > 1900
+    }
+
+    fun isValidRegister(): Boolean {
+        resetErrors()
+
+        if (_username.value.isEmpty()) {
+            _usernameError.value = "Username is required"
+        }
+        if (_fullName.value.isEmpty()) {
+            _fullNameError.value = "Full name is required"
+        }
+        if (_phoneNumber.value.isEmpty()) {
+            _phoneNumberError.value = "Phone number is required"
+        } else if (!isValidPhone()) {
+            _phoneNumberError.value = "Invalid phone number format"
+        }
+        if (_birthDate.value.isEmpty()) {
+            _birthDateError.value = "Birth date is required"
+        } else if (!isValidaBirthDate()) {
+            _birthDateError.value = "Invalid birth date format, should be YYYY-MM-DD"
+        }
+        if (_email.value.isEmpty()) {
+            _emailError.value = "Email is required"
+        } else if (!isValidEmail()) {
+            _emailError.value = "Invalid email format"
+        }
+        if (_password.value.isEmpty()) {
+            _passwordError.value = "Password is required"
+        } else if (!isValidPassword()) {
+            _passwordError.value = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+        }
+        if (_photoUrl.value.isEmpty()) {
+            _registerError.value = "Photo URL is required"
+        }
+
+        return _email.value.isNotEmpty() &&
+                isValidEmail() &&
+                isValidPhone() &&
+                isValidPassword() &&
+                isValidaBirthDate() &&
+                _password.value.isNotEmpty() &&
+                _phoneNumber.value.isNotEmpty() &&
+                _birthDate.value.isNotEmpty() &&
+                _username.value.isNotEmpty() &&
+                _fullName.value.isNotEmpty() &&
+                _photoUrl.value.isNotEmpty()
+    }
 }

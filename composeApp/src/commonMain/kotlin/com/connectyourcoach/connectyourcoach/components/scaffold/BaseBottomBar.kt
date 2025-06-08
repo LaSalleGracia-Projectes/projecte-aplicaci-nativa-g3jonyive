@@ -18,9 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
-import com.connectyourcoach.connectyourcoach.screens.ChatScreen
-import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
+import com.connectyourcoach.connectyourcoach.screens.ChatListScreen
 import com.connectyourcoach.connectyourcoach.screens.TablonScreen
+import com.connectyourcoach.connectyourcoach.screens.ProfileScreen
 
 @Composable
 fun BaseBottomBar(
@@ -44,7 +44,6 @@ fun BaseBottomBar(
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
-
                     when (label) {
                         "Home" -> navigateToScreen(
                             navigator,
@@ -53,8 +52,8 @@ fun BaseBottomBar(
                         )
                         "Chat" -> navigateToScreen(
                             navigator,
-                            ChatScreen(),
-                            condition = { it is ChatScreen }
+                            ChatListScreen(),
+                            condition = { it is ChatListScreen }
                         )
                         "Profile" -> navigateToScreen(
                             navigator,

@@ -15,8 +15,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.RegisterViewModel
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 
 @Composable
 fun RegisterView(
@@ -24,9 +27,6 @@ fun RegisterView(
     onRegisterComplete: () -> Unit,
     onLogin: () -> Unit,
 ) {
-    val isActive by viewModel.active
-    var showBlockedAlert by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,7 +39,9 @@ fun RegisterView(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (viewModel.isLoading.value) {
-            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary
+            )
             return@Column
         }
 
@@ -48,7 +50,11 @@ fun RegisterView(
                 model = viewModel.photoUrl.value,
                 contentDescription = "User Avatar",
                 modifier = Modifier.size(100.dp),
-                loading = { CircularProgressIndicator(color = MaterialTheme.colors.primary) },
+                loading = {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary
+                    )
+                },
                 error = {
                     Icon(
                         imageVector = Icons.Filled.Close,
@@ -58,7 +64,9 @@ fun RegisterView(
                 }
             )
         } else {
-            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -75,10 +83,15 @@ fun RegisterView(
             onValueChange = { viewModel.updateFullName(it) },
             label = { Text("Full name") },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
         if (viewModel.fullNameError.value.isNotBlank()) {
-            Text(text = viewModel.fullNameError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.fullNameError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -88,10 +101,15 @@ fun RegisterView(
             onValueChange = { viewModel.updateUsername(it) },
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
         if (viewModel.usernameError.value.isNotBlank()) {
-            Text(text = viewModel.usernameError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.usernameError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -101,10 +119,15 @@ fun RegisterView(
             onValueChange = { viewModel.updateBirthDate(it) },
             label = { Text("Birth date") },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
         if (viewModel.birthDateError.value.isNotBlank()) {
-            Text(text = viewModel.birthDateError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.birthDateError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -121,7 +144,10 @@ fun RegisterView(
             )
         )
         if (viewModel.phoneNumberError.value.isNotBlank()) {
-            Text(text = viewModel.phoneNumberError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.phoneNumberError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -138,7 +164,10 @@ fun RegisterView(
             )
         )
         if (viewModel.emailError.value.isNotBlank()) {
-            Text(text = viewModel.emailError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.emailError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -156,7 +185,10 @@ fun RegisterView(
             modifier = Modifier.fillMaxWidth()
         )
         if (viewModel.passwordError.value.isNotBlank()) {
-            Text(text = viewModel.passwordError.value, color = MaterialTheme.colors.error)
+            Text(
+                text = viewModel.passwordError.value,
+                color = MaterialTheme.colors.error,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -167,13 +199,7 @@ fun RegisterView(
         }
 
         Button(
-            onClick = {
-                if (isActive) {
-                    viewModel.onRegister()
-                } else {
-                    showBlockedAlert = true
-                }
-            },
+            onClick = { viewModel.onRegister() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")
@@ -186,13 +212,7 @@ fun RegisterView(
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.End)
-                .clickable {
-                    if (isActive) {
-                        onLogin()
-                    } else {
-                        showBlockedAlert = true
-                    }
-                },
+                .clickable { onLogin() },
             color = MaterialTheme.colors.onBackground
         )
 
@@ -202,26 +222,15 @@ fun RegisterView(
                 text = { Text("You have been registered successfully") },
                 onDismissRequest = { viewModel.onDismissDialog() },
                 confirmButton = {
-                    Button(onClick = {
-                        viewModel.onDismissDialog()
-                        onRegisterComplete()
-                    }) {
+                    Button(
+                        onClick = {
+                            viewModel.onDismissDialog()
+                            onRegisterComplete()
+                        }
+                    ) {
                         Text("Ok!")
                     }
                 },
-            )
-        }
-
-        if (showBlockedAlert) {
-            AlertDialog(
-                onDismissRequest = { showBlockedAlert = false },
-                title = { Text("Blocked") },
-                text = { Text("Sorry, you are blocked!") },
-                confirmButton = {
-                    Button(onClick = { showBlockedAlert = false }) {
-                        Text("OK")
-                    }
-                }
             )
         }
     }

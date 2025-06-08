@@ -13,6 +13,5 @@ data class User(
     var profile_picture: String? = null,
     val uid: String,
     val updated_at: String? = null,
-    var username: String,
-    var active: Boolean
+    var username: String
 )
