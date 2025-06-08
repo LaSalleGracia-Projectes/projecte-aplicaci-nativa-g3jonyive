@@ -133,6 +133,7 @@ dependencies {
     implementation(libs.androidx.ui.text.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.androidx.compose.material)
     debugImplementation(compose.uiTooling)
 }
 

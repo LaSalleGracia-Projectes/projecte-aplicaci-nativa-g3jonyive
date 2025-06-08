@@ -8,36 +8,32 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ProfileTopBar
-import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
-import com.connectyourcoach.connectyourcoach.views.ProfileView
+import com.connectyourcoach.connectyourcoach.viewmodels.ControlPanelViewModel
+import com.connectyourcoach.connectyourcoach.views.ControlPanelView
 
-class ProfileScreen : Screen {
+class ControlPanelScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel by remember { mutableStateOf(ProfileViewModel()) }
+        val viewModel by remember { mutableStateOf(ControlPanelViewModel()) }
 
         BaseScaffold(
             navigator = navigator,
-            topBar = {
-                ProfileTopBar(
-                    onNavigateToSettings = { navigator.push(SettingsScreen()) }
-                )
-            },
+            showBottomBar = false,
+            topBar = {}
         ) { paddingValues ->
-            ProfileView(
+            ControlPanelView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 onLogout = {
                     navigator.popAll()
                     navigator.push(LoginScreen())
                 },
-                onControlPanel = {
+                onGoToProfile = {
                     navigator.popAll()
-                    navigator.push(ControlPanelScreen())
-                },
+                    navigator.push(ProfileScreen())
+                }
             )
         }
     }

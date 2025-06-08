@@ -9,7 +9,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.AddCardTopBar
 import com.connectyourcoach.connectyourcoach.viewmodels.AddCardViewModel
-import com.connectyourcoach.connectyourcoach.viewmodels.TablonViewModel
 import com.connectyourcoach.connectyourcoach.views.AddCardView
 
 class AddCardScreen : Screen {

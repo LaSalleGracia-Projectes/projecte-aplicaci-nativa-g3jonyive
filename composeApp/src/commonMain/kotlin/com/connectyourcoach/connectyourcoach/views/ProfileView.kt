@@ -14,17 +14,17 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.models.User
 import com.connectyourcoach.connectyourcoach.viewmodels.ProfileViewModel
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+
 
 @Composable
 fun ProfileView(
     viewModel: ProfileViewModel,
     paddingValues: PaddingValues,
     onLogout: () -> Unit,
+    onControlPanel: () -> Unit,
 ) {
     val user: User? by viewModel.user
+    val email = user?.email
 
     Column(
         modifier = Modifier
@@ -59,6 +59,7 @@ fun ProfileView(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
 
         user?.full_name?.let { fullName ->
             Text(
@@ -137,6 +138,18 @@ fun ProfileView(
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
         ) {
             Text("Sign out", color = Color.White)
+        }
+
+        if  (user?.email == "admin@cyc.com") {
+            Button(
+                onClick = {
+                    viewModel.onClickControlPanel(onControlPanel)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text("Control Panel", color = Color.Green)
+            }
         }
     }
 }

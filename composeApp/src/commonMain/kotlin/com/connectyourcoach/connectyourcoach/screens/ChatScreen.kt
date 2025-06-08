@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ChatListTopBar
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.ChatTopBar
-import com.connectyourcoach.connectyourcoach.models.FirestoreChat
 import com.connectyourcoach.connectyourcoach.models.FirestoreUser
 import com.connectyourcoach.connectyourcoach.viewmodels.ChatViewModel
 import com.connectyourcoach.connectyourcoach.views.ChatView

@@ -51,4 +51,11 @@ class ProfileViewModel : ViewModel() {
             onLogout()
         }
     }
+
+    fun onClickControlPanel(onControlPanel: () -> Unit) {
+        viewModelScope.launch {
+            auth.signOut()
+            onControlPanel()
+        }
+    }
 }

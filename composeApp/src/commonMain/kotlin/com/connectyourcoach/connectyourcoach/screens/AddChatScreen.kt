@@ -7,11 +7,8 @@ import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
-import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.AddCardTopBar
 import com.connectyourcoach.connectyourcoach.components.scaffold.TopBar.AddChatTopBar
-import com.connectyourcoach.connectyourcoach.viewmodels.AddCardViewModel
 import com.connectyourcoach.connectyourcoach.viewmodels.AddChatViewModel
-import com.connectyourcoach.connectyourcoach.views.AddCardView
 import com.connectyourcoach.connectyourcoach.views.AddChatView
 
 class AddChatScreen : Screen {
