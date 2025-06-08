@@ -11,6 +11,7 @@ import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.viewmodels.ControlPanelViewModel
 import com.connectyourcoach.connectyourcoach.views.ControlPanelView
 
+
 class ControlPanelScreen : Screen {
 
     @Composable
@@ -25,7 +26,6 @@ class ControlPanelScreen : Screen {
         ) { paddingValues ->
             ControlPanelView(
                 viewModel = viewModel,
-                paddingValues = paddingValues,
                 onLogout = {
                     navigator.popAll()
                     navigator.push(LoginScreen())
