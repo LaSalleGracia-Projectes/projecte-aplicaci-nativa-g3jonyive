@@ -30,6 +30,7 @@ fun LoginView(
     val loading by viewModel.loading
     val error by viewModel.error
     val loggedIn by viewModel.loggedIn
+    val isBlocked = !viewModel.active.value
 
     if (loggedIn) {
         onLogin()
@@ -100,13 +101,23 @@ fun LoginView(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { viewModel.onLogin() },
+            onClick = { if (!isBlocked) viewModel.onLogin() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            enabled = !loading
+            enabled = !loading && !isBlocked
         ) {
             Text("Login")
+        }
+        if (isBlocked) {
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text("Compte bloquejat") },
+                text = { Text("Has sigut bloquejat. Contacta amb l'administrador.") },
+                confirmButton = {
+                    Button(onClick = {}) { Text("OK") }
+                }
+            )
         }
         Column {
             Text(

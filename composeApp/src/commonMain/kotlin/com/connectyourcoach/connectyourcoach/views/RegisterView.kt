@@ -198,11 +198,23 @@ fun RegisterView(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        val isBlocked = !viewModel.active.value
         Button(
-            onClick = { viewModel.onRegister() },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { if (!isBlocked) viewModel.onRegister() },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !viewModel.isLoading.value && !isBlocked
         ) {
             Text("Register")
+        }
+        if (isBlocked) {
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text("Compte bloquejat") },
+                text = { Text("Has sigut bloquejat. Contacta amb l'administrador.") },
+                confirmButton = {
+                    Button(onClick = {}) { Text("OK") }
+                }
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
