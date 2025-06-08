@@ -27,9 +27,9 @@ class UserRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/$nickname"
+        val urlUser = "$URL/$nickname"
         baseRepository.getData<User>(
-            url = URL,
+            url = urlUser,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
@@ -58,9 +58,9 @@ class UserRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/$nickname"
+        val urlUser = "$URL/$nickname"
         baseRepository.deleteData<User>(
-            url = URL,
+            url = urlUser,
             token = token,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
@@ -75,9 +75,9 @@ class UserRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/${user.username}"
+        val urlUser = "$URL/${user.username}"
         baseRepository.putData<User>(
-            url = URL,
+            url = urlUser,
             token = token,
             body = user,
             onSuccessResponse = onSuccessResponse,

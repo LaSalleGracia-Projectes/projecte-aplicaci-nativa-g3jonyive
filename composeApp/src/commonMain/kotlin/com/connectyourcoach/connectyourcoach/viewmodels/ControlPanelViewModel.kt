@@ -18,7 +18,7 @@ class ControlPanelViewModel : ViewModel() {
         private set
 
     private val repository = UserRepository()
-    private val dummyToken = "TOKEN" // Canvia això si tens autenticació real
+    private val dummyToken = "TOKEN" // Canvia aquí pel token real
 
     init {
         loadUsers()
@@ -30,9 +30,10 @@ class ControlPanelViewModel : ViewModel() {
                 onSuccessResponse = { userList ->
                     _users.clear()
                     _users.addAll(userList)
+                    error = null
                 },
-                onErrorResponse = { _ ->
-                    error = "Error desconegut"
+                onErrorResponse = { errorResponse ->
+                    error = "Error al carregar usuaris"
                 }
             )
         }
@@ -48,10 +49,12 @@ class ControlPanelViewModel : ViewModel() {
                     val index = _users.indexOfFirst { it.username == updated.username }
                     if (index != -1) {
                         _users[index] = updated
+                        error = null
                     }
                 },
-                onErrorResponse = { _ ->
-                    error = "No s'ha pogut actualitzar l'usuari."
+                onErrorResponse = { errorResponse ->
+                    error = "No s'ha pogut actualitzar l'usuari"
+                    loadUsers() // Recarrega per mantenir coherència
                 }
             )
         }
