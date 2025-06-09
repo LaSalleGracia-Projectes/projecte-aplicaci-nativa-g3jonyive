@@ -16,7 +16,7 @@ import com.connectyourcoach.connectyourcoach.viewmodels.ControlPanelViewModel
 fun ControlPanelView(
     viewModel: ControlPanelViewModel,
     onGoToProfile: () -> Unit = {},
-    onLogout: () -> Unit = {}
+    onGoToStatics: () -> Unit = {}
 ) {
     val users = viewModel.users
     val error = viewModel.error
@@ -33,8 +33,8 @@ fun ControlPanelView(
             Text(text = "Anar al perfil")
         }
 
-        Button(onClick = onLogout) {
-            Text(text = "Tancar sessió")
+        Button(onClick = onGoToStatics) {
+            Text(text = "Anar a les estadistiques")
         }
 
         when {

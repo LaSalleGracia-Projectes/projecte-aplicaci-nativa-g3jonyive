@@ -9,32 +9,28 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.connectyourcoach.connectyourcoach.components.scaffold.BaseScaffold
 import com.connectyourcoach.connectyourcoach.viewmodels.ControlPanelViewModel
+import com.connectyourcoach.connectyourcoach.viewmodels.StaticsViewModel
 import com.connectyourcoach.connectyourcoach.views.ControlPanelView
+import com.connectyourcoach.connectyourcoach.views.StaticsView
 
 
-class ControlPanelScreen : Screen {
+class StaticsScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel by remember { mutableStateOf(ControlPanelViewModel()) }
+        val viewModel by remember { mutableStateOf(StaticsViewModel()) }
 
-        BaseScaffold(
-            navigator = navigator,
-            showBottomBar = false,
-            topBar = {}
-        ) { paddingValues ->
-            ControlPanelView(
-                viewModel = viewModel,
-                onGoToProfile = {
-                    navigator.popAll()
-                    navigator.push(ProfileScreen())
-                },
-                onGoToStatics = {
-                    navigator.popAll()
-                    navigator.push(StaticsScreen())
-                }
-            )
-        }
+        StaticsView(
+            viewModel = viewModel,
+            onGoToControlPanel = {
+                navigator.popAll()
+                navigator.push(ControlPanelScreen())
+            },
+            onGoToProfile = {
+                navigator.popAll()
+                navigator.push(ProfileScreen())
+            }
+        )
     }
 }
