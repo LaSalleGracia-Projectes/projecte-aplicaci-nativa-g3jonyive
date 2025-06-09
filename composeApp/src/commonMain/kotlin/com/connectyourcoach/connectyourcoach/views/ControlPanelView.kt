@@ -27,19 +27,19 @@ fun ControlPanelView(
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = "Benvingut al panell de control")
+        Text(text = "Welcome to Control Panel, admin!")
 
         Button(onClick = onGoToProfile) {
-            Text(text = "Anar al perfil")
+            Text(text = "Go to Profile")
         }
 
         Button(onClick = onGoToStatics) {
-            Text(text = "Anar a les estadistiques")
+            Text(text = "Go to Statics")
         }
 
         when {
             users.isEmpty() && error == null -> {
-                Text("Carregant usuaris...")
+                Text("Charging users...")
             }
             error != null -> {
                 Text("Error: $error", color = Color.Red)
@@ -51,9 +51,9 @@ fun ControlPanelView(
                         .border(1.dp, Color.Black)
                         .padding(8.dp)
                 ) {
-                    Text("Nom", modifier = Modifier.weight(1f))
-                    Text("Estat", modifier = Modifier.weight(1f))
-                    Text("Eliminar", modifier = Modifier.weight(1f))
+                    Text("Name", modifier = Modifier.weight(1f))
+                    Text("State", modifier = Modifier.weight(1f))
+                    Text("Ban", modifier = Modifier.weight(1f))
                 }
 
                 LazyColumn(
@@ -71,13 +71,13 @@ fun ControlPanelView(
                                 onClick = { viewModel.toggleUserActiveStatus(user) },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(if (user.active) "Bloquejar" else "Activar")
+                                Text(if (user.active) "Block" else "Activate")
                             }
                             Button(
                                 onClick = { viewModel.deleteUser(user) },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text("Bannejar")
+                                Text("Ban")
                             }
                         }
                     }

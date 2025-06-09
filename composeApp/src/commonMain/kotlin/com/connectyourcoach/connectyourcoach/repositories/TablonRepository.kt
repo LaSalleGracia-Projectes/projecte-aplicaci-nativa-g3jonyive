@@ -4,10 +4,19 @@ import com.connectyourcoach.connectyourcoach.BASE_URL
 import com.connectyourcoach.connectyourcoach.models.ErrorResponse
 import com.connectyourcoach.connectyourcoach.models.Like
 import com.connectyourcoach.connectyourcoach.models.Post
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 
 class TablonRepository {
-    val URL = "$BASE_URL/post"
-    val baseRepository = BaseRepository()
+    private val baseUrl = "$BASE_URL/post"
+    private val baseRepository = BaseRepository()
 
     suspend fun getPosts(
         onSuccessResponse: (List<Post>) -> Unit,
@@ -15,7 +24,7 @@ class TablonRepository {
         onFinish: () -> Unit = {}
     ) {
         baseRepository.getData<List<Post>>(
-            url = URL,
+            url = baseUrl,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
@@ -28,9 +37,9 @@ class TablonRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/$id"
+        val url = "$baseUrl/$id"
         baseRepository.getData<Post>(
-            url = URL,
+            url = url,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
@@ -44,7 +53,7 @@ class TablonRepository {
         onFinish: () -> Unit = {}
     ) {
         baseRepository.getData<List<Post>>(
-            url = URL,
+            url = baseUrl,
             onSuccessResponse = { posts ->
                 val filteredPosts = posts.filter { post ->
                     post.title.contains(query, ignoreCase = true) ||
@@ -65,7 +74,7 @@ class TablonRepository {
         onFinish: () -> Unit = {}
     ) {
         baseRepository.postData<Post>(
-            url = URL,
+            url = baseUrl,
             body = post,
             token = token,
             onSuccessResponse = onSuccessResponse,
@@ -81,9 +90,9 @@ class TablonRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/$id"
+        val url = "$baseUrl/$id"
         baseRepository.deleteData<Post>(
-            url = URL,
+            url = url,
             token = token,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
@@ -98,9 +107,9 @@ class TablonRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/${post.id}"
+        val url = "$baseUrl/${post.id}"
         baseRepository.putData<Post>(
-            url = URL,
+            url = url,
             token = token,
             body = post,
             onSuccessResponse = onSuccessResponse,
@@ -116,9 +125,9 @@ class TablonRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/like/$id"
+        val url = "$baseUrl/like/$id"
         baseRepository.getData<Int>(
-            url = URL,
+            url = url,
             token = token,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
@@ -133,9 +142,9 @@ class TablonRepository {
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
-        val URL = "$URL/like/$id"
+        val url = "$baseUrl/like/$id"
         baseRepository.postData<Like?>(
-            url = URL,
+            url = url,
             token = token,
             onSuccessResponse = {
                 onSuccessResponse(it != null)
@@ -143,5 +152,25 @@ class TablonRepository {
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
         )
+    }
+
+    private val client = HttpClient(CIO)
+
+    suspend fun getPostsByUserIdSuspend(userId: String): List<Post> = withContext(Dispatchers.IO) {
+        try {
+            val response: HttpResponse = client.get(baseUrl) {
+                parameter("userId", userId)
+                accept(ContentType.Application.Json)
+            }
+            if (response.status == HttpStatusCode.OK) {
+                val posts: List<Post> = response.body()
+                posts
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 }

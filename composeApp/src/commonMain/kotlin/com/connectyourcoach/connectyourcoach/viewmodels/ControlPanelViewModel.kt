@@ -33,7 +33,7 @@ class ControlPanelViewModel : ViewModel() {
                     error = null
                 },
                 onErrorResponse = { errorResponse ->
-                    error = "Error al carregar usuaris"
+                    error = "Error charging users"
                 }
             )
         }
@@ -53,7 +53,7 @@ class ControlPanelViewModel : ViewModel() {
                     }
                 },
                 onErrorResponse = { errorResponse ->
-                    error = "No s'ha pogut actualitzar l'usuari"
+                    error = "Could not update user status"
                     loadUsers() // Recarrega per mantenir coherència
                 }
             )
@@ -70,7 +70,7 @@ class ControlPanelViewModel : ViewModel() {
                     error = null
                 },
                 onErrorResponse = {
-                    error = "No s'ha pogut eliminar l'usuari"
+                    error = "Could not delete user"
                 }
             )
         }

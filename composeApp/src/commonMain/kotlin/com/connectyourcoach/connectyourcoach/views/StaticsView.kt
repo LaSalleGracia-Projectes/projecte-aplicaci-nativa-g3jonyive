@@ -23,11 +23,10 @@ fun StaticsView(
     onGoToControlPanel: () -> Unit
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabTitles = listOf("Estadística 1", "Estadística 2", "Estadística 3")
+    val tabTitles = listOf("User States", "Num of Posts per User", "Top 3 high profits")
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        // Botons a la part superior
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -35,14 +34,13 @@ fun StaticsView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(onClick = onGoToProfile) {
-                Text("Perfil")
+                Text("Profile")
             }
             Button(onClick = onGoToControlPanel) {
-                Text("Panell de Control")
+                Text("Control Panel")
             }
         }
 
-        // Tabs
         TabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier.fillMaxWidth()
@@ -56,7 +54,6 @@ fun StaticsView(
             }
         }
 
-        // Contingut de cada tab
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -69,7 +66,7 @@ fun StaticsView(
 
                     when {
                         users.isEmpty() && error == null -> {
-                            Text("Carregant dades...")
+                            Text("Charging users...")
                         }
 
                         error != null -> {
@@ -80,18 +77,16 @@ fun StaticsView(
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                // Capçalera
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .border(1.dp, Color.Black)
                                         .padding(8.dp)
                                 ) {
-                                    Text("Nom", modifier = Modifier.weight(1f))
-                                    Text("Estat", modifier = Modifier.weight(1f))
+                                    Text("Name", modifier = Modifier.weight(1f))
+                                    Text("State", modifier = Modifier.weight(1f))
                                 }
 
-                                // Cos de la taula
                                 LazyColumn {
                                     items(users) { user ->
                                         Row(
@@ -102,7 +97,7 @@ fun StaticsView(
                                         ) {
                                             Text(user.username ?: "—", modifier = Modifier.weight(1f))
                                             Text(
-                                                if (user.active) "Activat" else "Bloquejat",
+                                                if (user.active) "Active" else "Blocked",
                                                 modifier = Modifier.weight(1f)
                                             )
                                         }
@@ -113,7 +108,55 @@ fun StaticsView(
                     }
                 }
 
-                1 -> Text("Contingut de l'Estadística 2", modifier = Modifier.align(Alignment.Center))
+                1 -> {
+                    val postCounts = viewModel.userPostCounts
+                    val error = viewModel.postCountError
+
+                    LaunchedEffect(viewModel.users) {
+                        if (postCounts.isEmpty() && error == null && viewModel.users.isNotEmpty()) {
+                            viewModel.loadUserPostCounts()
+                        }
+                    }
+
+                    when {
+                        postCounts.isEmpty() && error == null -> {
+                            Text("Charging statics...", modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        error != null -> {
+                            Text("Error: $error", color = Color.Red, modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        else -> {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .border(1.dp, Color.Black)
+                                        .padding(8.dp)
+                                ) {
+                                    Text("Name", modifier = Modifier.weight(1f))
+                                    Text("Number of Posts", modifier = Modifier.weight(1f))
+                                }
+
+                                LazyColumn {
+                                    items(postCounts) { (username, count) ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .border(0.5.dp, Color.Gray)
+                                                .padding(8.dp)
+                                        ) {
+                                            Text(username, modifier = Modifier.weight(1f))
+                                            Text(count.toString(), modifier = Modifier.weight(1f))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 2 -> Text("Contingut de l'Estadística 3", modifier = Modifier.align(Alignment.Center))
             }
         }
