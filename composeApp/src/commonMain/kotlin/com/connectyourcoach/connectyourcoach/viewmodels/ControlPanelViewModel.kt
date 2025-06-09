@@ -59,4 +59,21 @@ class ControlPanelViewModel : ViewModel() {
             )
         }
     }
+
+    fun deleteUser(user: User) {
+        viewModelScope.launch {
+            repository.deleteUser(
+                nickname = user.username ?: return@launch,
+                token = dummyToken,
+                onSuccessResponse = {
+                    _users.removeAll { it.username == user.username }
+                    error = null
+                },
+                onErrorResponse = {
+                    error = "No s'ha pogut eliminar l'usuari"
+                }
+            )
+        }
+    }
+
 }

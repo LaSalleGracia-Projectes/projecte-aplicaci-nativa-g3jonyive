@@ -45,16 +45,15 @@ fun ControlPanelView(
                 Text("Error: $error", color = Color.Red)
             }
             else -> {
-                // Capçalera de la taula
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(1.dp, Color.Black)
                         .padding(8.dp)
                 ) {
-                    Text("ID", modifier = Modifier.weight(1f))
                     Text("Nom", modifier = Modifier.weight(1f))
-                    Text("Estat", modifier = Modifier.weight(1f)) // Nom de la columna
+                    Text("Estat", modifier = Modifier.weight(1f))
+                    Text("Eliminar", modifier = Modifier.weight(1f))
                 }
 
                 LazyColumn(
@@ -67,13 +66,18 @@ fun ControlPanelView(
                                 .border(0.5.dp, Color.Gray)
                                 .padding(8.dp)
                         ) {
-                            Text(user.id?.toString() ?: "—", modifier = Modifier.weight(1f))
                             Text(user.username ?: "—", modifier = Modifier.weight(1f))
                             Button(
                                 onClick = { viewModel.toggleUserActiveStatus(user) },
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(if (user.active) "Bloquejar" else "Activar")
+                            }
+                            Button(
+                                onClick = { viewModel.deleteUser(user) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Bannejar")
                             }
                         }
                     }
