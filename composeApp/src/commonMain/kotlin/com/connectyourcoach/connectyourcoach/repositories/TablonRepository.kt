@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 class TablonRepository {
     private val baseUrl = "$BASE_URL/post"
     private val baseRepository = BaseRepository()
+    private val client = HttpClient(CIO)
 
     suspend fun getPosts(
         onSuccessResponse: (List<Post>) -> Unit,
@@ -154,17 +155,20 @@ class TablonRepository {
         )
     }
 
-    private val client = HttpClient(CIO)
 
     suspend fun getPostsByUserIdSuspend(userId: String): List<Post> = withContext(Dispatchers.IO) {
         try {
             val response: HttpResponse = client.get(baseUrl) {
-                parameter("userId", userId)
                 accept(ContentType.Application.Json)
             }
             if (response.status == HttpStatusCode.OK) {
                 val posts: List<Post> = response.body()
-                posts
+                val userIdInt = userId.toIntOrNull()
+                if (userIdInt != null) {
+                    posts.filter { it.user_id == userIdInt }
+                } else {
+                    emptyList()
+                }
             } else {
                 emptyList()
             }
