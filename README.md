@@ -2,12 +2,6 @@
 
 # ConnectYourCoach
 
-Plataforma web para conectar entrenadores y clientes en un entorno virtual de entrenamiento.
-
-- [Ver Demo](#)
-- [Reportar Bug](#)
-- [Solicitar Característica](#)
-
 ## Tabla de Contenidos
 
 1. [Sobre el Proyecto](#sobre-el-proyecto)
