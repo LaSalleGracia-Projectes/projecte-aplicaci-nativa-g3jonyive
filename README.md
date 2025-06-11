@@ -11,9 +11,8 @@
    - [Instalación](#instalación)
    - [Despliegue](#despliegue)
 4. [Uso](#uso)
-5. [Pruebas](#pruebas)
-6. [Hoja de Ruta](#hoja-de-ruta)
-7. [Licencia](#licencia)
+5. [Hoja de Ruta](#hoja-de-ruta)
+6. [Licencia](#licencia)
 
 ## Sobre el Proyecto
 
@@ -29,13 +28,9 @@ ConnectYourCoach es una plataforma web que permite a entrenadores personales ges
 
 ## Construido Con
 
-- Next.js
-- React.js
-- Tailwind CSS
-- MongoDB
-- Prisma
-- NextAuth.js
-- TypeScript
+- Kotlin Multiplatform
+- Python
+- Firebase
 
 ## Comenzando
 
