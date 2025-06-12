@@ -155,7 +155,6 @@ class SettingsViewModel : ViewModel() {
             onSuccessResponse = { fetchedUser ->
                 viewModelScope.launch {
                     uploadPhoto()
-                    //pushToFirestore(fetchedUser)
                 }
             },
             onErrorResponse = { error ->
@@ -188,6 +187,9 @@ class SettingsViewModel : ViewModel() {
                 token = auth.currentUser?.getIdToken(false) ?: "",
                 onSuccessResponse = { updatedUser ->
                     _saved.value = true
+                    viewModelScope.launch {
+                        pushToFirestore(updatedUser)
+                    }
                 },
                 onErrorResponse = { error ->
                     _error.value = error.details
