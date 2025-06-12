@@ -18,7 +18,6 @@ class SettingsScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val viewModel by remember { mutableStateOf(SettingsViewModel()) }
-        val httpClient = remember { HttpClient() }
 
         BaseScaffold(
             navigator = navigator,
@@ -33,8 +32,7 @@ class SettingsScreen : Screen {
                 paddingValues = paddingValues,
                 onSave = {
                     navigator?.pop()
-                },
-                httpClient = httpClient
+                }
             )
         }
     }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
 import io.kamel.image.KamelImage
@@ -25,37 +28,21 @@ fun SettingsProfileView(
     viewModel: SettingsViewModel,
     paddingValues: PaddingValues,
     onSave: () -> Unit,
-    httpClient: HttpClient
 ) {
-    val email by viewModel.email
-    val fullname by viewModel.fullname
+    val fullname by viewModel.full_name
     val phone by viewModel.phone
-    val password by viewModel.password
-    val saved by viewModel.saved
-    val loading by viewModel.loading
-    val saveError by viewModel.saveError
-    val profileImageUrl by viewModel.photoUrl
+    val photoUrl by viewModel.photoUrl
+    val error by viewModel.error
 
-    if (saved) {
+    if (viewModel.saved.value) {
         onSave()
-    }
-
-    LaunchedEffect(httpClient) {
-        viewModel.initialize(httpClient)
-    }
-
-    if (viewModel.showAvatarGenerator.value) {
-        ApiCamera(httpClient) { imageUrl ->
-            viewModel.updateAvatarUrl(imageUrl)
-            viewModel.showAvatarGenerator(false)
-        }
-        return
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .padding(paddingValues)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -63,30 +50,47 @@ fun SettingsProfileView(
         Text("Settings de Perfil", style = MaterialTheme.typography.h4, modifier = Modifier.padding(16.dp))
         Spacer(modifier = Modifier.height(50.dp))
 
-        // Secció d'avatar
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (viewModel.photoUrl.value.isNotBlank()) {
-                KamelImage(
-                    resource = asyncPainterResource(data = viewModel.photoUrl.value),
-                    contentDescription = "Avatar de l'usuari",
-                    modifier = Modifier.size(100.dp)
-                )
+            SubcomposeAsyncImage(
+                model = photoUrl,
+                contentDescription = "User Avatar",
+                modifier = Modifier.size(100.dp),
+                loading = {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary
+                    )
+                },
+                error = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        modifier = Modifier.size(100.dp),
+                        contentDescription = "Error on loading image",
+                    )
+                }
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
 
                 Button(
-                    onClick = { viewModel.generateRandomAvatar() },
+                    onClick = { viewModel.onGenerateNewAvatar() },
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    Text("Generar Nou Avatar")
+                    Text("Generate Avatar")
                 }
-            } else {
+
+                Spacer(modifier = Modifier.weight(0.5f))
+
                 Button(
-                    onClick = { viewModel.showAvatarGenerator(true) },
+                    onClick = { viewModel.onUploadImage() },
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    Text("Seleccionar Avatar")
+                    Text("Upload Image")
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
 
@@ -101,7 +105,7 @@ fun SettingsProfileView(
 
         OutlinedTextField(
             value = fullname,
-            onValueChange = { viewModel.updateFullname(it) },
+            onValueChange = { viewModel.onFullNameChange(it) },
             label = { Text("Full name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -114,31 +118,8 @@ fun SettingsProfileView(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { viewModel.updateEmail(it) },
-            label = { Text("Email") },
-            isError = !viewModel.isValidEmail(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        if (!viewModel.isValidEmail() && email.isNotEmpty()) {
-            Text(
-                text = "Email must contain '@' and '.'",
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
             value = phone,
-            onValueChange = { viewModel.updatePhone(it) },
+            onValueChange = { viewModel.onPhoneChange(it) },
             label = { Text("Phone (optional)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -151,33 +132,6 @@ fun SettingsProfileView(
         if (!viewModel.isValidPhone() && phone.isNotEmpty()) {
             Text(
                 text = "Please enter a valid phone number",
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { viewModel.updatePassword(it) },
-            label = { Text("New password (optional)") },
-            visualTransformation = PasswordVisualTransformation(),
-            isError = password.isNotEmpty() && !viewModel.isValidPassword(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { viewModel.onSave() }
-            )
-        )
-
-        if (password.isNotEmpty() && !viewModel.isValidPassword()) {
-            Text(
-                text = "Password must contain at least 8 characters with uppercase, lowercase, digit and special character",
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -197,9 +151,9 @@ fun SettingsProfileView(
             }
         }
 
-        if (saveError != null) {
+        if (error != null) {
             Text(
-                text = saveError!!,
+                text = error!!,
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(top = 8.dp)
             )
