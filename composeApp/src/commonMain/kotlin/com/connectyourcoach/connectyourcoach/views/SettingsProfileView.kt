@@ -38,6 +38,17 @@ fun SettingsProfileView(
         onSave()
     }
 
+    if (viewModel.loading.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

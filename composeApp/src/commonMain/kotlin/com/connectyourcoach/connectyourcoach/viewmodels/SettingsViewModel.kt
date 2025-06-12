@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
+import com.connectyourcoach.connectyourcoach.models.FirestoreUser
 import com.connectyourcoach.connectyourcoach.models.User
 import com.connectyourcoach.connectyourcoach.repositories.FirestoreUserRepository
 import com.connectyourcoach.connectyourcoach.repositories.UserRepository
@@ -50,6 +51,7 @@ class SettingsViewModel : ViewModel() {
                 userRepository.getUserByNicknameOrUID(
                     nickname = user.uid,
                     onSuccessResponse = { fetchedUser ->
+                        _user.value = fetchedUser
                         _full_name.value = fetchedUser.full_name
                         _phone.value = fetchedUser.phone ?: ""
                         _photoUrl.value = fetchedUser.profile_picture ?: ""
@@ -101,6 +103,43 @@ class SettingsViewModel : ViewModel() {
     }
 
     suspend fun save() {
-        _saved.value = true
+        _loading.value = true
+
+        if (_user.value == null) {
+            _error.value = "User not found"
+            _loading.value = false
+            return
+        }
+
+        _user.value?.full_name = _full_name.value
+        _user.value?.phone = if (_phone.value.isNotBlank()) _phone.value else null
+        _user.value?.profile_picture = _photoUrl.value
+
+        userRepository.updateUser(
+            user = _user.value!!,
+            token = auth.currentUser?.getIdToken(false) ?: "",
+            onSuccessResponse = { fetchedUser ->
+                val firestoreUser = FirestoreUser(
+                    uid = fetchedUser.uid,
+                    username = fetchedUser.full_name,
+                    phone = fetchedUser.phone ?: "",
+                    photoUrl = fetchedUser.profile_picture ?: "",
+                )
+                viewModelScope.launch {
+                    try {
+                        firebaseUserRepository.updateUser(user = firestoreUser)
+                        _saved.value = true
+                    } catch (e: Exception) {
+                        _error.value = e.message ?: "Failed to update user in Firestore"
+                    }
+                }
+            },
+            onErrorResponse = { error ->
+                _error.value = error.details
+            },
+            onFinish = {
+                _loading.value = false
+            }
+        )
     }
 }
