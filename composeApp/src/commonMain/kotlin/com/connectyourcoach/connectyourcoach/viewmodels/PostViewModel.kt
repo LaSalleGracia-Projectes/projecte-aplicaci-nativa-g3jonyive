@@ -33,6 +33,7 @@ class PostViewModel(postId: String) : ViewModel() {
     init {
         viewModelScope.launch {
             loadPost(postId)
+            setLike(postId)
         }
     }
 
@@ -92,6 +93,33 @@ class PostViewModel(postId: String) : ViewModel() {
             onErrorResponse = { error ->
                 //TODO Handle error
                 println("Error getting likes: ${error.details}")
+            }
+        )
+    }
+
+    suspend fun setLike(postId: String) {
+        tablonRepository.likePost(
+            id = postId,
+            token = auth.currentUser?.getIdToken(false) ?: "",
+            onSuccessResponse = { like ->
+                _isLiked.value = !like
+                viewModelScope.launch {
+                    tablonRepository.likePost(
+                        id = postId,
+                        token = auth.currentUser?.getIdToken(false) ?: "",
+                        onSuccessResponse = { like ->
+                            // Para dejarlo como estaba
+                        },
+                        onErrorResponse = { error ->
+                            //TODO Handle error
+                            println("Error liking post: ${error.details}")
+                        }
+                    )
+                }
+            },
+            onErrorResponse = { error ->
+                //TODO Handle error
+                println("Error liking post: ${error.details}")
             }
         )
     }
