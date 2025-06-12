@@ -1,14 +1,22 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -37,6 +45,7 @@ private val customColors = darkColors(
 fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val post by viewModel.post
     val user by viewModel.user
+    val isLiked by viewModel.isLiked
     val scrollState = rememberScrollState()
 
     MaterialTheme(colors = customColors) {
@@ -98,6 +107,24 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                     modifier = Modifier.padding(16.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+                    LikeButton(
+                        isLiked = isLiked,
+                        onToggleLike = {
+                            viewModel.onLike()
+                        }
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    Text(
+                        text = "${viewModel.likes.value} Likes",
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = post.description,
                     style = MaterialTheme.typography.body1,
@@ -111,6 +138,35 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun LikeButton(
+    isLiked: Boolean,
+    onToggleLike: () -> Unit
+) {
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(isLiked) {
+        scale.snapTo(1f)
+        scale.animateTo(
+            targetValue = 1.3f,
+            animationSpec = tween(durationMillis = 100, easing = LinearOutSlowInEasing)
+        )
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 100, easing = FastOutLinearInEasing)
+        )
+    }
+
+    IconButton(onClick = onToggleLike) {
+        Icon(
+            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            contentDescription = if (isLiked) "Unlike" else "Like",
+            tint = if (isLiked) Color.Red else Color.Gray,
+            modifier = Modifier.scale(scale.value)
+        )
     }
 }
 

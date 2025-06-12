@@ -80,6 +80,10 @@ class BaseRepository {
                 }
 
                 if (response.status.isSuccess()) {
+                    if (response.status.value == 204) {
+                        onSuccessResponse(null as T)
+                        return@launch
+                    }
                     val data = response.body<T>()
                     onSuccessResponse(data)
                 } else {

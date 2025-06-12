@@ -111,15 +111,13 @@ class TablonRepository {
 
     suspend fun getPostLikes(
         id: String,
-        token: String,
-        onSuccessResponse: (Int) -> Unit,
+        onSuccessResponse: (String) -> Unit,
         onErrorResponse: (ErrorResponse) -> Unit,
         onFinish: () -> Unit = {}
     ) {
         val URL = "$URL/like/$id"
-        baseRepository.getData<Int>(
+        baseRepository.getData<String>(
             url = URL,
-            token = token,
             onSuccessResponse = onSuccessResponse,
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
