@@ -1,6 +1,7 @@
 package com.connectyourcoach.connectyourcoach.repositories
 
 import com.connectyourcoach.connectyourcoach.BASE_URL
+import com.connectyourcoach.connectyourcoach.models.CustomException
 import com.connectyourcoach.connectyourcoach.models.ErrorResponse
 import com.connectyourcoach.connectyourcoach.models.User
 
@@ -31,6 +32,30 @@ class UserRepository {
         baseRepository.getData<User>(
             url = URL,
             onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
+        )
+    }
+
+    suspend fun getUserById(
+        id: Int,
+        onSuccessResponse: (User) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
+    ) {
+        baseRepository.getData<List<User>>(
+            url = URL,
+            onSuccessResponse = { users ->
+                users.firstOrNull { it.id == id }
+                    ?.let(onSuccessResponse)
+                    ?: onErrorResponse(
+                        ErrorResponse(
+                            error = "Has occurred an error",
+                            details = "User with id $id not found",
+                            exception = CustomException.ModelNotFoundException
+                        )
+                    )
+            },
             onErrorResponse = onErrorResponse,
             onFinish = onFinish
         )

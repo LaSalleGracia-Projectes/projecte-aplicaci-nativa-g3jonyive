@@ -36,6 +36,7 @@ private val customColors = darkColors(
 @Composable
 fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val post by viewModel.post
+    val user by viewModel.user
     val scrollState = rememberScrollState()
 
     MaterialTheme(colors = customColors) {
@@ -70,7 +71,7 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "By ${post.user_id}",
+                        text = "By ${user?.username ?: "Unknown User"}",
                         style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.padding(16.dp)
