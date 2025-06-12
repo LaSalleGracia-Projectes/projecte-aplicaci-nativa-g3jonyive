@@ -10,6 +10,7 @@ import com.connectyourcoach.connectyourcoach.repositories.TablonRepository
 import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PostViewModel(postId: String) : ViewModel() {
@@ -30,11 +31,18 @@ class PostViewModel(postId: String) : ViewModel() {
     private val _likes = mutableStateOf<Int>(0)
     val likes get() = _likes
 
+    private val _isPaid = mutableStateOf(false)
+    val isPaid get() = _isPaid
+
     init {
         viewModelScope.launch {
             loadPost(postId)
             setLike(postId)
         }
+    }
+
+    fun setPaid() {
+        _isPaid.value = true
     }
 
     fun onLike() {

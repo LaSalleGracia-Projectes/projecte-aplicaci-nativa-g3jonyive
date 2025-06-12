@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -18,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.connectyourcoach.connectyourcoach.viewmodels.PostViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 // Definir la paleta de colores personalizada
 private val DarkBlue = Color(0xFF173040)
@@ -47,6 +51,18 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val user by viewModel.user
     val isLiked by viewModel.isLiked
     val scrollState = rememberScrollState()
+    val showDialog = remember { mutableStateOf(false) }
+    val isPaid by viewModel.isPaid
+
+    if (showDialog.value) {
+        PagoTarjeta(
+            showDialog = showDialog.value,
+            onDismiss = { showDialog.value = false },
+            setPayed = {
+                viewModel.setPaid()
+            }
+        )
+    }
 
     MaterialTheme(colors = customColors) {
         Column(
@@ -123,6 +139,14 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
                         modifier = Modifier.padding(16.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))
+                    Button(
+                        onClick = { showDialog.value = true },
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                        enabled = !isPaid
+                    ) {
+                        Text(if (!isPaid) "Pagar" else "Comprado")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -170,3 +194,143 @@ fun LikeButton(
     }
 }
 
+
+@Composable
+fun PagoTarjeta(showDialog: Boolean, onDismiss: () -> Unit, setPayed: () -> Unit) {
+    var cardNumber by remember { mutableStateOf("") }
+    var cvv by remember { mutableStateOf("") }
+
+    var month by remember { mutableStateOf("") }
+    var year by remember { mutableStateOf("") }
+    var isMonthValid by remember { mutableStateOf(true) }
+
+    var paymentConfirmed by remember { mutableStateOf(false) }
+    var isProcessing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    fun isValid(): Boolean {
+        val monthInt = month.toIntOrNull()
+        val yearValid = year.length == 2
+        val monthValid = month.length == 2 && monthInt in 1..12
+
+        return cardNumber.length == 16 &&
+                cvv.length == 3 &&
+                monthValid && yearValid
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Pago con Tarjeta") },
+            text = {
+                when {
+                    isProcessing -> {
+                        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                    }
+                    paymentConfirmed -> {
+                        Text("✅ ¡Pago realizado con éxito!")
+                        setPayed()
+                    }
+                    else -> {
+                        Column {
+                            Text("Introduce los datos de tu tarjeta:")
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = cardNumber,
+                                onValueChange = {
+                                    cardNumber = it.filter { c -> c.isDigit() }.take(16)
+                                },
+                                label = { Text("Número de tarjeta") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = month,
+                                    onValueChange = {
+                                        val digits = it.filter { c -> c.isDigit() }.take(2)
+                                        month = digits
+                                        isMonthValid = if (digits.length == 2) {
+                                            val m = digits.toIntOrNull()
+                                            m != null && m in 1..12
+                                        } else true
+                                    },
+                                    label = { Text("Mes") },
+                                    placeholder = { Text("MM") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    isError = !isMonthValid,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                OutlinedTextField(
+                                    value = year,
+                                    onValueChange = {
+                                        year = it.filter { c -> c.isDigit() }.take(2)
+                                    },
+                                    label = { Text("Año") },
+                                    placeholder = { Text("AA") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            if (!isMonthValid) {
+                                Text(
+                                    text = "El mes debe estar entre 01 y 12",
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = cvv,
+                                onValueChange = {
+                                    cvv = it.filter { c -> c.isDigit() }.take(3)
+                                },
+                                label = { Text("CVV") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                when {
+                    paymentConfirmed -> {
+                        TextButton(onClick = onDismiss) {
+                            Text("Cerrar")
+                        }
+                    }
+                    isProcessing -> {
+                        TextButton(onClick = {}, enabled = false) {
+                            Text("Procesando...")
+                        }
+                    }
+                    else -> {
+                        TextButton(
+                            onClick = {
+                                isProcessing = true
+                                scope.launch {
+                                    delay(2000) // Simular procesamiento
+                                    paymentConfirmed = true
+                                    isProcessing = false
+                                }
+                            },
+                            enabled = isValid()
+                        ) {
+                            Text("Pagar ahora")
+                        }
+                    }
+                }
+            }
+        )
+    }
+}
