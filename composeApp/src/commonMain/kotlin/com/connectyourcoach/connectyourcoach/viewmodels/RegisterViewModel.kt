@@ -118,12 +118,18 @@ class RegisterViewModel : ViewModel() {
             resetErrors()
 
             try {
-                val result = Firebase.auth.createUserWithEmailAndPassword(_email.value, _password.value)
-                result.user?.updateProfile(
+                // Attempt to create user with email and password in Firebase Auth
+                val authResult = Firebase.auth.createUserWithEmailAndPassword(_email.value, _password.value)
+                val firebaseUser = authResult.user
+
+                firebaseUser?.updateProfile(
                     displayName = _username.value,
                     photoUrl = _photoUrl.value
                 )
 
+                val uid = firebaseUser?.uid ?: ""
+
+                // Create user in your custom backend
                 val user = User(
                     username = _username.value,
                     full_name = _fullName.value,
@@ -131,15 +137,17 @@ class RegisterViewModel : ViewModel() {
                     birth_date = _birthDate.value,
                     email = _email.value,
                     profile_picture = _photoUrl.value,
-                    uid = result.user?.uid ?: "",
+                    uid = uid,
                 )
 
                 userRepository.createUser(
                     user = user,
                     onSuccessResponse = {
                         _showDialog.value = true
+                        _isLoading.value = false // Ensure loading is stopped on success
                     },
                     onErrorResponse = { error ->
+                        // Handle validation errors from custom backend
                         if (error.exception == CustomException.ValidationError) {
                             if (error.validationError != null && error.validationError.isNotEmpty()) {
                                 for (validationError in error.validationError) {
@@ -156,51 +164,90 @@ class RegisterViewModel : ViewModel() {
                                 }
                             }
                         }
-
-                        onError(Exception(error.details))
+                        // Call onError to clean up Firebase Auth and Firestore if custom backend failed
+                        onError(Exception(error.details), uid, true)
+                        _isLoading.value = false
                     },
                     onFinish = {
-                        _isLoading.value = false
+                        // This onFinish might be called after onError, so ensure _isLoading is handled correctly.
+                        // For clarity, _isLoading is set inside success/error callbacks now.
                     }
                 )
 
-                firestoreUserRepository.addUser(
-                    user = FirestoreUser(
-                        uid = result.user?.uid ?: "",
-                        username = _username.value,
-                        phone = _phoneNumber.value,
-                        photoUrl = _photoUrl.value,
+                // Add user to Firestore (this should ideally happen after successful custom backend registration)
+                if (uid.isNotEmpty()) {
+                    firestoreUserRepository.addUser(
+                        user = FirestoreUser(
+                            uid = uid,
+                            username = _username.value,
+                            phone = _phoneNumber.value,
+                            photoUrl = _photoUrl.value,
+                        )
                     )
-                )
+                } else {
+                    // Log or handle the case where Firebase Auth user UID is unexpectedly empty
+                    println("RegisterViewModel: Firebase Auth UID is empty after creation.")
+                    onError(Exception("Firebase Auth UID is empty after creation"), uid, false)
+                }
+
             } catch (e: Exception) {
-                onError(e)
+                // Catch any exceptions during Firebase Auth user creation
+                onError(e, Firebase.auth.currentUser?.uid ?: "", false) // Pass current UID if available
                 _isLoading.value = false
             }
         }
     }
 
-    fun onError(e: Exception) {
+    /**
+     * Handles errors during registration, performing cleanup actions like deleting the user
+     * from Firebase Auth and Firestore if they were partially created.
+     * @param e The exception that occurred.
+     * @param uidToDelete The UID of the user to attempt to delete from Firestore/Firebase Auth.
+     * @param isBackendFailure Indicates if the failure came from the custom backend (UserRepository).
+     */
+    fun onError(e: Exception, uidToDelete: String, isBackendFailure: Boolean) {
         viewModelScope.launch {
             updateRegisterError("Error en el registre: ${e.message}")
 
-            userRepository.deleteUser(
-                nickname = _username.value,
-                token = Firebase.auth.currentUser?.getIdToken(false) ?: "",
-                onSuccessResponse = {
-                    // User deleted successfully
-                },
-                onErrorResponse = { error ->
-                    // Handle error
+            val currentUser = Firebase.auth.currentUser
+
+            // Only attempt Firebase Auth and Firestore deletion if a user was actually created
+            // and we have a UID to work with.
+            if (currentUser != null && currentUser.uid == uidToDelete && uidToDelete.isNotEmpty()) {
+                // Delete user from custom backend (if it failed earlier, this might not be needed or would re-attempt)
+                // This call here is a fallback; the primary call is in onRegister's onErrorResponse.
+                if (!isBackendFailure) { // Avoid redundant calls if backend already failed
+                    userRepository.deleteUser(
+                        nickname = _username.value, // This might not exist in backend if auth failed early
+                        token = currentUser.getIdToken(false) ?: "",
+                        onSuccessResponse = {
+                            // User deleted successfully from custom backend
+                        },
+                        onErrorResponse = { error ->
+                            // Handle error deleting from custom backend
+                            println("Error deleting user from custom backend during onError: ${error.details}")
+                        }
+                    )
                 }
-            )
 
-            if (Firebase.auth.currentUser != null) {
-                Firebase.auth.currentUser?.delete()
+                // Delete Firebase Auth user
+                try {
+                    currentUser.delete()
+                } catch (authDeleteException: Exception) {
+                    println("Error deleting Firebase Auth user: ${authDeleteException.message}")
+                    // Potentially, if delete fails, you might want to force sign out or show a critical error.
+                }
+
+                // Delete user from Firestore
+                firestoreUserRepository.deleteUser(uidToDelete)
+            } else if (uidToDelete.isNotEmpty()) {
+                // This block handles cases where the Firebase Auth user might not be 'currentUser'
+                // anymore, but we still have a UID from a partial creation to try and clean up in Firestore.
+                // Firebase Auth user cannot be deleted without being current user, but Firestore can.
+                firestoreUserRepository.deleteUser(uidToDelete)
+            } else {
+                println("RegisterViewModel: No valid UID or current user to perform cleanup in onError.")
             }
-
-            firestoreUserRepository.deleteUser(
-                userId = Firebase.auth.currentUser?.uid ?: "",
-            )
         }
     }
 
@@ -264,6 +311,7 @@ class RegisterViewModel : ViewModel() {
         val month = dateParts[1].toIntOrNull()
         val day = dateParts[2].toIntOrNull()
         if (day == null || month == null || year == null) return false
+        // Simple date validation (does not account for days in month or leap years)
         return day in 1..31 && month in 1..12 && year > 1900
     }
 
@@ -300,16 +348,14 @@ class RegisterViewModel : ViewModel() {
             _registerError.value = "Photo URL is required"
         }
 
-        return _email.value.isNotEmpty() &&
-                isValidEmail() &&
-                isValidPhone() &&
-                isValidPassword() &&
-                isValidaBirthDate() &&
-                _password.value.isNotEmpty() &&
-                _phoneNumber.value.isNotEmpty() &&
-                _birthDate.value.isNotEmpty() &&
-                _username.value.isNotEmpty() &&
-                _fullName.value.isNotEmpty() &&
-                _photoUrl.value.isNotEmpty()
+        // Return true only if all fields are valid and errors are cleared
+        return _usernameError.value.isEmpty() &&
+                _fullNameError.value.isEmpty() &&
+                _phoneNumberError.value.isEmpty() &&
+                _birthDateError.value.isEmpty() &&
+                _emailError.value.isEmpty() &&
+                _passwordError.value.isEmpty() &&
+                _registerError.value.isEmpty() && // Ensure photoUrl requirement is covered by this
+                _photoUrl.value.isNotEmpty() // Explicit check for photoUrl
     }
 }

@@ -140,7 +140,7 @@ fun ProfileView(
             Text("Sign out", color = Color.White)
         }
 
-        if  (user?.email == "admin@cyc.com") {
+        if  (user?.email == "sergi754575@gmail.com") {
             Button(
                 onClick = {
                     viewModel.onClickControlPanel(onControlPanel)
