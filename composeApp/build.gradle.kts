@@ -1,3 +1,4 @@
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -48,6 +49,8 @@ kotlin {
 
             // Firestore
             implementation(project.dependencies.platform(libs.android.firebase.bom))
+
+            implementation(libs.accompanist.permissions)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core.v173)

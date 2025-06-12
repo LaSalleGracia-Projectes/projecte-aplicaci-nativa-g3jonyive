@@ -1,7 +1,10 @@
 package com.connectyourcoach.connectyourcoach.views
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -11,17 +14,29 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import coil3.compose.SubcomposeAsyncImage
 import com.connectyourcoach.connectyourcoach.apicamera.ApiCamera
 import com.connectyourcoach.connectyourcoach.viewmodels.SettingsViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.painterResource
+import shared.PermissionCallback
+import shared.PermissionStatus
+import shared.PermissionType
+import shared.createPermissionsManager
+import shared.rememberGalleryManager
 
 @Composable
 fun SettingsProfileView(
@@ -33,6 +48,20 @@ fun SettingsProfileView(
     val phone by viewModel.phone
     val photoUrl by viewModel.photoUrl
     val error by viewModel.error
+    val imageBitmap by viewModel.imageBitmap
+    val launchGallery by viewModel.launchGallery
+
+    val galleryManager = rememberGalleryManager { image ->
+        viewModel.onImageSelected(image)
+    }
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(
+            permissionType: PermissionType,
+            status: PermissionStatus
+        ) {
+
+        }
+    })
 
     if (viewModel.saved.value) {
         onSave()
@@ -49,6 +78,15 @@ fun SettingsProfileView(
         return
     }
 
+    if (launchGallery) {
+        if (permissionsManager.isPermissionGranted(PermissionType.GALLERY)) {
+            galleryManager.launch()
+        } else {
+            permissionsManager.askPermission(PermissionType.GALLERY)
+        }
+        viewModel.closeGallery()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,23 +100,31 @@ fun SettingsProfileView(
         Spacer(modifier = Modifier.height(50.dp))
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            SubcomposeAsyncImage(
-                model = photoUrl,
-                contentDescription = "User Avatar",
-                modifier = Modifier.size(100.dp),
-                loading = {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colors.primary
-                    )
-                },
-                error = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        modifier = Modifier.size(100.dp),
-                        contentDescription = "Error on loading image",
-                    )
-                }
-            )
+            if (imageBitmap == null) {
+                SubcomposeAsyncImage(
+                    model = photoUrl,
+                    contentDescription = "User Avatar",
+                    modifier = Modifier.size(100.dp),
+                    loading = {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colors.primary
+                        )
+                    },
+                    error = {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            modifier = Modifier.size(100.dp),
+                            contentDescription = "Error on loading image",
+                        )
+                    }
+                )
+            } else {
+                Image(
+                    modifier = Modifier.size(100.dp),
+                    bitmap = imageBitmap!!,
+                    contentDescription = "Profile",
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -95,7 +141,7 @@ fun SettingsProfileView(
                 Spacer(modifier = Modifier.weight(0.5f))
 
                 Button(
-                    onClick = { viewModel.onUploadImage() },
+                    onClick = { viewModel.openGallery() },
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     Text("Upload Image")

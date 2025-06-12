@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.connectyourcoach.connectyourcoach.apicamera.ImageLoader
@@ -14,7 +15,16 @@ import com.connectyourcoach.connectyourcoach.repositories.UserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import shared.PermissionCallback
+import shared.PermissionStatus
+import shared.PermissionType
+import shared.SharedImage
+import shared.createPermissionsManager
+import shared.rememberGalleryManager
 
 class SettingsViewModel : ViewModel() {
     private val auth by mutableStateOf(Firebase.auth)
@@ -31,6 +41,12 @@ class SettingsViewModel : ViewModel() {
     private val _photoUrl: MutableState<String> = mutableStateOf("")
     val photoUrl: State<String> get() = _photoUrl
 
+    private val _imageBitmap: MutableState<ImageBitmap?> = mutableStateOf(null)
+    val imageBitmap: State<ImageBitmap?> get() = _imageBitmap
+
+    private val _sharedImage: MutableState<SharedImage?> = mutableStateOf(null)
+    val sharedImage: State<SharedImage?> get() = _sharedImage
+
     private val _loading: MutableState<Boolean> = mutableStateOf(false)
     val loading: State<Boolean> get() = _loading
 
@@ -40,10 +56,22 @@ class SettingsViewModel : ViewModel() {
     private val _saved: MutableState<Boolean> = mutableStateOf(false)
     val saved: State<Boolean> get() = _saved
 
+    private val _launchGallery: MutableState<Boolean> = mutableStateOf(false)
+    val launchGallery: State<Boolean> get() = _launchGallery
+
     private val userRepository = UserRepository()
     private val firebaseUserRepository = FirestoreUserRepository()
 
     private val imageLoader = ImageLoader(HttpClient())
+
+    fun onImageSelected(image: SharedImage?) {
+        viewModelScope.launch {
+            val bitmap = withContext(Dispatchers.Default) {
+                setImage(image?.toImageBitmap())
+            }
+            _sharedImage.value = image
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -62,6 +90,11 @@ class SettingsViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun setImage(image: ImageBitmap?) {
+        _imageBitmap.value = image
+        _photoUrl.value = ""
     }
 
     fun onFullNameChange(newFullName: String) {
@@ -90,12 +123,12 @@ class SettingsViewModel : ViewModel() {
         _photoUrl.value = imageLoader.getRandomAvatar()
     }
 
-    fun onUploadImage() {
-        viewModelScope.launch { uploadImage() }
-    }
+    fun closeGallery() {
+        _launchGallery.value = false
+     }
 
-    suspend fun uploadImage() {
-
+    fun openGallery() {
+        _launchGallery.value = true
     }
 
     fun onSave() {
@@ -114,32 +147,55 @@ class SettingsViewModel : ViewModel() {
         _user.value?.full_name = _full_name.value
         _user.value?.phone = if (_phone.value.isNotBlank()) _phone.value else null
         _user.value?.profile_picture = _photoUrl.value
+        _user.value?.birth_date = null
 
         userRepository.updateUser(
             user = _user.value!!,
             token = auth.currentUser?.getIdToken(false) ?: "",
             onSuccessResponse = { fetchedUser ->
-                val firestoreUser = FirestoreUser(
-                    uid = fetchedUser.uid,
-                    username = fetchedUser.full_name,
-                    phone = fetchedUser.phone ?: "",
-                    photoUrl = fetchedUser.profile_picture ?: "",
-                )
                 viewModelScope.launch {
-                    try {
-                        firebaseUserRepository.updateUser(user = firestoreUser)
-                        _saved.value = true
-                    } catch (e: Exception) {
-                        _error.value = e.message ?: "Failed to update user in Firestore"
-                    }
+                    uploadPhoto()
+                    //pushToFirestore(fetchedUser)
                 }
             },
             onErrorResponse = { error ->
                 _error.value = error.details
-            },
-            onFinish = {
-                _loading.value = false
             }
         )
+    }
+
+    suspend fun pushToFirestore(fetchedUser: User) {
+        val firestoreUser = FirestoreUser(
+            uid = fetchedUser.uid,
+            username = fetchedUser.full_name,
+            phone = fetchedUser.phone ?: "",
+            photoUrl = fetchedUser.profile_picture ?: "",
+        )
+        try {
+            firebaseUserRepository.updateUser(user = firestoreUser)
+            _saved.value = true
+        } catch (e: Exception) {
+            _error.value = e.message ?: "Failed to update user in Firestore"
+        }
+    }
+
+    suspend fun uploadPhoto() {
+        if (_sharedImage.value != null) {
+            val photo = _sharedImage.value!!.toByteArray()
+            userRepository.uploadPhoto(
+                nickname = _user.value?.username ?: "",
+                photo = photo!!,
+                token = auth.currentUser?.getIdToken(false) ?: "",
+                onSuccessResponse = { updatedUser ->
+                    _saved.value = true
+                },
+                onErrorResponse = { error ->
+                    _error.value = error.details
+                },
+                onFinish = {
+                    _loading.value = false
+                }
+            )
+        }
     }
 }

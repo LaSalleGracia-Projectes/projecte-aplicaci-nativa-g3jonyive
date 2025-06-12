@@ -85,4 +85,23 @@ class UserRepository {
             onFinish = onFinish
         )
     }
+
+    suspend fun uploadPhoto(
+        nickname: String,
+        photo: ByteArray,
+        token: String,
+        onSuccessResponse: (User) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
+    ) {
+        val URL = "$URL/$nickname/image"
+        baseRepository.uploadImageFile<User>(
+            url = URL,
+            token = token,
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish,
+            imageBytes = photo
+        )
+    }
 }

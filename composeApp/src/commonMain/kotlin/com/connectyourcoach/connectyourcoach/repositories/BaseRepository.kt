@@ -11,12 +11,19 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import com.connectyourcoach.connectyourcoach.models.CustomException
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import io.ktor.util.InternalAPI
+import io.ktor.utils.io.ByteReadChannel
 
 class BaseRepository {
     suspend inline fun <reified T> getData(
@@ -166,6 +173,59 @@ class BaseRepository {
                     body?.let {
                         contentType(ContentType.Application.Json)
                         setBody(it)
+                    }
+                }
+
+                if (response.status.isSuccess()) {
+                    val data = response.body<T>()
+                    onSuccessResponse(data)
+                } else {
+                    if (response.status.value == 502) throw Exception("Could not connect to the server")
+                    val errorResponse = response.body<ErrorResponse>()
+                    onErrorResponse(errorResponse)
+                }
+            } catch (e: Exception) {
+                val errorResponse = ErrorResponse(
+                    error = "Connection Error",
+                    details = e.message ?: "Failed to connect",
+                    exception = CustomException.FailedToConnectException
+                )
+                onErrorResponse(errorResponse)
+            } finally {
+                onFinish()
+            }
+        }
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend inline fun <reified T> uploadImageFile(
+        url: String,
+        imageBytes: ByteArray,
+        token: String? = null,
+        crossinline onSuccessResponse: (T) -> Unit,
+        crossinline onErrorResponse: (ErrorResponse) -> Unit,
+        crossinline onFinish: () -> Unit = {}
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = httpClient.submitFormWithBinaryData(
+                    url = url,
+                    formData = formData {
+                        append(
+                            key = "image",
+                            value = imageBytes,
+                            headers = Headers.build {
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                                append(HttpHeaders.ContentDisposition, "filename=imagen.jpeg")
+                            }
+                        )
+                    }
+                ) {
+                    method = HttpMethod.Post
+                    token?.let {
+                        headers {
+                            append(HttpHeaders.Authorization, it)
+                        }
                     }
                 }
 
