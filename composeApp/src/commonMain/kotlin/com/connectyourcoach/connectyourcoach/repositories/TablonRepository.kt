@@ -3,6 +3,7 @@ package com.connectyourcoach.connectyourcoach.repositories
 import com.connectyourcoach.connectyourcoach.BASE_URL
 import com.connectyourcoach.connectyourcoach.models.ErrorResponse
 import com.connectyourcoach.connectyourcoach.models.Like
+import com.connectyourcoach.connectyourcoach.models.Payment
 import com.connectyourcoach.connectyourcoach.models.Post
 
 class TablonRepository {
@@ -137,6 +138,44 @@ class TablonRepository {
             token = token,
             onSuccessResponse = {
                 onSuccessResponse(it != null)
+            },
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
+        )
+    }
+
+    suspend fun pay(
+        payment: Payment,
+        token: String,
+        onSuccessResponse: (Payment) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
+    ) {
+        val URL = "$BASE_URL/payment/"
+        baseRepository.postData<Payment>(
+            url = URL,
+            body = payment,
+            token = token,
+            onSuccessResponse = onSuccessResponse,
+            onErrorResponse = onErrorResponse,
+            onFinish = onFinish
+        )
+    }
+
+    suspend fun isPostPaid(
+        postId: String,
+        token: String,
+        onSuccessResponse: (Boolean) -> Unit,
+        onErrorResponse: (ErrorResponse) -> Unit,
+        onFinish: () -> Unit = {}
+    ) {
+        val URL = "$BASE_URL/payment/"
+        baseRepository.getData<List<Payment>>(
+            url = URL,
+            token = token,
+            onSuccessResponse = {  payments ->
+                val isPaid = payments.any { it.post_id.toString() == postId }
+                onSuccessResponse(isPaid)
             },
             onErrorResponse = onErrorResponse,
             onFinish = onFinish

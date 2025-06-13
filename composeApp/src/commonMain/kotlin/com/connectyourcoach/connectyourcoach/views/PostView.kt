@@ -53,14 +53,18 @@ fun PostView(viewModel: PostViewModel, paddingValues: PaddingValues) {
     val scrollState = rememberScrollState()
     val showDialog = remember { mutableStateOf(false) }
     val isPaid by viewModel.isPaid
+    val isLoading by viewModel.isLoading
 
     if (showDialog.value) {
         PagoTarjeta(
             showDialog = showDialog.value,
             onDismiss = { showDialog.value = false },
+            isProcessing = isLoading,
+            paymentConfirmed = isPaid,
             setPayed = {
                 viewModel.setPaid()
-            }
+            },
+            onPay = { viewModel.onPay() }
         )
     }
 
@@ -196,7 +200,7 @@ fun LikeButton(
 
 
 @Composable
-fun PagoTarjeta(showDialog: Boolean, onDismiss: () -> Unit, setPayed: () -> Unit) {
+fun PagoTarjeta(showDialog: Boolean, paymentConfirmed: Boolean, isProcessing: Boolean, onDismiss: () -> Unit, setPayed: () -> Unit, onPay: () -> Unit) {
     var cardNumber by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
 
@@ -204,8 +208,6 @@ fun PagoTarjeta(showDialog: Boolean, onDismiss: () -> Unit, setPayed: () -> Unit
     var year by remember { mutableStateOf("") }
     var isMonthValid by remember { mutableStateOf(true) }
 
-    var paymentConfirmed by remember { mutableStateOf(false) }
-    var isProcessing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     fun isValid(): Boolean {
@@ -317,12 +319,7 @@ fun PagoTarjeta(showDialog: Boolean, onDismiss: () -> Unit, setPayed: () -> Unit
                     else -> {
                         TextButton(
                             onClick = {
-                                isProcessing = true
-                                scope.launch {
-                                    delay(2000) // Simular procesamiento
-                                    paymentConfirmed = true
-                                    isProcessing = false
-                                }
+                                onPay()
                             },
                             enabled = isValid()
                         ) {
